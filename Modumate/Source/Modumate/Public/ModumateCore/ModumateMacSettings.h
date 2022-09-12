@@ -16,13 +16,9 @@ class MODUMATE_API UModumateMacSettings : public UObject
 public:
 	//Mac Values
 	UPROPERTY(Config)
-	float MacGlobalGamma = 0.85f;
+	float MacMidtoneSaturation = 1.2f;
 	UPROPERTY(Config)
-	float MacShadowsGamma = 1.1f;
-	UPROPERTY(Config)
-	float MacMidtonesGamma = 0.8f;
-	UPROPERTY(Config)
-	float MacHighlightsGamma= 0.75f;
+	float MacHighlightsSaturation = 1.25f;
 	UPROPERTY(Config)
 	float MacShadowsGain = 0.9f;
 	UPROPERTY(Config)
@@ -30,13 +26,9 @@ public:
 
 	//Non Mac values
 	UPROPERTY(Config)
-	float GlobalGamma = 1.0f;
+	float MidtoneSaturation = 1.0f;
 	UPROPERTY(Config)
-	float ShadowsGamma = 1.0f;
-	UPROPERTY(Config)
-	float MidtonesGamma = 1.0f;
-	UPROPERTY(Config)
-	float HighlightsGamma = 1.0f;
+	float HighlightsSaturation = 1.0f;
 	UPROPERTY(Config)
 	float ShadowsGain = 1.0f;
 	UPROPERTY(Config)

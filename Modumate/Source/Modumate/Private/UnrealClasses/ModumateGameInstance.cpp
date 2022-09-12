@@ -6,7 +6,7 @@
 #include "BIMKernel/Core/BIMProperties.h"
 //#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 //#include "BIMKernel/Presets/BIMSymbolPresetData.h"
-#include "Database/ModumateObjectDatabase.h"
+
 #include "DocumentManagement/ModumateCommands.h"
 #include "Dom/JsonObject.h"
 #include "Drafting/DraftingManager.h"
@@ -116,17 +116,6 @@ void UModumateGameInstance::Init()
 	}
 
 	QuantitiesManager = MakeShared<FQuantitiesManager>(this);
-
-	// Initialize the Object Database, which can take a while
-	ObjectDatabase = new FModumateDatabase();
-	ObjectDatabase->Init();
-
-	double databaseLoadTime = 0.0;
-	{
-		SCOPE_SECONDS_COUNTER(databaseLoadTime);
-		ObjectDatabase->ReadPresetData();
-	}
-	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), FMath::RoundToInt(1000.0 * databaseLoadTime));
 
 	GetTimerManager().SetTimer(SlowTickHandle, this, &UModumateGameInstance::SlowTick, 0.5f, true);
 
@@ -834,13 +823,6 @@ void UModumateGameInstance::Shutdown()
 	}
 
 	UModumateAnalyticsStatics::ShutdownAnalytics(AnalyticsInstance);
-
-	if (ObjectDatabase)
-	{
-		ObjectDatabase->Shutdown();
-		delete ObjectDatabase;
-		ObjectDatabase = nullptr;
-	}
 
 	if (DrawingDesignerMeshCache)
 	{

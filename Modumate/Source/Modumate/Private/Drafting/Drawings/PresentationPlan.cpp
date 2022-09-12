@@ -132,6 +132,7 @@ void FPresentationPlan::OnPageCompleted()
 
 bool FPresentationPlan::FindRooms(TSharedPtr<FDraftingComposite> Parent)
 {
+#if 0
 	UModumateGameInstance *modGameInst = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
 	auto drawingInterface = draftMan->CurrentDrawingInterface;
@@ -213,4 +214,6 @@ bool FPresentationPlan::FindRooms(TSharedPtr<FDraftingComposite> Parent)
 	RoomLegend = TWeakPtr<FRoomLegend>(roomLegend);
 
 	return roomConfigs.Num() > 0;
+#endif
+	return true;
 }

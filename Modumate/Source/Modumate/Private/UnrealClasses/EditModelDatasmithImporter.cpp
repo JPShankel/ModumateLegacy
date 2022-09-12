@@ -39,8 +39,7 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromDialogue()
 	{
 		// Create new archMesh from Datasmith
 		FGuid newArchitecturalMeshKey = FGuid::NewGuid();
-		FModumateDatabase* db = GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase;
-		db->AddArchitecturalMeshFromDatasmith(filename, newArchitecturalMeshKey);
+		controller->GetDocument()->GetPresetCollection().AddArchitecturalMeshFromDatasmith(filename, newArchitecturalMeshKey);
 
 		// Create new preset
 		int32 urlLastSlashIdx;
@@ -48,7 +47,7 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromDialogue()
 		FString newPresetName = filename.RightChop(urlLastSlashIdx + 1);
 
 		FGuid newPresetID;
-		controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(*db, newPresetName, newArchitecturalMeshKey, newPresetID);
+		controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(newPresetName, newArchitecturalMeshKey, newPresetID);
 
 		// trigger web update to add new created preset
 		TArray<FGuid> addedPresets;
@@ -69,14 +68,13 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromWeb(const FString& URL)
 	}
 	// Create new archMesh from Datasmith
 	FGuid newArchitecturalMeshKey = FGuid::NewGuid();
-	FModumateDatabase* db = GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase;
-	db->AddArchitecturalMeshFromDatasmith(URL, newArchitecturalMeshKey);
+	controller->GetDocument()->GetPresetCollection().AddArchitecturalMeshFromDatasmith(URL, newArchitecturalMeshKey);
 
 	// Create new preset
 	FString newPresetName = TEXT("Downloaded Asset");
 
 	FGuid newPresetID;
-	controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(*db, newPresetName, newArchitecturalMeshKey, newPresetID);
+	controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(newPresetName, newArchitecturalMeshKey, newPresetID);
 	controller->GetDocument()->UpdateWebPresets();
 	return true;
 }

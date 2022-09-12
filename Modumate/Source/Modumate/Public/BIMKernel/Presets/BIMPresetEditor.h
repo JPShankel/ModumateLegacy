@@ -15,7 +15,6 @@
 
 struct FBIMAssemblySpec;
 class FBIMPresetEditorNode;
-class FModumateDatabase;
 
 /*
 	FBIMPresetEditor contains all the context information for editing presets.
@@ -35,7 +34,7 @@ public:
 	FBIMPresetCollectionProxy PresetCollectionProxy;
 
 	EBIMResult ResetInstances();
-	EBIMResult InitFromPreset(const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
+	EBIMResult InitFromPreset(const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
 
 	EBIMResult DestroyNodeInstance(const FBIMPresetEditorNodeSharedPtr& Instance, TArray<FBIMEditorNodeIDType>& OutDestroyed);
 	EBIMResult DestroyNodeInstance(const FBIMEditorNodeIDType& InstanceID, TArray<FBIMEditorNodeIDType>& OutDestroyed);
@@ -60,8 +59,8 @@ public:
 
 	bool ValidatePool() const;
 
-	EBIMResult CreateAssemblyFromNodes(const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
-	EBIMResult CreateAssemblyFromLayerNode(const FModumateDatabase& InDB, const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult CreateAssemblyFromNodes(FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult CreateAssemblyFromLayerNode(const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
 	EBIMResult ReorderChildNode(const FBIMEditorNodeIDType& ChildNode, int32 FromPosition, int32 ToPosition);
 	EBIMResult FindNodeParentLineage(const FBIMEditorNodeIDType& NodeID, TArray<FBIMEditorNodeIDType>& OutLineage);
 

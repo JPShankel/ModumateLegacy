@@ -308,7 +308,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMPresetCollection
 						// Turn off verbose error reporting, needed for data validation but annoying for icons that are allowed to fail
 						bool bEnsureOnFormulaError = FBIMPartLayout::bEnsureOnFormulaError;
 						FBIMPartLayout::bEnsureOnFormulaError = false;
-						if (assemblySpec.FromPreset(*GameInstance->ObjectDatabase, alteredPartCollection, craftingSpec.PresetGUID) == EBIMResult::Success)
+						if (assemblySpec.FromPreset(alteredPartCollection, craftingSpec.PresetGUID) == EBIMResult::Success)
 						{
 							FBIMPartLayout::bEnsureOnFormulaError = bEnsureOnFormulaError;
 							bCaptureSuccess = SetIconMeshForAssemblyType(assemblySpec, IconRenderTarget, assemblyPartIndex, fromRootNode);
@@ -464,46 +464,45 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 	{
 		switch (childPreset->NodeScope)
 		{
-		case EBIMValueScope::RawMaterial:
-			bCaptureSuccess = SetIconMeshForRawMaterial(AsmKey, IconRenderTargetForWeb);
-			break;
-		case EBIMValueScope::Profile:
-			bCaptureSuccess = SetIconMeshForProfile(AsmKey, IconRenderTargetForWeb);
-			break;
-		case EBIMValueScope::Material:
-			bCaptureSuccess = SetIconMeshForMaterial(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
-			break;
-		case EBIMValueScope::Module:
-		case EBIMValueScope::Gap:
-			bCaptureSuccess = SetIconMeshForModule(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
-			break;
-		case EBIMValueScope::Mesh:
-			bCaptureSuccess = SetIconMeshForMesh(AsmKey, IconRenderTargetForWeb);
-			break;
-		case EBIMValueScope::Layer:
-			bCaptureSuccess = SetIconMeshForLayerPreset(presetCollection, AsmKey, IconRenderTargetForWeb);
-			break;
-		case EBIMValueScope::Pattern:
-		{
-			const FStaticIconTexture* staticIcon = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(AsmKey);
-			if (staticIcon != nullptr && staticIcon->IsValid())
+			case EBIMValueScope::RawMaterial:
+				bCaptureSuccess = SetIconMeshForRawMaterial(AsmKey, IconRenderTargetForWeb);
+				break;
+			case EBIMValueScope::Profile:
+				bCaptureSuccess = SetIconMeshForProfile(AsmKey, IconRenderTargetForWeb);
+				break;
+			case EBIMValueScope::Material:
+				bCaptureSuccess = SetIconMeshForMaterial(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
+				break;
+			case EBIMValueScope::Module:
+			case EBIMValueScope::Gap:
+				bCaptureSuccess = SetIconMeshForModule(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
+				break;
+			case EBIMValueScope::Mesh:
+				bCaptureSuccess = SetIconMeshForMesh(AsmKey, IconRenderTargetForWeb);
+				break;
+			case EBIMValueScope::Layer:
+				bCaptureSuccess = SetIconMeshForLayerPreset(presetCollection, AsmKey, IconRenderTargetForWeb);
+				break;
+			case EBIMValueScope::Pattern:
 			{
-				DrawTextureSampleToRenderTarget(staticIcon->Texture.Get(), IconRenderTargetForWeb);
-				bCaptureSuccess = true;
+				const FStaticIconTexture* staticIcon = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(AsmKey);
+				if (staticIcon != nullptr && staticIcon->IsValid())
+				{
+					DrawTextureSampleToRenderTarget(staticIcon->Texture.Get(), IconRenderTargetForWeb);
+					bCaptureSuccess = true;
+				}
 			}
-			break;
-		}
-		case EBIMValueScope::IESProfile:
-		{
-			const FStaticIconTexture* staticIconIES = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(AsmKey);
-			if (staticIconIES != nullptr && staticIconIES->IsValid())
+				break;
+			case EBIMValueScope::IESProfile:
 			{
-				DrawTextureSampleToRenderTarget(staticIconIES->Texture.Get(), IconRenderTargetForWeb);
-				bCaptureSuccess = true;
-			}
-			break;
-		}
-			
+				const FStaticIconTexture* staticIconIES = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(AsmKey);
+				if (staticIconIES != nullptr && staticIconIES->IsValid())
+				{
+					DrawTextureSampleToRenderTarget(staticIconIES->Texture.Get(), IconRenderTargetForWeb);
+					bCaptureSuccess = true;
+				}
+				break;
+			}			
 		}
 	}	
 	
@@ -873,7 +872,7 @@ bool ADynamicIconGenerator::SetIconMeshForPointHostedAssembly(const FBIMAssembly
 
 bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial)
 {
-	const FStaticIconTexture* staticIcon = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(PresetID);
+	const FStaticIconTexture* staticIcon = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(PresetID);
 	if (staticIcon != nullptr && staticIcon->IsValid())
 	{
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
@@ -912,7 +911,7 @@ bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Prese
 bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get material
-	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(MaterialKey);
+	const FArchitecturalMaterial* aMat = Controller->GetDocument()->GetPresetCollection().GetArchitecturalMaterialByGUID(MaterialKey);
 	if (!aMat->IsValid())
 	{
 		return false;
@@ -934,7 +933,7 @@ bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FGuid& MaterialKey, 
 bool ADynamicIconGenerator::SetIconMeshForProfile(const FGuid& ProfileKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get profile
-	const FSimpleMeshRef* meshRef = GameInstance->ObjectDatabase->GetSimpleMeshByGUID(ProfileKey);
+	const FSimpleMeshRef* meshRef = Controller->GetDocument()->GetPresetCollection().GetSimpleMeshByGUID(ProfileKey);
 	if (!meshRef)
 	{
 		return false;
@@ -977,7 +976,7 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FGuid& ProfileKey, UText
 bool ADynamicIconGenerator::SetIconMeshForMesh(const FGuid& MeshKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get mesh from key
-	const FArchitecturalMesh* aMesh = GameInstance->ObjectDatabase->GetArchitecturalMeshByGUID(MeshKey);
+	const FArchitecturalMesh* aMesh = Controller->GetDocument()->GetPresetCollection().GetArchitecturalMeshByGUID(MeshKey);
 	if (!aMesh->EngineMesh.IsValid())
 	{
 		return false;
@@ -1055,8 +1054,8 @@ bool ADynamicIconGenerator::SetIconMeshForPart(const FBIMPresetCollectionProxy& 
 	// Step 3: Get assets from key, and size from dimension
 	FVector vSize = FVector::OneVector;
 
-	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
-	const FArchitecturalMesh* aMesh = GameInstance->ObjectDatabase->GetArchitecturalMeshByGUID(meshKey);
+	const FArchitecturalMaterial* aMat = Controller->GetDocument()->GetPresetCollection().GetArchitecturalMaterialByGUID(rawMaterialKey);
+	const FArchitecturalMesh* aMesh = Controller->GetDocument()->GetPresetCollection().GetArchitecturalMeshByGUID(meshKey);
 
 	// Step 4: Set assets
 	if (aMat != nullptr && aMesh != nullptr && aMesh->EngineMesh.IsValid())
@@ -1116,7 +1115,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMPresetCollectionPro
 	}
 
 	// Step 3: Get assets from key
-	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
+	const FArchitecturalMaterial* aMat = Controller->GetDocument()->GetPresetCollection().GetArchitecturalMaterialByGUID(rawMaterialKey);
 
 	// Step 4: Set assets
 	if (aMat != nullptr)
@@ -1187,7 +1186,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		}
 	}
 
-	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
+	const FArchitecturalMaterial* aMat = Controller->GetDocument()->GetPresetCollection().GetArchitecturalMaterialByGUID(rawMaterialKey);
 	// Step 4: Set assets
 	if (aMat != nullptr)
 	{
@@ -1216,7 +1215,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 bool ADynamicIconGenerator::SetIconMeshForLayerNodeID(const FBIMPresetCollectionProxy& PresetCollection, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	FBIMAssemblySpec assembly;
-	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(*GameInstance->ObjectDatabase, NodeID, assembly);
+	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(NodeID, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 
@@ -1225,7 +1224,7 @@ bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FBIMPresetCollection
 	FBIMAssemblySpec assembly;
 	EObjectType objType = EObjectType::OTWallSegment; // TODO: Get object type, default to wall for now
 	FBIMPresetCollectionProxy mutableCollection(PresetCollection);
-	EBIMResult result = mutableCollection.CreateAssemblyFromLayerPreset(*GameInstance->ObjectDatabase, PresetID, objType, assembly);
+	EBIMResult result = mutableCollection.CreateAssemblyFromLayerPreset(PresetID, objType, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 

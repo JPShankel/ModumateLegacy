@@ -397,7 +397,7 @@ void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 							static const FName colorMultiplierName(TEXT("colorMultiplier"));
 
 							UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
-							const FArchitecturalMaterial* material = gameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(innerMaterialGuid);
+							const FArchitecturalMaterial* material = doc->GetPresetCollection().GetArchitecturalMaterialByGUID(innerMaterialGuid);
 							if (material)
 							{
 								// TODO: Create material only for new mesh section, changing material for exiting section only needs to copy material params

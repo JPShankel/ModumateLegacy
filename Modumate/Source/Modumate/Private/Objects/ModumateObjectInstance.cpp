@@ -4,7 +4,7 @@
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
-#include "Database/ModumateObjectDatabase.h"
+
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Objects/MOIFactory.h"

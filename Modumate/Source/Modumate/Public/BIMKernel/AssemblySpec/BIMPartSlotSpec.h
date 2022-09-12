@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Objects/ModumateObjectEnums.h"
+#include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
@@ -65,7 +66,7 @@ private:
 	UPROPERTY()
 	FBIMPropertySheet Properties;
 
-	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
+	EBIMResult BuildFromProperties(const FBIMPresetCollectionProxy& InDB);
 
 public:
 

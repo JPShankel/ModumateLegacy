@@ -2,7 +2,7 @@
 
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 
-#include "Database/ModumateObjectDatabase.h"
+
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "DocumentManagement/ModumateCommands.h"
@@ -310,7 +310,7 @@ bool FBIMPresetEditor::ValidatePool() const
 	return ret;
 }
 
-EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(FBIMAssemblySpec& OutAssemblySpec)
 {
 	FBIMPresetEditorNodeSharedPtr rootNode;
 	for (const auto &inst : InstancePool)
@@ -324,7 +324,7 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(const FModumateDatabase& In
 
 	if (rootNode.IsValid())
 	{
-		return OutAssemblySpec.FromPreset(InDB, PresetCollectionProxy, rootNode->Preset.GUID);
+		return OutAssemblySpec.FromPreset(PresetCollectionProxy, rootNode->Preset.GUID);
 	}
 	return EBIMResult::Error;
 }
@@ -332,7 +332,7 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(const FModumateDatabase& In
 /*
 Build a layered assembly based on a single layer, used by the icon generator to produce layer previews
 */
-EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FModumateDatabase& InDB, const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec)
 {
 	// Add layer node preset
 	FBIMPresetEditorNodeSharedPtr layerNode = InstanceFromID(LayerNodeID);
@@ -367,7 +367,7 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FModumateDatabase
 	}
 	PresetCollectionProxy.OverridePreset(assemblyPreset);
 	
-	return OutAssemblySpec.FromPreset(InDB, PresetCollectionProxy, assemblyPreset.GUID);
+	return OutAssemblySpec.FromPreset(PresetCollectionProxy, assemblyPreset.GUID);
 }
 
 EBIMResult FBIMPresetEditor::ReorderChildNode(const FBIMEditorNodeIDType& ChildNode, int32 FromPosition, int32 ToPosition)
@@ -572,7 +572,7 @@ EBIMResult FBIMPresetEditor::DestroyNodeInstance(const FBIMEditorNodeIDType& Ins
 	return DestroyNodeInstance(InstanceFromID(InstanceID), OutDestroyed);
 }
 
-EBIMResult FBIMPresetEditor::InitFromPreset(const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr& OutRootNode)
+EBIMResult FBIMPresetEditor::InitFromPreset(const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr& OutRootNode)
 {
 	ResetInstances();
 	OutRootNode = CreateNodeInstanceFromPreset(BIM_ID_NONE, PresetGUID, 0, 0);
@@ -588,7 +588,7 @@ EBIMResult FBIMPresetEditor::InitFromPreset(const FModumateDatabase& InDB, const
 	if (OutRootNode->PartNodes.Num() > 0)
 	{
 		FBIMAssemblySpec assemblySpec;
-		if (CreateAssemblyFromNodes(InDB, assemblySpec) == EBIMResult::Success)
+		if (CreateAssemblyFromNodes(assemblySpec) == EBIMResult::Success)
 		{
 			FBIMPartLayout layout;
 			layout.FromAssembly(assemblySpec, FVector::OneVector);

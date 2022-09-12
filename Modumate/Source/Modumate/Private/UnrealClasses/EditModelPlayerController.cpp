@@ -7,7 +7,7 @@
 #include "Algo/Transform.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/EditableTextBox.h"
-#include "Database/ModumateObjectDatabase.h"
+
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSnappingView.h"
