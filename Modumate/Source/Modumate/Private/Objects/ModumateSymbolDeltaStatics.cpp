@@ -15,6 +15,7 @@
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Algo/ForEach.h"
+#include "TransformTypes.h"
 
 
 void FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas)
@@ -276,14 +277,26 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		static const FString symbolNcp(TEXT("Symbol"));
 
 		FBIMPresetCollection& presets = Doc->GetPresetCollection();
+		TArray<FGuid> symbols;
+		presets.GetPresetsForNCP(FBIMTagPath(symbolNcp), symbols, true);
+		TArray<const FText*> symbolNames;
+		Algo::Transform(symbols, symbolNames, [&presets](const FGuid& id) { return &presets.PresetFromGUID(id)->DisplayName; });
+		
 		FBIMPresetInstance newSymbolPreset;
-		newSymbolPreset.DisplayName = FText::FromString(TEXT("New Symbol"));
 		newSymbolPreset.NodeType = symbolNodeType;
 		newSymbolPreset.NodeScope = EBIMValueScope::Symbol;
 		newSymbolPreset.MyTagPath.FromString(symbolNcp);
 
+		int32 idNumber = 1;
+		FText displayName;
+		do
+		{
+			displayName = FText::FromString(FString::Printf(TEXT("Symbol %d"), idNumber++));
+		} while (symbolNames.FindByPredicate([&displayName](const FText* s) {return displayName.EqualToCaseIgnored(*s); }));
+		newSymbolPreset.DisplayName = displayName;
+
 		FBIMSymbolPresetData symbolData;
-		if (!CreatePresetDataForNewSymbol(Doc, group, symbolData))
+		if (!CreatePresetDataForSymbol(Doc, group, FTransform::Identity, symbolData))
 		{
 			return false;
 		}
@@ -292,7 +305,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		FDeltaPtr presetDelta(presets.MakeCreateNewDelta(newSymbolPreset));
 
 		newGroupData.SymbolID = newSymbolPreset.GUID;
-		// Reset transform so frozen Preset data is absolute:
+		// Reset transform so Preset postion data is correct for this group (transform is identity above).
 		newGroupData.Location = FVector::ZeroVector;
 		newGroupData.Rotation = FQuat::Identity;
 		FMOIStateData groupInstanceData(group->GetStateData());
@@ -308,7 +321,8 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 	return false;
 }
 
-bool FModumateSymbolDeltaStatics::CreatePresetDataForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, FBIMSymbolPresetData& OutPreset)
+bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, const FTransform& Transform,
+	FBIMSymbolPresetData& OutPreset)
 {
 	const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(SymbolGroup);
 	if (!ensure(group))
@@ -339,7 +353,12 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForNewSymbol(UModumateDocument
 	const FGraph3D* graph3d = Doc->GetVolumeGraph(group->ID);
 	if (ensure(graph3d))
 	{
+		FTransform3d transform(Transform);
 		graph3d->Save(&OutPreset.Graph3d);
+		for (auto& vert : OutPreset.Graph3d.Vertices)
+		{
+			vert.Value.Position = transform.TransformPosition(vert.Value.Position);
+		}
 		return true;
 	}
 
@@ -543,15 +562,15 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		allGroupIDs.Add(UModumateObjectStatics::GetGroupIdForObject(Doc, itemId));
 	}
 
+	FTransform masterTransform(groupMoi->GetWorldTransform().Inverse());
+
 	FBIMSymbolPresetData newSymbolData;
-	if (!ensure(CreatePresetDataForNewSymbol(Doc, groupMoi, newSymbolData)))
+	if (!ensure(CreatePresetDataForSymbol(Doc, groupMoi, masterTransform, newSymbolData)))
 	{
 		return;
 	}
 
 	FBIMPresetInstance newSymbolPreset(*symbolPreset);
-
-	FTransform masterTransform(groupMoi->GetWorldTransform().Inverse());
 
 	for (int32 otherGroup : allGroupIDs)
 	{
@@ -564,7 +583,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		if (ensure(otherGroupMoi))
 		{
 			FModumateObjectDeltaStatics::GetDeltasForGraphDelete(Doc, otherGroup, OutDeltas, false);
-			FTransform transform(masterTransform * otherGroupMoi->GetWorldTransform());
+			FTransform transform(otherGroupMoi->GetWorldTransform());
 			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, newSymbolData, transform, OutDeltas));
 		}
 	}

@@ -95,6 +95,8 @@
 #include "ToolsAndAdjustments/Tools/EditModelEdgeHostedTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelFaceHostedTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPattern2DTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelSymbolTool.h"
+
 #include "UI/Custom/WebKeyboardCapture.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
 #include "UnrealClasses/SkyActor.h"
@@ -928,7 +930,8 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<UTerrainTool>());
 	RegisterTool(CreateTool<UGroupTool>());
 	RegisterTool(CreateTool<UUngroupTool>());
-	RegisterTool(CreateTool <UEditModelPattern2DTool>());
+	RegisterTool(CreateTool<UEditModelPattern2DTool>());
+	RegisterTool(CreateTool<USymbolTool>());
 }
 
 void AEditModelPlayerController::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)

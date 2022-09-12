@@ -51,6 +51,7 @@ enum class EToolMode : uint8
 	VE_GROUP,
 	VE_UNGROUP,
 	VE_PATTERN2D,
+	VE_SYMBOL,
 };
 
 UENUM(BlueprintType)
