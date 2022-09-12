@@ -152,20 +152,22 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult GetWebPresets(FBIMWebPresetCollection& OutPresets, UWorld* World);
 
 	// Datasmith
-	void AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, const FGuid& InArchitecturalMeshKey);
+	static void AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, const FGuid& InArchitecturalMeshKey);
 
-	void AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
-	void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
-	void AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
-	void AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	static void AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	static void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
+	static void AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	static void AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
 
-	bool AddMeshFromPreset(const FBIMPresetInstance& Preset);
-	bool AddRawMaterialFromPreset(const FBIMPresetInstance& Preset);
-	bool AddMaterialFromPreset(const FBIMPresetInstance& Preset);
-	bool AddProfileFromPreset(const FBIMPresetInstance& Preset);
-	bool AddPatternFromPreset(const FBIMPresetInstance& Preset);
-	bool AddLightFromPreset(const FBIMPresetInstance& Preset);
+	bool AddMeshFromPreset(const FBIMPresetInstance& Preset) const;
+	bool AddRawMaterialFromPreset(const FBIMPresetInstance& Preset) const;
+	bool AddMaterialFromPreset(const FBIMPresetInstance& Preset) const;
+	bool AddProfileFromPreset(const FBIMPresetInstance& Preset) const;
+	bool AddPatternFromPreset(const FBIMPresetInstance& Preset) const;
+	bool AddLightFromPreset(const FBIMPresetInstance& Preset) const;
+
+	bool AddAssetsFromPreset(const FBIMPresetInstance& Preset) const;
 
 	// Data Access
 	const FArchitecturalMesh* GetArchitecturalMeshByGUID(const FGuid& Key) const;

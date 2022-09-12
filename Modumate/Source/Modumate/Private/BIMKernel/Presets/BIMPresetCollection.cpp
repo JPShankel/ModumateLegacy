@@ -1289,9 +1289,7 @@ EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPrese
 	return EBIMResult::Success;
 }
 
-
-
-bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset)
+bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset) const
 {
 	FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
 
@@ -1335,7 +1333,7 @@ bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset)
 	return true;
 }
 
-bool FBIMPresetCollection::AddRawMaterialFromPreset(const FBIMPresetInstance& Preset)
+bool FBIMPresetCollection::AddRawMaterialFromPreset(const FBIMPresetInstance& Preset) const
 {
 	FString assetPath;
 	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
@@ -1351,7 +1349,7 @@ bool FBIMPresetCollection::AddRawMaterialFromPreset(const FBIMPresetInstance& Pr
 	return false;
 }
 
-bool FBIMPresetCollection::AddMaterialFromPreset(const FBIMPresetInstance& Preset)
+bool FBIMPresetCollection::AddMaterialFromPreset(const FBIMPresetInstance& Preset) const
 {
 	FGuid rawMaterial;
 
@@ -1384,7 +1382,7 @@ bool FBIMPresetCollection::AddMaterialFromPreset(const FBIMPresetInstance& Prese
 	return false;
 }
 
-bool FBIMPresetCollection::AddLightFromPreset(const FBIMPresetInstance& Preset)
+bool FBIMPresetCollection::AddLightFromPreset(const FBIMPresetInstance& Preset) const
 {
 	FArchitecturalLight light;
 	light.Key = Preset.GUID;
@@ -1399,7 +1397,7 @@ bool FBIMPresetCollection::AddLightFromPreset(const FBIMPresetInstance& Preset)
 	return true;
 }
 
-bool FBIMPresetCollection::AddProfileFromPreset(const FBIMPresetInstance& Preset)
+bool FBIMPresetCollection::AddProfileFromPreset(const FBIMPresetInstance& Preset) const
 {
 	FString assetPath;
 	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
@@ -1415,7 +1413,7 @@ bool FBIMPresetCollection::AddProfileFromPreset(const FBIMPresetInstance& Preset
 	return false;
 }
 
-bool FBIMPresetCollection::AddPatternFromPreset(const FBIMPresetInstance& Preset)
+bool FBIMPresetCollection::AddPatternFromPreset(const FBIMPresetInstance& Preset) const
 {
 	FLayerPattern newPattern;
 	newPattern.InitFromCraftingPreset(Preset);
@@ -1434,7 +1432,6 @@ bool FBIMPresetCollection::AddPatternFromPreset(const FBIMPresetInstance& Preset
 	}
 	return false;
 }
-
 
 void FBIMPresetCollection::AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
 {
@@ -1537,6 +1534,33 @@ void FBIMPresetCollection::AddArchitecturalMeshFromDatasmith(const FString& Asse
 static constexpr TCHAR BIMCacheRecordField[] = TEXT("BIMCacheRecord");
 static constexpr TCHAR BIMManifestFileName[] = TEXT("BIMManifest.txt");
 static constexpr TCHAR BIMNCPFileName[] = TEXT("NCPTable.csv");
+
+bool FBIMPresetCollection::AddAssetsFromPreset(const FBIMPresetInstance& Preset) const
+{
+	switch (Preset.AssetType)
+	{
+	case EBIMAssetType::IESProfile:
+		AddLightFromPreset(Preset);
+		break;
+	case EBIMAssetType::Mesh:
+		AddMeshFromPreset(Preset);
+		break;
+	case EBIMAssetType::Profile:
+		AddProfileFromPreset(Preset);
+		break;
+	case EBIMAssetType::RawMaterial:
+		AddRawMaterialFromPreset(Preset);
+		break;
+	case EBIMAssetType::Material:
+		AddMaterialFromPreset(Preset);
+		break;
+	case EBIMAssetType::Pattern:
+		AddPatternFromPreset(Preset);
+		break;
+	};
+
+	return true;
+}
 
 void FBIMPresetCollection::ReadPresetData(bool bTruncate)
 {

@@ -1148,7 +1148,7 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 				gameInstance = Cast<UModumateGameInstance>(gameState->GetGameInstance());
 				if (gameInstance != nullptr)
 				{
-					gameInstance->ObjectDatabase->AddAssetsFromPreset(*rootPreset);
+					gameState->Document->GetPresetCollection().AddAssetsFromPreset(*rootPreset);
 				}
 			}
 		}
@@ -1171,7 +1171,7 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 			AddChildPreset(child, 0, setPosition++);
 			if (gameInstance != nullptr)
 			{
-				gameInstance->ObjectDatabase->AddAssetsFromPreset(*preset);
+				gameState->Document->GetPresetCollection().AddAssetsFromPreset(*preset);
 			}
 		}
 	}
