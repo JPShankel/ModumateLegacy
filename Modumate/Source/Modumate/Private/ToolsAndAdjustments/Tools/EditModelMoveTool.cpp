@@ -142,8 +142,7 @@ bool UMoveObjectTool::FrameUpdate()
 				TArray<FDeltaPtr> groupDeltas;
 				if (GroupCopyDeltas.Num() > 0)
 				{
-					GetDeltasForGroupCopies(doc, offset, groupDeltas);
-					doc->ApplyPreviewDeltas(groupDeltas, GetWorld());
+					GetDeltasForGroupCopies(doc, offset, groupDeltas, false);
 				}
 				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, true, &groupDeltas);
 			}
@@ -192,7 +191,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			else
 			{
 				TArray<FDeltaPtr> groupDeltas;
-				GetDeltasForGroupCopies(doc, offset, groupDeltas);
+				GetDeltasForGroupCopies(doc, offset, groupDeltas, true);
 				doc->BeginUndoRedoMacro();
 				doc->ApplyDeltas(groupDeltas, GetWorld());
 
@@ -244,7 +243,7 @@ bool UMoveObjectTool::EndUse()
 
 		FVector offset(snappedCursor.WorldPosition - AnchorPoint);
 		TArray<FDeltaPtr> groupDeltas;
-		GetDeltasForGroupCopies(doc, offset, groupDeltas);
+		GetDeltasForGroupCopies(doc, offset, groupDeltas, true);
 		doc->BeginUndoRedoMacro();
 		doc->ApplyDeltas(groupDeltas, GetWorld());
 
@@ -281,7 +280,7 @@ bool UMoveObjectTool::PostEndOrAbort()
 }
 
 // Copy all the new-graph deltas shifting the vertices by Offset.
-void UMoveObjectTool::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, TArray<FDeltaPtr>& OutDeltas)
+void UMoveObjectTool::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, TArray<FDeltaPtr>& OutDeltas, bool bPresetsAlso)
 {
-	FModumateObjectDeltaStatics::GetDeltasForGroupCopies(Doc, Offset, GroupCopyDeltas, OutDeltas);
+	FModumateObjectDeltaStatics::GetDeltasForGroupCopies(Doc, Offset, GroupCopyDeltas, OutDeltas, bPresetsAlso);
 }

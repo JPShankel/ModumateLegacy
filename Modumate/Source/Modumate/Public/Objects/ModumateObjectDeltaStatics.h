@@ -46,7 +46,7 @@ public:
 	static void DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType, FDeltaPtr>>& OutDeltas);
 	// Update prototypical deltas (from DuplicateGroups()) according to Offset.
 	static void GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, const TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType, FDeltaPtr>>& GroupCopyDeltas,
-		TArray<FDeltaPtr>& OutDeltas);
+		TArray<FDeltaPtr>& OutDeltas, bool bPresetsAlso = true);
 
 	// Transform all positions for groups.
 	static void GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32,FTransform>& OriginalGroupVertexTranslations, const FTransform transform,

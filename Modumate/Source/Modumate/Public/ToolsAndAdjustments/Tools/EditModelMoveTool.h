@@ -14,7 +14,7 @@ class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelected
 	GENERATED_BODY()
 
 private:
-	void GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, TArray<FDeltaPtr>& OutDeltas);
+	void GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, TArray<FDeltaPtr>& OutDeltas, bool bPresetsAlso);
 
 	FVector AnchorPoint;
 	bool bCtrlIsPressed = false;

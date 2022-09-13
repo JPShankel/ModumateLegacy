@@ -1180,7 +1180,7 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 				newSymbolPreset.SetCustomData(symbolPresetData);
 				FDeltaPtr presetDelta = presets.MakeUpdateDelta(newSymbolPreset);
 
-				OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, presetDelta);
+				OutDeltas.Emplace(FSelectedObjectToolMixin::kPreset, presetDelta);
 			}
 		}
 
@@ -1788,13 +1788,16 @@ bool FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(const UMod
 	return true;
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, const TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType,
-	FDeltaPtr>>& GroupCopyDeltas, TArray<FDeltaPtr>& OutDeltas)
+void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset,
+	const TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType, FDeltaPtr>>& GroupCopyDeltas, TArray<FDeltaPtr>& OutDeltas,
+	bool bPresetsAlso /*= true*/)
 {
 	for (const auto& deltaPair : GroupCopyDeltas)
 	{
 		FDeltaPtr delta = deltaPair.Value;
-		if (deltaPair.Key == FSelectedObjectToolMixin::kVertexPosition)
+		switch (deltaPair.Key)
+		{
+		case FSelectedObjectToolMixin::kVertexPosition:
 		{
 			FGraph3DDelta graphDelta(*static_cast<FGraph3DDelta*>(delta.Get()));
 			for (auto& kvp : graphDelta.VertexAdditions)
@@ -1802,8 +1805,10 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc
 				kvp.Value += Offset;
 			}
 			OutDeltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(graphDelta)));
+			break;
 		}
-		else if (deltaPair.Key == FSelectedObjectToolMixin::kGroup)
+
+		case FSelectedObjectToolMixin::kGroup:
 		{	// Update the reference transform on the group itself.
 			const FMOIDelta* groupDelta = static_cast<FMOIDelta*>(delta.Get());
 			FMOIMetaGraphData groupCustomData;
@@ -1818,10 +1823,24 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc
 			auto moiDelta = MakeShared<FMOIDelta>();
 			moiDelta->AddCreateDestroyState(groupData, EMOIDeltaType::Create);
 			OutDeltas.Add(moiDelta);
+			break;
 		}
-		else
+
+		case FSelectedObjectToolMixin::kPreset:
+		{
+			if (bPresetsAlso)
+			{
+				OutDeltas.Add(delta);
+			}
+			break;
+		}
+
+		case FSelectedObjectToolMixin::kOther:
 		{
 			OutDeltas.Add(delta);
+			break;
+		}
+
 		}
 	}
 }
