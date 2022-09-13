@@ -143,6 +143,9 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTTerrainPolygon: return EToolMode::VE_TERRAIN;
 	case EObjectType::OTPattern2D: return EToolMode::VE_PATTERN2D;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
+	case EObjectType::OTMetaGraph: return EToolMode::VE_SYMBOL;
+	default:
+		break;
 	};
 	return EToolMode::VE_NONE;
 }

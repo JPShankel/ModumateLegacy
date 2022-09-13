@@ -145,6 +145,7 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 	Super::CleanObject(DirtyFlag, OutSideEffectDeltas);
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
+		CachedAssembly.PresetGUID = InstanceData.SymbolID;  // For CS tool
 		if (!SetupBoundingBox())
 		{
 			return false;

@@ -75,8 +75,10 @@ bool UCreateSimilarTool::MatchTargetObject(bool bUseMouseHoverObject)
 	}
 	else
 	{
-		const auto &selectedObjs = Controller->EMPlayerState->SelectedObjects;
-		targetObj = (selectedObjs.Num() == 1) ? *selectedObjs.CreateConstIterator() : nullptr;
+		const auto& selectedObjs = Controller->EMPlayerState->SelectedObjects;
+		const auto& selectedGroups = Controller->EMPlayerState->SelectedGroupObjects;
+		targetObj = (selectedObjs.Num() == 1) ? *selectedObjs.CreateConstIterator() :
+			(selectedGroups.Num() == 1) ? *selectedGroups.CreateConstIterator() : nullptr;
 	}
 
 	if (targetObj)
