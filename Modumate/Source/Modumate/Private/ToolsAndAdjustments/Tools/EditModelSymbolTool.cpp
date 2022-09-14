@@ -46,12 +46,14 @@ bool USymbolTool::BeginUse()
 	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
 	const FVector location = snappedCursor.WorldPosition;
 
+	bool bRetVal = false;
 	if (GetObjectCreationDeltas(location - SymbolAnchor, true, deltas))
 	{
-		return GameState->Document->ApplyDeltas(deltas, GetWorld());
+		bRetVal = GameState->Document->ApplyDeltas(deltas, GetWorld());
+		OnAssemblyChanged();
 	}
 
-	return false;
+	return bRetVal;
 }
 
 // Symbol ID rather than Assembly.

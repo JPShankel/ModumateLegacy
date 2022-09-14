@@ -221,45 +221,56 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 	}
 
 	auto graphDelta = MakeShared<FGraph3DDelta>();
-TMap<int32, TSharedPtr<FGraph3DDelta>> newDeltas;  // Per other-group
+	TMap<int32, TSharedPtr<FGraph3DDelta>> newDeltas;  // Per other-group
+	const FTransform thisTransformInverse(groupObj->GetWorldTransform().Inverse());
 
-const FTransform thisTransformInverse(groupObj->GetWorldTransform().Inverse());
-
-for (const auto& moveDelta : GraphDelta->VertexMovements)
-{
-	const int32 vertId = moveDelta.Key;
-	for (const auto& idMapping : symbolData.EquivalentIDs)
+	for (const auto& moveDelta : GraphDelta->VertexMovements)
 	{
-		if (idMapping.Value.IDSet.Contains(vertId))
-		{
-			for (int32 otherVertId : idMapping.Value.IDSet)
-			{
-				if (otherVertId != vertId)
-				{
-					const AMOIMetaGraph* otherGroupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(Doc->FindGraph3DByObjID(otherVertId)));
-					if (ensure(otherGroupMoi))
-					{
-						const FTransform vertTransform(thisTransformInverse * otherGroupMoi->GetWorldTransform());
-						const int32 otherGroupId = otherGroupMoi->ID;
-						if (!newDeltas.Contains(otherGroupId))
-						{
-							newDeltas.Add(otherGroupId, MakeShared<FGraph3DDelta>(otherGroupId));
-						}
-						newDeltas[otherGroupId]->VertexMovements.Add(otherVertId,
-							{ vertTransform.TransformPosition(moveDelta.Value.Key), vertTransform.TransformPosition(moveDelta.Value.Value) });
-					}
+		const int32 vertId = moveDelta.Key;
+		const FVector& fromPosition = moveDelta.Value.Key;
+		const FVector& toPosition = moveDelta.Value.Value;
 
+		for (const auto& idMapping : symbolData.EquivalentIDs)
+		{
+			if (idMapping.Value.IDSet.Contains(vertId))
+			{
+				auto* symbolVert = symbolData.Graph3d.Vertices.Find(idMapping.Key);
+				if (ensure(symbolVert))
+				{
+					symbolVert->Position = thisTransformInverse.TransformPosition(toPosition);
+				}
+
+				for (int32 otherVertId : idMapping.Value.IDSet)
+				{
+					if (otherVertId != vertId)
+					{
+						const AMOIMetaGraph* otherGroupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(Doc->FindGraph3DByObjID(otherVertId)));
+						if (ensure(otherGroupMoi))
+						{
+							const FTransform vertTransform(thisTransformInverse * otherGroupMoi->GetWorldTransform());
+							const int32 otherGroupId = otherGroupMoi->ID;
+							if (!newDeltas.Contains(otherGroupId))
+							{
+								newDeltas.Add(otherGroupId, MakeShared<FGraph3DDelta>(otherGroupId));
+							}
+							newDeltas[otherGroupId]->VertexMovements.Add(otherVertId,
+								{ vertTransform.TransformPosition(fromPosition), vertTransform.TransformPosition(toPosition) });
+						}
+
+					}
 				}
 			}
 		}
 	}
-}
 
-for (auto& delta : newDeltas)
-{
-	OutDeltas.Add(delta.Value);
-}
+	for (auto& delta : newDeltas)
+	{
+		OutDeltas.Add(delta.Value);
+	}
 
+	FBIMPresetInstance newPresetInstance(*symbolPreset);
+	newPresetInstance.SetCustomData(symbolData);
+	OutDeltas.Add(presets.MakeUpdateDelta(newPresetInstance));
 }
 
 bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, TArray<FDeltaPtr>& OutDeltas)
