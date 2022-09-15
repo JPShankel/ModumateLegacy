@@ -408,7 +408,11 @@ void UModumateDocumentWebBridge::update_mois(TArray<int32> ID, TArray<FString> M
 			}
 			);
 	}
-	Document->ApplyDeltas({ delta }, GetWorld());
+
+	if (delta->IsValid())
+	{
+		Document->ApplyDeltas({ delta }, GetWorld());
+	}
 }
 
 void UModumateDocumentWebBridge::update_player_state(const FString& InStateJson)

@@ -40,10 +40,13 @@ public:
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
 	virtual FTransform GetWorldTransform() const override;
 	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
+	virtual bool FromWebMOI(const FString& InJson) override;
 
 	UPROPERTY()
 	FMOIMetaGraphData InstanceData;
 
 private:
 	FBox CachedBounds { ForceInitToZero };
+
+	static const FString PropertyName;
 };

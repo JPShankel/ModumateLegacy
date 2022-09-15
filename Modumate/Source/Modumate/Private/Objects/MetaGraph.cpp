@@ -6,10 +6,20 @@
 #include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateSymbolDeltaStatics.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+
+const FString AMOIMetaGraph::PropertyName(TEXT("Name"));
 
 AMOIMetaGraph::AMOIMetaGraph()
 {
 	FWebMOIProperty prop;
+
+	prop.Name = PropertyName;
+	prop.Type = EWebMOIPropertyType::text;
+	prop.DisplayName = TEXT("Name");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 
 	prop.Name = TEXT("SymbolGuid");
 	prop.Type = EWebMOIPropertyType::text;
@@ -177,14 +187,56 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 {
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
+		const FGuid& symbolID = InstanceData.SymbolID;
 		const FWebMOIProperty* formPropUpdateSymbolGuid = WebProperties.Find(TEXT("SymbolGuid"));
 		FWebMOIProperty webPropSymbolGuid = *formPropUpdateSymbolGuid;
 		webPropSymbolGuid.ValueArray.Empty();
-		webPropSymbolGuid.ValueArray.Add(InstanceData.SymbolID.ToString());
+		webPropSymbolGuid.ValueArray.Add(symbolID.ToString());
 		OutMOI.Properties.Add(TEXT("SymbolGuid"), webPropSymbolGuid);
 
+		if (symbolID.IsValid())
+		{
+			const auto * preset = Document->GetPresetCollection().PresetFromGUID(symbolID);
+			if (ensure(preset))
+			{
+				const FWebMOIProperty* formPropUpdateSymbolName = WebProperties.Find(PropertyName);
+				FWebMOIProperty webPropName = *formPropUpdateSymbolName;
+				webPropName.ValueArray.Empty();
+				webPropName.ValueArray.Add(preset->DisplayName.ToString());
+				OutMOI.Properties.Add(formPropUpdateSymbolName->Name, webPropName);
+			}
+		}
 		return true;
 	}
 	return false;
 
+}
+
+bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
+{
+	if (Super::FromWebMOI(InJson) && InstanceData.SymbolID.IsValid())
+	{
+		FWebMOI webMOI;
+		if (!ReadJsonGeneric<FWebMOI>(InJson, &webMOI))
+		{
+			return false;
+		}
+		const auto* nameProp = webMOI.Properties.Find(PropertyName);
+
+		if (nameProp && nameProp->Type == EWebMOIPropertyType::text && nameProp->ValueArray.Num() == 1)
+		{
+			const FString& symbolName = nameProp->ValueArray[0];
+			const auto* preset = Document->GetPresetCollection().PresetFromGUID(InstanceData.SymbolID);
+			if (preset && preset->DisplayName.ToString() != symbolName)
+			{
+				auto deltaPtr = Document->GetPresetCollection().MakeUpdateDelta(preset->GUID);
+				deltaPtr->NewState.DisplayName = FText::FromString(symbolName);
+				Document->ApplyDeltas({ deltaPtr }, GetWorld());
+			}
+		}
+
+		return true;
+	}
+
+	return false;
 }
