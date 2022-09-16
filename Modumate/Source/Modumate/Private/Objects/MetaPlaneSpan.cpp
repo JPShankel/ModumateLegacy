@@ -176,6 +176,11 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	Algo::Transform(InstanceData.GraphMembers, memberFaces,
 		[graph](int32 FaceID) {return graph->FindFace(FaceID); });
 
+	if (memberFaces.Num() == 0)
+	{
+		return true;
+	}
+
 	FPlane basePlane  = memberFaces[0]->CachedPlane;
 
 #ifdef ENFORCE_SINGLETON_SPANS
