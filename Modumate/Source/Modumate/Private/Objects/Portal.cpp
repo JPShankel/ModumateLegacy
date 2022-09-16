@@ -742,7 +742,7 @@ void AMOIPortal::UpdateQuantities()
 		hostingFace = Document->GetVolumeGraph(Document->FindGraph3DByObjID(parentID))->FindFace(parentID);
 	}
 
-	if (!ensure(hostingFace))
+	if (!ensure(hostingFace) || hostingFace->Cached2DPositions.Num() < 3)
 	{
 		return;
 	}
@@ -755,7 +755,14 @@ void AMOIPortal::UpdateQuantities()
 	FString name = FString::FromInt(namingWidth) + TEXT("x") + FString::FromInt(namingHeight);
 
 	CachedQuantities.AddPartsQuantity(name, assembly.Parts, assemblyGuid);
-	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
+
+	UModumateGameInstance* gameInstance = GetWorld() ? GetWorld()->GetGameInstance<UModumateGameInstance>() : nullptr;
+	FQuantitiesManager* quantitiesManager = gameInstance ? gameInstance->GetQuantitiesManager().Get() : nullptr;
+
+	if (quantitiesManager)
+	{
+		quantitiesManager->SetDirtyBit();
+	}
 }
 
 void AMOIPortal::PreDestroy()
