@@ -1747,19 +1747,22 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
 		
-		FDateTime dateTime;
-		if (!ensureMsgf(!EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601().IsEmpty(),
-			TEXT("The SkyActor date/time is empty. Setting it to %s"), *DefaultEnvDateTime))
+		if (EMPlayerController && EMPlayerController->SkyActor)
 		{
-			FDateTime::ParseIso8601(*DefaultEnvDateTime, dateTime);
-		}
-		else
-		{
-			dateTime = EMPlayerController->SkyActor->GetCurrentDateTime();
-			FDateTime::ParseIso8601(*CachedInputCameraState.SavedTime, dateTime);
+			FDateTime dateTime;
+			if (!ensureMsgf(!EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601().IsEmpty(),
+				TEXT("The SkyActor date/time is empty. Setting it to %s"), *DefaultEnvDateTime))
+			{
+				FDateTime::ParseIso8601(*DefaultEnvDateTime, dateTime);
+			}
+			else
+			{
+				dateTime = EMPlayerController->SkyActor->GetCurrentDateTime();
+				FDateTime::ParseIso8601(*CachedInputCameraState.SavedTime, dateTime);
+			}
+			OutState.camera.SavedTime = dateTime.ToIso8601();
 		}
 		
-		OutState.camera.SavedTime = dateTime.ToIso8601(); 
 		OutState.camera.bAxesActorVisibility = CachedInputCameraState.bAxesActorVisibility;
 		OutState.camera.bViewCubeVisibility = CachedInputCameraState.bViewCubeVisibility;
 		OutState.camera.bGraphDirectionVisibility = CachedInputCameraState.bGraphDirectionVisibility;
