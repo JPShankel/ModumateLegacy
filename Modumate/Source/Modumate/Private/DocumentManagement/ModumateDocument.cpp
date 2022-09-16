@@ -4616,7 +4616,8 @@ bool UModumateDocument::PresetIsInUse(const FGuid& InPreset) const
 		return false;
 	}
 
-	if (preset->ObjectType != EObjectType::OTNone)
+	// MetaGraph Presets (ie, Symbols) have uses handled separately.
+	if (preset->ObjectType != EObjectType::OTNone && preset->ObjectType != EObjectType::OTMetaGraph)
 	{
 		TArray<const AModumateObjectInstance*> obs = GetObjectsOfType(preset->ObjectType);
 		for (auto ob : obs)
@@ -4652,6 +4653,9 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 		return;
 	}
 
+	const bool bSymbolDelete = preset->ObjectType == EObjectType::OTMetaGraph;
+	ClearPreviewDeltas(World);
+
 	TArray<AModumateObjectInstance*> obs = GetObjectsOfType(preset->ObjectType).FilterByPredicate(
 		[DeleteGUID](const AModumateObjectInstance* MOI) {return MOI->GetAssembly().PresetGUID == DeleteGUID; });
 
@@ -4665,6 +4669,23 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 				auto& newState = delta->AddMutationState(ob);
 				newState.AssemblyGUID = ReplacementGUID;
 			}
+			deltas.Add(delta);
+		}
+		else if (bSymbolDelete)
+		{
+			auto delta = MakeShared<FMOIDelta>();
+			for (auto ob : obs)
+			{
+				auto& newState = delta->AddMutationState(ob);
+				FMOIMetaGraphData graphData;
+				if (ob->StateData.CustomData.LoadStructData(graphData))
+				{
+					graphData.SymbolID.Invalidate();
+					newState.AssemblyGUID.Invalidate();
+					newState.CustomData.SaveStructData(graphData);
+				}
+			}
+	
 			deltas.Add(delta);
 		}
 		else if (!GetDeleteObjectsDeltas(deltas, obs))

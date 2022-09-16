@@ -5,6 +5,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
@@ -772,6 +773,16 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDuplicateDelta(const FGuid
 		if (AnalyticsWorldContextObject)
 		{
 			UModumateAnalyticsStatics::RecordPresetDuplication(AnalyticsWorldContextObject, &NewPreset);
+		}
+
+		FBIMSymbolPresetData symbolData;
+		if (NewPreset.TryGetCustomData(symbolData))
+		{   // Wipe out equivalent MOI IDs in new Preset.
+			for (auto& idSet : symbolData.EquivalentIDs)
+			{
+				idSet.Value.IDSet.Empty();
+			}
+			NewPreset.SetCustomData(symbolData);
 		}
 
 		return MakeUpdateDelta(NewPreset);

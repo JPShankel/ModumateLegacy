@@ -320,6 +320,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		newGroupData.Location = FVector::ZeroVector;
 		newGroupData.Rotation = FQuat::Identity;
 		FMOIStateData groupInstanceData(group->GetStateData());
+		groupInstanceData.AssemblyGUID = newGroupData.SymbolID;
 		groupInstanceData.CustomData.SaveStructData(newGroupData, UE_EDITOR);
 
 		auto groupDelta = MakeShared<FMOIDelta>();
@@ -649,6 +650,7 @@ bool FModumateSymbolDeltaStatics::DetachSymbol(UModumateDocument* Doc, const AMo
 			FMOIMetaGraphData groupData(group->InstanceData);
 			groupData.SymbolID.Invalidate();
 			FMOIStateData newState(group->GetStateData());
+			newState.AssemblyGUID.Invalidate();
 			newState.CustomData.SaveStructData(groupData, UE_EDITOR);
 			auto moiDelta = MakeShared<FMOIDelta>();
 			moiDelta->AddMutationState(group, group->GetStateData(), newState);

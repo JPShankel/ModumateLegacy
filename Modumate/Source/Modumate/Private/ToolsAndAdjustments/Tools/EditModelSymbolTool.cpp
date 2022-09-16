@@ -36,7 +36,7 @@ bool USymbolTool::BeginUse()
 	Super::BeginUse();
 	EndUse();
 
-	if (!SymbolPreset)
+	if (!SymbolGuid.IsValid())
 	{
 		return true;
 	}
@@ -65,15 +65,14 @@ void USymbolTool::OnAssemblyChanged()
 		return;
 	}
 
-	SymbolPreset = nullptr;
 	const auto& presets = doc->GetPresetCollection();
-	const FBIMPresetInstance* symbolPreset = GetAssemblyGUID().IsValid() ? presets.PresetFromGUID(GetAssemblyGUID()) : nullptr;
+	SymbolGuid = GetAssemblyGUID();
+	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(SymbolGuid);
 	if (symbolPreset)
 	{
-		SymbolPreset = symbolPreset;
 		FBIMSymbolPresetData symbolData;
 		// Similar to UPasteTool, find a minimal anchor point.
-		if (ensure(SymbolPreset->TryGetCustomData(symbolData)))
+		if (ensure(symbolPreset->TryGetCustomData(symbolData)))
 		{
 			FVector anchor(ForceInit);
 			for (const auto& vert : symbolData.Graph3d.Vertices)
@@ -96,7 +95,8 @@ void USymbolTool::OnAssemblyChanged()
 bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetDelta, TArray<FDeltaPtr>& OutDeltas)
 {
 	FBIMSymbolPresetData symbolData;
-	if (SymbolPreset->TryGetCustomData(symbolData))
+	const FBIMPresetInstance* symbolPreset = GameState->Document->GetPresetCollection().PresetFromGUID(SymbolGuid);
+	if (symbolPreset && symbolPreset->TryGetCustomData(symbolData))
 	{
 		auto* doc = GameState->Document;
 		int32 nextID = doc->GetNextAvailableID();
@@ -107,7 +107,8 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 		FMOIStateData newGroupState(newGroupID, EObjectType::OTMetaGraph, doc->GetActiveVolumeGraphID());
 		FMOIMetaGraphData newGroupData;
 		newGroupData.Location = Location;
-		newGroupData.SymbolID = SymbolPreset->GUID;
+		newGroupData.SymbolID = SymbolGuid;
+		newGroupState.AssemblyGUID = SymbolGuid;
 		newGroupState.CustomData.SaveStructData(newGroupData, UE_EDITOR);
 		groupDelta->AddCreateDestroyState(newGroupState, EMOIDeltaType::Create);
 		auto newGraph3d = MakeShared<FGraph3DDelta>(newGroupID);
@@ -120,7 +121,7 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 
 		if (bPresetDelta)
 		{
-			FBIMPresetInstance newSymbolPrest(*SymbolPreset);
+			FBIMPresetInstance newSymbolPrest(*symbolPreset);
 			newSymbolPrest.SetCustomData(symbolData);
 			OutDeltas.Add(doc->GetPresetCollection().MakeUpdateDelta(newSymbolPrest));
 		}
@@ -132,13 +133,13 @@ bool USymbolTool::Deactivate()
 {
 	Super::Deactivate();
 
-	SymbolPreset = nullptr;
+	SymbolGuid.Invalidate();
 	return true;
 }
 
 bool USymbolTool::FrameUpdate()
 {
-	if (!SymbolPreset)
+	if (!SymbolGuid.IsValid())
 	{
 		return true;
 	}

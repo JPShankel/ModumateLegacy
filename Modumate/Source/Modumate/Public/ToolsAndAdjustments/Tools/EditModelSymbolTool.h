@@ -29,5 +29,5 @@ protected:
 	bool GetObjectCreationDeltas(const FVector& Location, bool bPresetDelta, TArray<FDeltaPtr>& OutDeltas);
 
 	FVector SymbolAnchor = FVector::ZeroVector;
-	const FBIMPresetInstance* SymbolPreset = nullptr;
+	FGuid SymbolGuid;
 };
