@@ -4333,8 +4333,11 @@ bool AEditModelPlayerController::UnhideAll()
 
 void AEditModelPlayerController::PostServerLog_Implementation(const FString& Message)
 {
-	UE_LOG(ModumateEMPC, Warning, TEXT("PostServerLog (%d)[%s]: %s"),
-		EMPlayerState->MultiplayerClientIdx, *EMPlayerState->ReplicatedUserInfo.ID, *Message);
+	if (EMPlayerState)
+	{
+		UE_LOG(ModumateEMPC, Warning, TEXT("PostServerLog (%d)[%s]: %s"),
+			EMPlayerState->MultiplayerClientIdx, *EMPlayerState->ReplicatedUserInfo.ID, *Message);
+	}
 }
 
 void AEditModelPlayerController::HandleUndo()

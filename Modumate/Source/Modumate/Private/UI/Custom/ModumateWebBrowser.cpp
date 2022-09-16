@@ -73,6 +73,14 @@ void UModumateWebBrowser::HandleOnLoadStarted()
 
 void UModumateWebBrowser::WatchdogTriggered()
 {
-	GetOwningLocalPlayer<AEditModelPlayerController>()->PostServerLog(TEXT("Web Watchdog Triggered, reloading"));
-	WebBrowserWidget->Reload();
+	auto controller = GetOwningLocalPlayer<AEditModelPlayerController>();
+	if (controller)
+	{
+		GetOwningLocalPlayer<AEditModelPlayerController>()->PostServerLog(TEXT("Web Watchdog Triggered, reloading"));
+	}
+
+	if (WebBrowserWidget)
+	{
+		WebBrowserWidget->Reload();
+	}
 }
