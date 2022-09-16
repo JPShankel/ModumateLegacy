@@ -339,12 +339,15 @@ void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 			continue;
 		}
 		const FMiterParticipantData* participantData = miterData.ParticipantsByID.Find(participantID);
-		FEdgeDetailCondition participantCondition(participantData);
-		FEdgeDetailOverrides participantOverride(participantData);
-		if (ensure(participantCondition.LayerThicknesses.Num() == participantOverride.LayerExtensions.Num()))
+		if (ensure(participantData))
 		{
-			Conditions.Add(MoveTemp(participantCondition));
-			Overrides.Add(MoveTemp(participantOverride));
+			FEdgeDetailCondition participantCondition(participantData);
+			FEdgeDetailOverrides participantOverride(participantData);
+			if (ensure(participantCondition.LayerThicknesses.Num() == participantOverride.LayerExtensions.Num()))
+			{
+				Conditions.Add(MoveTemp(participantCondition));
+				Overrides.Add(MoveTemp(participantOverride));
+			}
 		}
 	}
 
