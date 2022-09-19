@@ -3689,6 +3689,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	SetDirtyFlags(bInitialDocumentDirty);
 
 #if !UE_SERVER
+	UpdateWebPresets();
 	FTimespan duration = FDateTime::Now() - loadStartTime;
 	static const FString eventName(TEXT("TimeClientDocumentLoad"));
 	UModumateAnalyticsStatics::RecordEventCustomFloat(GetWorld(), EModumateAnalyticsCategory::Network, eventName, duration.GetTotalSeconds());

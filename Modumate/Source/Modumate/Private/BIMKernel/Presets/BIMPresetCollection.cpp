@@ -924,22 +924,21 @@ const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMo
 
 bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord, const FBIMPresetCollection& UntruncatedCollection)
 {
-	*this = FBIMPresetCollection();
+	*this = UntruncatedCollection;
 
 	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
-	FBIMPresetCollection fullCollection = UntruncatedCollection;
-
-	Version = UntruncatedCollection.Version;
-	PresetTaxonomy = UntruncatedCollection.PresetTaxonomy;
-	NodeDescriptors = UntruncatedCollection.NodeDescriptors;
-	AllNCPs = UntruncatedCollection.AllNCPs;
 
 	// Presets in the doc were edited by definition
 	// If bEdited comes in false for a custom preset for any reason, it won't get saved
+	TArray<FGuid> starters;
 	for (auto& kvp : docPresets.PresetsByGUID)
 	{
 		kvp.Value.bEdited = true;
-		fullCollection.AddPreset(kvp.Value);
+		AddPreset(kvp.Value);
+		if (kvp.Value.ObjectType != EObjectType::OTNone)
+		{
+			starters.AddUnique(kvp.Key);
+		}
 	}
 
 	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
@@ -949,51 +948,6 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, cons
 			NodeDescriptors.Add(kvp.Key, kvp.Value);
 		}
 	}
-
-
-	TSet<FGuid> neededPresets;
-	for (auto& ob : DocRecord.ObjectData)
-	{
-		if (ob.AssemblyGUID.IsValid())
-		{
-			TArray<FGuid> dependents;
-			neededPresets.Add(ob.AssemblyGUID);
-
-			fullCollection.GetAllDescendentPresets(ob.AssemblyGUID, dependents);
-
-			for (auto& dep : dependents)
-			{
-				if (dep.IsValid())
-				{
-					neededPresets.Add(dep);
-				}
-			}
-		}
-	}
-
-	// Make sure all terrain data is available
-	TArray<FGuid> starters;
-	const FBIMTagPath terrainNCP(TEXT("Part_3FlexDims0Fixed_Terrain"));
-	fullCollection.GetPresetsForNCP(terrainNCP, starters);
-	neededPresets.Append(starters);
-
-	for (const auto& needed : neededPresets)
-	{
-		const FBIMPresetInstance* preset = fullCollection.PresetFromGUID(needed);
-		if (ensureAlways(preset != nullptr) && (preset->ObjectType != EObjectType::OTNone || preset->AssetType != EBIMAssetType::None))
-		{
-			starters.AddUnique(preset->GUID);
-		}
-		if (docPresets.PresetFromGUID(needed) == nullptr)
-		{
-			docPresets.AddPreset(*preset);
-			if (preset->ObjectType != EObjectType::OTNone)
-			{
-				starters.AddUnique(needed);
-			}
-		}
-	}
-	docPresets.ProcessStarterAssemblies(starters);
 
 	FBIMPresetCollectionProxy proxyCollection(*this);
 
@@ -1008,6 +962,16 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, cons
 	}
 
 	PresetsByGUID.Append(docPresets.PresetsByGUID);
+
+	for (auto& kvp : PresetsByGUID)
+	{
+		if (kvp.Value.ObjectType != EObjectType::OTNone)
+		{
+			starters.AddUnique(kvp.Key);
+		}
+	}
+
+	ProcessStarterAssemblies(starters);
 
 	SetPartSizesFromMeshes();
 	
@@ -1612,6 +1576,11 @@ void FBIMPresetCollection::ReadPresetData(bool bTruncate)
 	// If this preset implies an asset type, load it
 	for (auto& preset : PresetsByGUID)
 	{
+		if (preset.Value.ObjectType != EObjectType::OTNone)
+		{
+			starters.AddUnique(preset.Key);
+		}
+
 		FLightConfiguration lightConfig;
 		if (preset.Value.TryGetCustomData(lightConfig))
 		{
@@ -1656,42 +1625,6 @@ void FBIMPresetCollection::ReadPresetData(bool bTruncate)
 	}
 
 	SetPartSizesFromMeshes();
-
-	if (bTruncate)
-	{
-		FBIMPresetCollection presetCollection = *this;
-
-		TSet<FGuid> presetsToAdd;
-		for (auto& starter : starters)
-		{
-			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(starter);
-			if (ensure(preset != nullptr))
-			{
-				presetsToAdd.Add(preset->GUID);
-				TArray<FGuid> descendents;
-				presetCollection.GetAllDescendentPresets(starter, descendents);
-				for (auto& descendent : descendents)
-				{
-					presetsToAdd.Add(descendent);
-				}
-			}
-		}
-
-		PresetsByGUID.Empty();
-
-		for (auto& guid : presetsToAdd)
-		{
-			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(guid);
-			if (ensure(preset != nullptr))
-			{
-				AddPreset(*preset);				
-				if (preset->ObjectType != EObjectType::OTNone)
-				{
-					starters.Add(guid);
-				}
-			}
-		}
-	}
 
 	ensure(ProcessStarterAssemblies(starters) == EBIMResult::Success);
 }
