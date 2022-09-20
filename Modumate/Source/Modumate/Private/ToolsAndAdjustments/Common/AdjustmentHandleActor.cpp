@@ -89,9 +89,15 @@ void AAdjustmentHandleActor::Initialize()
 	}
 
 	// Spawn the handle's widget from the standard adjustment handle class, from the HUD's widget pool
-	Widget = PlayerHUD->GetOrCreateWidgetInstance<UAdjustmentHandleWidget>(PlayerHUD->WidgetClasses->AdjustmentHandleClass);
-	Widget->HandleActor = this;
-	ApplyWidgetStyle();
+	if (PlayerHUD != nullptr && PlayerHUD->WidgetClasses)
+	{
+		Widget = PlayerHUD->GetOrCreateWidgetInstance<UAdjustmentHandleWidget>(PlayerHUD->WidgetClasses->AdjustmentHandleClass);
+		if (Widget != nullptr)
+		{
+			Widget->HandleActor = this;
+		}
+		ApplyWidgetStyle();
+	}
 
 	bInitialized = true;
 }
