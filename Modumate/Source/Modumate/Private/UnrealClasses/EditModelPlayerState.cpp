@@ -1886,12 +1886,28 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		
 		EMPlayerController->SetFieldOfViewCommand(InState.camera.FOV);
 		EMPlayerController->ToggleAllCutPlanesColor(InState.camera.bCutPlanesColorVisibility);
-		EMPlayerController->EMPlayerPawn->SetCameraOrtho(InState.camera.bOrthoView);
-		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
-		EMPlayerController->SkyActor->SetCurrentDateTime(dateTime);
-		EMPlayerController->AxesActor->SetActorHiddenInGame(!InState.camera.bAxesActorVisibility);
-		EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
+		if (EMPlayerController->EMPlayerPawn != nullptr)
+		{
+			EMPlayerController->EMPlayerPawn->SetCameraOrtho(InState.camera.bOrthoView);
+		}
+
+		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
+
+		if (EMPlayerController->SkyActor != nullptr)
+		{
+			EMPlayerController->SkyActor->SetCurrentDateTime(dateTime);
+		}
+
+		if (EMPlayerController->AxesActor != nullptr)
+		{
+			EMPlayerController->AxesActor->SetActorHiddenInGame(!InState.camera.bAxesActorVisibility);
+		}
+
+		if (EMPlayerController->EditModelUserWidget != nullptr && EMPlayerController->EditModelUserWidget->ViewCubeUserWidget != nullptr)
+		{
+			EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		}
 		// Cache the camera state to send back to the web
 		CachedInputCameraState = InState.camera;
 	}
