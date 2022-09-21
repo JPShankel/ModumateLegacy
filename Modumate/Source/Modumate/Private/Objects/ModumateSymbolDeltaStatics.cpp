@@ -47,13 +47,13 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 	}
 
 	AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupId));
-	if (!groupMoi->InstanceData.SymbolID.IsValid())
+	if (!groupMoi->GetStateData().AssemblyGUID.IsValid())
 	{
 		return;
 	}
 
 	const FBIMPresetCollection& presets = Doc->GetPresetCollection();
-	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupMoi->InstanceData.SymbolID);
+	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupMoi->GetStateData().AssemblyGUID);
 	if (!ensure(symbolPreset))
 	{
 		return;
@@ -178,7 +178,7 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 	int32 graphId = GraphDelta->GraphID;
 
 	const AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(graphId));
-	if (!groupObj || !groupObj->InstanceData.SymbolID.IsValid())
+	if (!groupObj || !groupObj->GetStateData().AssemblyGUID.IsValid())
 	{
 		return;
 	}
@@ -208,7 +208,7 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 	}
 
 	const FBIMPresetCollection& presets = Doc->GetPresetCollection();
-	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupObj->InstanceData.SymbolID);
+	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupObj->GetStateData().AssemblyGUID);
 	if (!ensure(symbolPreset))
 	{
 		return;
@@ -281,8 +281,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		return false;
 	}
 
-	FMOIMetaGraphData newGroupData = group->InstanceData;
-	if (ensure(!newGroupData.SymbolID.IsValid()) && group->ID != Doc->GetRootVolumeGraphID())
+	if (ensure(!group->GetStateData().AssemblyGUID.IsValid()) && group->ID != Doc->GetRootVolumeGraphID())
 	{
 		static const FName symbolNodeType(TEXT("0Symbol"));
 		static const FString symbolNcp(TEXT("Symbol"));
@@ -315,12 +314,13 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		newSymbolPreset.SetCustomData(symbolData);
 		FDeltaPtr presetDelta(presets.MakeCreateNewDelta(newSymbolPreset));
 
-		newGroupData.SymbolID = newSymbolPreset.GUID;
+		FMOIMetaGraphData newGroupData = group->InstanceData;
+
 		// Reset transform so Preset postion data is correct for this group (transform is identity above).
 		newGroupData.Location = FVector::ZeroVector;
 		newGroupData.Rotation = FQuat::Identity;
 		FMOIStateData groupInstanceData(group->GetStateData());
-		groupInstanceData.AssemblyGUID = newGroupData.SymbolID;
+		groupInstanceData.AssemblyGUID = newSymbolPreset.GUID;
 		groupInstanceData.CustomData.SaveStructData(newGroupData, UE_EDITOR);
 
 		auto groupDelta = MakeShared<FMOIDelta>();
@@ -555,7 +555,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 {
 	const FBIMPresetCollection& presets = Doc->GetPresetCollection();
 	const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(GroupID));
-	const FBIMPresetInstance* symbolPreset = groupMoi ? presets.PresetFromGUID(groupMoi->InstanceData.SymbolID) : nullptr;
+	const FBIMPresetInstance* symbolPreset = groupMoi ? presets.PresetFromGUID(groupMoi->GetStateData().AssemblyGUID) : nullptr;
 
 	if (!ensure(symbolPreset != nullptr))
 	{
@@ -611,7 +611,7 @@ bool FModumateSymbolDeltaStatics::CreateNewSymbol(UModumateDocument* Doc, const 
 	{
 		TArray<FDeltaPtr> symbolDeltas;
 		const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(Group);
-		if (!group->InstanceData.SymbolID.IsValid() && ensure(CreateDeltasForNewSymbol(Doc, group, symbolDeltas)) )
+		if (!group->GetStateData().AssemblyGUID.IsValid() && ensure(CreateDeltasForNewSymbol(Doc, group, symbolDeltas)))
 		{
 			return Doc->ApplyDeltas(symbolDeltas, Doc->GetWorld());
 		}
@@ -626,10 +626,11 @@ bool FModumateSymbolDeltaStatics::DetachSymbol(UModumateDocument* Doc, const AMo
 	{
 		TArray<FDeltaPtr> symbolDeltas;
 		const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(Group);
-		if (group->InstanceData.SymbolID.IsValid())
+		const FGuid symbolID = group->GetStateData().AssemblyGUID;
+		if (symbolID.IsValid())
 		{
 			FBIMPresetCollection& presets = Doc->GetPresetCollection();
-			const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(group->InstanceData.SymbolID);
+			const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(symbolID);
 			if (!ensure(symbolPreset))
 			{
 				return false;
@@ -647,11 +648,8 @@ bool FModumateSymbolDeltaStatics::DetachSymbol(UModumateDocument* Doc, const AMo
 			RemoveGroupMembersFromSymbol(groupMemberIDs, symbolData);
 
 			// Take out Symbol GUID from Group:
-			FMOIMetaGraphData groupData(group->InstanceData);
-			groupData.SymbolID.Invalidate();
 			FMOIStateData newState(group->GetStateData());
 			newState.AssemblyGUID.Invalidate();
-			newState.CustomData.SaveStructData(groupData, UE_EDITOR);
 			auto moiDelta = MakeShared<FMOIDelta>();
 			moiDelta->AddMutationState(group, group->GetStateData(), newState);
 			symbolDeltas.Add(moiDelta);

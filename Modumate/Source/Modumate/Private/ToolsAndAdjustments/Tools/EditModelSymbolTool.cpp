@@ -107,9 +107,8 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 		FMOIStateData newGroupState(newGroupID, EObjectType::OTMetaGraph, doc->GetActiveVolumeGraphID());
 		FMOIMetaGraphData newGroupData;
 		newGroupData.Location = Location;
-		newGroupData.SymbolID = SymbolGuid;
-		newGroupState.AssemblyGUID = SymbolGuid;
 		newGroupState.CustomData.SaveStructData(newGroupData, UE_EDITOR);
+		newGroupState.AssemblyGUID = SymbolGuid;
 		groupDelta->AddCreateDestroyState(newGroupState, EMOIDeltaType::Create);
 		auto newGraph3d = MakeShared<FGraph3DDelta>(newGroupID);
 		newGraph3d->DeltaType = EGraph3DDeltaType::Add;

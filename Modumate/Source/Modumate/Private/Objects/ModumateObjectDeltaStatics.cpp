@@ -964,6 +964,7 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		}
 
 		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, parentID);
+		stateData.AssemblyGUID = graphObject->GetStateData().AssemblyGUID;
 		FMOIMetaGraphData groupInstanceData(graphObject->InstanceData);
 		stateData.CustomData.SaveStructData(groupInstanceData);
 
@@ -1143,9 +1144,9 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		}
 
 		// Handle Symbol Groups:
-		if (groupInstanceData.SymbolID.IsValid())
+		const FGuid& symbolID = graphObject->GetStateData().AssemblyGUID;
+		if (symbolID.IsValid())
 		{
-			const FGuid& symbolID = groupInstanceData.SymbolID;
 			const FBIMPresetCollection& presets = Doc->GetPresetCollection();
 			const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(symbolID);
 			FBIMSymbolPresetData symbolPresetData;
@@ -1339,6 +1340,8 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi /*= true*/)
 {
 	auto* graph = Doc->GetVolumeGraph(GraphID);
+	TMap<int32, FGraph2DDelta> surfaceGraphDeltas;
+
 	if (graph)
 	{
 		auto& graphElements = graph->GetAllObjects();
@@ -1377,7 +1380,36 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 				UModumateObjectStatics::GetAllDescendents(metaObject, mois);
 				for (auto* moi : mois)
 				{
-					if (!UModumateTypeStatics::IsSpanObject(moi))
+					EGraphObjectType graph2dType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
+					if (graph2dType != EGraphObjectType::None)
+					{
+						auto graph2d = Doc->FindSurfaceGraph(moi->GetParentID());
+						if (ensure(graph2d.IsValid()))
+						{
+							auto& graph2dDelta = surfaceGraphDeltas.FindOrAdd(graph2d->GetID());
+							switch (graph2dType)
+							{
+							case EGraphObjectType::Vertex:
+								graph2dDelta.VertexDeletions.Add(moi->ID, graph2d->FindVertex(moi->ID)->Position);
+								break;
+
+							case EGraphObjectType::Edge:
+							{
+								const auto* edge = graph2d->FindEdge(moi->ID);
+								graph2dDelta.EdgeDeletions.Add(moi->ID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
+								break;
+							}
+
+							case EGraphObjectType::Polygon:
+							{
+								const auto* face = graph2d->FindPolygon(moi->ID);
+								graph2dDelta.PolygonDeletions.Add(moi->ID, FGraph2DObjDelta(face->VertexIDs));
+								break;
+							}
+							}
+						}
+					}
+					else if (!UModumateTypeStatics::IsSpanObject(moi))
 					{   // Spans are deleted via regular side-effect deltas.
 						moisDelta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
 					}
@@ -1385,10 +1417,18 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 			}
 		}
 
+		for (auto& graph2dDelta: surfaceGraphDeltas)
+		{
+			graph2dDelta.Value.ID = graph2dDelta.Key;
+			OutDeltas.Add(MakeShared<FGraph2DDelta>(graph2dDelta.Value));
+			OutDeltas.Add(MakeShared<FGraph2DDelta>(graph2dDelta.Key, EGraph2DDeltaType::Remove));
+		}
+
 		if (moisDelta->IsValid())
 		{
 			OutDeltas.Add(moisDelta);
 		}
+
 		if (!graphDelta->IsEmpty())
 		{
 			OutDeltas.Add(graphDelta);

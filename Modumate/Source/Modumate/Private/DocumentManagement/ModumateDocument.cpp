@@ -4678,13 +4678,7 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 			for (auto ob : obs)
 			{
 				auto& newState = delta->AddMutationState(ob);
-				FMOIMetaGraphData graphData;
-				if (ob->StateData.CustomData.LoadStructData(graphData))
-				{
-					graphData.SymbolID.Invalidate();
-					newState.AssemblyGUID.Invalidate();
-					newState.CustomData.SaveStructData(graphData);
-				}
+				newState.AssemblyGUID.Invalidate();
 			}
 	
 			deltas.Add(delta);

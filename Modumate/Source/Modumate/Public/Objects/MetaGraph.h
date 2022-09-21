@@ -16,10 +16,6 @@ struct MODUMATE_API FMOIMetaGraphData
 
 	UPROPERTY()
 	FQuat Rotation = FQuat::Identity;
-
-	// If root of symbol then ID of Symbol Preset.
-	UPROPERTY()
-	FGuid SymbolID;
 };
 
 UCLASS()

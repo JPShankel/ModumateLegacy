@@ -33,6 +33,8 @@ void AMOIMetaGraph::PostCreateObject(bool bNewObject)
 {
 	if (Document)
 	{
+		// Prevent assembly getting default Symbol GUID:
+		CachedAssembly.ObjectType = StateData.ObjectType;
 		Super::PostCreateObject(bNewObject);
 	}
 }
@@ -155,7 +157,7 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 	Super::CleanObject(DirtyFlag, OutSideEffectDeltas);
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
-		CachedAssembly.PresetGUID = InstanceData.SymbolID;  // For CS tool
+		CachedAssembly.PresetGUID = StateData.AssemblyGUID;  // For CS tool
 		if (!SetupBoundingBox())
 		{
 			return false;
@@ -187,7 +189,7 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 {
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
-		const FGuid& symbolID = InstanceData.SymbolID;
+		const FGuid& symbolID = StateData.AssemblyGUID;
 		const FWebMOIProperty* formPropUpdateSymbolGuid = WebProperties.Find(TEXT("SymbolGuid"));
 		FWebMOIProperty webPropSymbolGuid = *formPropUpdateSymbolGuid;
 		webPropSymbolGuid.ValueArray.Empty();
@@ -214,7 +216,7 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 
 bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 {
-	if (Super::FromWebMOI(InJson) && InstanceData.SymbolID.IsValid())
+	if (Super::FromWebMOI(InJson) && StateData.AssemblyGUID.IsValid())
 	{
 		FWebMOI webMOI;
 		if (!ReadJsonGeneric<FWebMOI>(InJson, &webMOI))
@@ -226,7 +228,7 @@ bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 		if (nameProp && nameProp->Type == EWebMOIPropertyType::text && nameProp->ValueArray.Num() == 1)
 		{
 			const FString& symbolName = nameProp->ValueArray[0];
-			const auto* preset = Document->GetPresetCollection().PresetFromGUID(InstanceData.SymbolID);
+			const auto* preset = Document->GetPresetCollection().PresetFromGUID(StateData.AssemblyGUID);
 			if (preset && preset->DisplayName.ToString() != symbolName)
 			{
 				auto deltaPtr = Document->GetPresetCollection().MakeUpdateDelta(preset->GUID);
