@@ -1021,7 +1021,7 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
 			{
 				const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
-				if (/*ensureAlways*/(typeDef != nullptr))
+				if (ensureAlways(typeDef != nullptr))
 				{
 					DocRecord.PresetCollection.NodeDescriptors.Add(kvp.Value.NodeType, *typeDef);
 				}

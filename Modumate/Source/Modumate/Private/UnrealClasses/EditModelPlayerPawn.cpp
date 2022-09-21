@@ -277,7 +277,7 @@ bool AEditModelPlayerPawn::SetCameraOrtho(bool bOrtho)
 
 		// Change Sky dome to match with projection mode
 		auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
-		if (emPlayerController)
+		if (emPlayerController && ensure(emPlayerController->SkyActor))
 		{
 			emPlayerController->SkyActor->SetSkyDomePositionScaleByCameraProjection(bOrtho);
 		}
