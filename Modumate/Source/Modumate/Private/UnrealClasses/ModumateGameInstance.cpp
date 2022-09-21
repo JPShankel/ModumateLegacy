@@ -353,6 +353,10 @@ void UModumateGameInstance::RegisterAllCommands()
 			}
 #endif
 		}
+		else if (type.Equals(TEXT("datasmith")))
+		{
+			playerController->EditModelUserWidget->ToggleDatasmithDebugger();
+		}
 
 		return true;
 	});

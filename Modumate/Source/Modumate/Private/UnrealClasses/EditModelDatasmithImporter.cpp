@@ -189,6 +189,7 @@ void AEditModelDatasmithImporter::OnRuntimeActorImportDone(class AEditModelDatas
 	PresetLoadStatusMap.Add(FromActor->PresetKey, EAssetImportLoadStatus::Loaded);
 	StaticMeshAssetMap.Add(FromActor->PresetKey, FromActor->StaticMeshRefs);
 	StaticMeshTransformMap.Add(FromActor->PresetKey, FromActor->StaticMeshTransforms);
+	ImportedMaterialMap.Add(FromActor->PresetKey, FromActor->StaticMeshMaterials);
 
 	// Clean any objects that are using this model
 	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();

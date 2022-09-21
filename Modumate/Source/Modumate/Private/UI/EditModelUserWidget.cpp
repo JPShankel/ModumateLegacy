@@ -389,6 +389,12 @@ void UEditModelUserWidget::ShowBIMDebugger(bool NewVisible)
 	BIMDebugger->SetVisibility(NewVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 }
 
+void UEditModelUserWidget::ToggleDatasmithDebugger()
+{
+	bool isHidden = DatasmithDebugger->GetVisibility() == ESlateVisibility::Collapsed;
+	DatasmithDebugger->SetVisibility(isHidden ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+}
+
 bool UEditModelUserWidget::IsBIMDebuggerOn()
 {
 	return BIMDebugger->IsVisible();

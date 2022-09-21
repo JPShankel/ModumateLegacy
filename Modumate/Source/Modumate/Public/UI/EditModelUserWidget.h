@@ -67,6 +67,9 @@ public:
 	class UBIMDebugger* BIMDebugger;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUserWidget* DatasmithDebugger;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UDrawingDesignerWebBrowserWidget* DrawingDesigner;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -135,6 +138,7 @@ public:
 	void RefreshAssemblyList(bool bScrollToSelected = false);
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool bNewVisible);
+	void ToggleDatasmithDebugger();
 	bool IsBIMDebuggerOn();
 	void ToggleCutPlaneMenu(bool bNewVisibility);
 	void ToggleViewMenu(bool bNewVisibility);

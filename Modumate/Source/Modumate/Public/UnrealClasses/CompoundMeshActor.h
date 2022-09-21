@@ -64,8 +64,6 @@ public:
 	void GetDrawingDesignerLines(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& Outlines, float MinLength,
 		float AngleTolerance = 0.9205f, bool bFastMode = true) const;
 
-	void ApplyDatasmithMaterials();
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<bool> UseSlicedMesh;
 

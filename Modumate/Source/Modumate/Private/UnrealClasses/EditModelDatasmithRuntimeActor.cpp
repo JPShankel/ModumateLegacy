@@ -4,6 +4,8 @@
 #include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "DatasmithRuntimeBlueprintLibrary.h"
 #include "Components/StaticMeshComponent.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "ImageUtils.h"
 
 // Sets default values
 AEditModelDatasmithRuntimeActor::AEditModelDatasmithRuntimeActor()
@@ -12,7 +14,16 @@ AEditModelDatasmithRuntimeActor::AEditModelDatasmithRuntimeActor()
 
 void AEditModelDatasmithRuntimeActor::OnImportEnd()
 {
+	// The original plugin Datasmith materials use these parameters for opacity settings
+	static const FName opacityParamName(TEXT("Opacity"));
+	static const FName transparencyParamName(TEXT("Transparency"));
+
 	Super::OnImportEnd();
+	const auto gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (!gameMode)
+	{
+		return;
+	}
 
 	TArray<AActor*> attachedActors;
 	GetAttachedActorsRecursive(this, attachedActors);
@@ -49,12 +60,42 @@ void AEditModelDatasmithRuntimeActor::OnImportEnd()
 			if (mesh)
 			{
 				StaticMeshRefs.Add(mesh);
-				StaticMeshTransforms.Add(curStaticMeshComp->GetComponentTransform());
+				StaticMeshTransforms.Add(curStaticMeshComp->GetComponentTransform());		
+				for (const auto curStaticMeshMat : curStaticMeshComp->GetMaterials())
+				{
+					// If material isn't dynamic (ex: missing or static mat), create dynamic material from Modumate's version of Datasmith materials
+					UMaterialInstanceDynamic* originalDatasmithMat = Cast<UMaterialInstanceDynamic>(curStaticMeshMat);
+					if (!originalDatasmithMat)
+					{
+						// Create opaque dynamic mat by default
+						originalDatasmithMat = UMaterialInstanceDynamic::Create(gameMode->ModumateDatasmithMaterialPbrOpaque, this);
+					}
+					// By this point, the current material should only be the original dynamic Datasmith material
+					// Replace and copy it with Modumate version of Datasmith material
+					UMaterialInterface* modumateDatasmithParentMat = gameMode->ModumateDatasmithMaterialPbrOpaque;
+					if (originalDatasmithMat->GetBlendMode() != BLEND_Opaque)
+					{
+						float opacityValue = 0.f;
+						float transparencyValue = 0.f;
+						if (originalDatasmithMat->GetScalarParameterValue(opacityParamName, opacityValue))
+						{
+							modumateDatasmithParentMat = gameMode->ModumateDatasmithMaterialPbrTranslucent;
+						}
+						else if (originalDatasmithMat->GetScalarParameterValue(transparencyParamName, transparencyValue))
+						{
+							modumateDatasmithParentMat = gameMode->ModumateDatasmithMaterialPbrTransparent;
+						}
+					}
+					UMaterialInstanceDynamic* newDynMat = UMaterialInstanceDynamic::Create(modumateDatasmithParentMat, this);
+					newDynMat->CopyMaterialUniformParameters(originalDatasmithMat);
+					StaticMeshMaterials.Add(newDynMat);
+				}
 			}
 		}
 		curActor->SetActorHiddenInGame(true);
 		curActor->SetActorEnableCollision(false);
 	}
+	GetValuesFromMetaData();
 
 	if (DatasmithImporter.IsValid())
 	{
@@ -79,4 +120,110 @@ void AEditModelDatasmithRuntimeActor::GetAttachedActorsRecursive(AActor* ParentA
 			OutActors.Add(attached);
 		}
 	}
+}
+
+bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
+{
+	// Meta file path
+	FString datasmithPath = ImportFilePath;
+	int32 urlLastSlashIdx;
+	datasmithPath.FindLastChar(TEXT('\\'), urlLastSlashIdx);
+	FString metaFilePath = datasmithPath.Left(urlLastSlashIdx + 1) + TEXT("Meta.json");
+	FString metaFilePathClean = metaFilePath.Replace(TEXT("\\"), TEXT("/"));
+
+	AssetFolderPath = datasmithPath.Replace(TEXT(".udatasmith"), TEXT("_Assets\\"));
+	FString assetFolderPathClean = AssetFolderPath.Replace(TEXT("\\"), TEXT("/"));
+
+	FString fileJsonString;
+	bool bLoadFileSuccess = FFileHelper::LoadFileToString(fileJsonString, *metaFilePathClean);
+	if (!bLoadFileSuccess)
+	{
+		return false;
+	}
+
+	auto jsonReader = TJsonReaderFactory<>::Create(fileJsonString);
+
+	FDatasmithMetaData metaData;
+	if (!ReadJsonGeneric<FDatasmithMetaData>(fileJsonString, &metaData))
+	{
+		return false;
+	}
+	CurrentMetaData = metaData;
+
+	for (auto& curMaterial : metaData.Materials)
+	{
+		if (StaticMeshMaterials.IsValidIndex(curMaterial.Index))
+		{
+			UMaterialInstanceDynamic* dynMat = Cast<UMaterialInstanceDynamic>(StaticMeshMaterials[curMaterial.Index]);
+			if (dynMat)
+			{
+				// Tint
+				dynMat->SetVectorParameterValue(TEXT("TintColor"), FLinearColor::FromSRGBColor(FColor::FromHex(curMaterial.TintColor)));
+				dynMat->SetScalarParameterValue(TEXT("TintColorFading"), curMaterial.TintColorFading);
+				// Diffuse
+				dynMat->SetScalarParameterValue(TEXT("DiffuseMapFading"), curMaterial.DiffuseMapFading);
+				dynMat->SetVectorParameterValue(TEXT("DiffuseColor"), FLinearColor::FromSRGBColor(FColor::FromHex(curMaterial.DiffuseColor)));
+				// Metallic
+				dynMat->SetScalarParameterValue(TEXT("MetallicMapFading"), curMaterial.MetallicMapFading);
+				dynMat->SetScalarParameterValue(TEXT("Metallic"), curMaterial.Metallic);
+				// Specular
+				dynMat->SetScalarParameterValue(TEXT("SpecularMapFading"), curMaterial.SpecularMapFading);
+				dynMat->SetScalarParameterValue(TEXT("Specular"), curMaterial.Specular);
+				// Roughness
+				dynMat->SetScalarParameterValue(TEXT("RoughnessMapFading"), curMaterial.RoughnessMapFading);
+				dynMat->SetScalarParameterValue(TEXT("Roughness"), curMaterial.Roughness);
+				// Import textures
+				if (!curMaterial.DiffuseMap.IsEmpty())
+				{
+					UTexture2D* diffuseMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.DiffuseMap);
+					if (diffuseMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("DiffuseMap"), diffuseMapTexture);
+					}
+				}
+				if (!curMaterial.MetallicMap.IsEmpty())
+				{
+					UTexture2D* metallicMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.MetallicMap);
+					if (metallicMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("MetallicMap"), metallicMapTexture);
+					}
+				}
+				if (!curMaterial.SpecularMap.IsEmpty())
+				{
+					UTexture2D* specularMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.SpecularMap);
+					if (specularMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("SpecularMap"), specularMapTexture);
+					}
+				}
+				if (!curMaterial.RoughnessMap.IsEmpty())
+				{
+					UTexture2D* roughnessMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.RoughnessMap);
+					if (roughnessMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("RoughnessMap"), roughnessMapTexture);
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+
+FString AEditModelDatasmithRuntimeActor::DatasmithColorToHex(const FColor& InColor)
+{
+	return InColor.ToHex();
+}
+
+FColor AEditModelDatasmithRuntimeActor::DatasmithHexToColor(const FString& InHexString)
+{
+	return FColor::FromHex(InHexString);
+}
+
+FString AEditModelDatasmithRuntimeActor::MakeJsonStringFromDatasmithMetaData(const FDatasmithMetaData& InData)
+{
+	FString jsonString;
+	WriteJsonGeneric(jsonString, &InData);
+	return jsonString;
 }

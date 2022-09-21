@@ -54,6 +54,7 @@ public:
 
 	TMap<FGuid, TArray<UStaticMesh*>> StaticMeshAssetMap;
 	TMap<FGuid, TArray<FTransform>> StaticMeshTransformMap;
+	TMap<FGuid, TArray<UMaterialInterface*>> ImportedMaterialMap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FGuid, EAssetImportLoadStatus> PresetLoadStatusMap;
