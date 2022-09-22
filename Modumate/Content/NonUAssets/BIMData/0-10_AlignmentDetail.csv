@@ -1,9 +1,6 @@
 TYPENAME,,0AlignmentDetail,,Detail,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,,,,,,,,,,
-,,Form,,,,,,,,,,,,,
-FORMELEMENT,,AlignmentDetail.SubjectPreset,,Subject Preset,,,,,,,,,,,
-FORMELEMENT,,AlignmentDetail.TargetPreset,,Target Preset,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,
 TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=AlignmentDetail,SubjectPreset,SubjectOrigin,SubjectZone,SubjectDisplacement,TargetPreset,TargetOrigin,TargetZone,TargetDisplacement
 PRESET,,deb75eb1-e502-48d5-9e59-7a54db00f3b5,,Property_Spatiality_ConnectionDetail_Alignment-Property_Spatiality_ConnectionDetail_Alignment-1,,Property_Spatiality_ConnectionDetail_Alignment,,1,,,,,,,
