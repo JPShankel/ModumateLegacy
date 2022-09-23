@@ -162,6 +162,8 @@ void UModumateDocumentWebBridge::drawing_get_clicked(const FString& InRequest)
 
 		FDrawingDesignerMoiResponse moiResponse;
 		moiResponse.request = req;
+		moiResponse.moiId = INDEX_NONE;
+		moiResponse.spanId = INDEX_NONE;
 
 		AModumateObjectInstance* moi = Document->GetObjectById(req.viewId);
 		if (moi)
@@ -170,13 +172,19 @@ void UModumateDocumentWebBridge::drawing_get_clicked(const FString& InRequest)
 			{
 				AMOICutPlane* cutPlane = Cast<AMOICutPlane>(moi);
 				FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
-				Document->DrawingDesignerRenderControl->GetMoiFromView(uvVector, *cutPlane, moiResponse.moiId);
-			}
-			moiResponse.spanId = moi->GetParentID();
-			const FBIMPresetInstance* preset = Document->BIMPresetCollection.PresetFromGUID(moi->GetAssembly().PresetGUID);
-			if (preset)
-			{
-				moiResponse.presetId = preset->GUID;
+				int32 hitMoiId = INDEX_NONE;
+				Document->DrawingDesignerRenderControl->GetMoiFromView(uvVector, *cutPlane, hitMoiId);
+				AModumateObjectInstance* hitMoi = Document->GetObjectById(hitMoiId);
+				if(hitMoi)
+				{
+					moiResponse.moiId = hitMoiId;
+					moiResponse.spanId = hitMoi->GetParentID();
+					const FBIMPresetInstance* preset = Document->BIMPresetCollection.PresetFromGUID(hitMoi->GetAssembly().PresetGUID);
+					if (preset)
+					{
+						moiResponse.presetId = preset->GUID;
+					}			
+				}
 			}
 		}
 
