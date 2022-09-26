@@ -119,7 +119,7 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 #endif
 		else if (InstanceData.GraphMembers.Num() == 0 || GetChildIDs().Num() == 0)
 		{
-			Document->GetDeleteObjectsDeltas(outDeltas, { this }, true, true, true);
+			Document->GetDeleteObjectsDeltas(outDeltas, { this }, true, true);
 		}
 		else if (!UpdateCachedPerimeterFace())
 		{

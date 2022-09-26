@@ -267,7 +267,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	RegisterCommand(kDeleteObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		AEditModelPlayerController *playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(playerController->PlayerState);
-		GetDocument()->DeleteObjects(params.GetValue(kObjectIDs), true, params.GetValue(kIncludeConnected));
+		GetDocument()->DeleteObjects(params.GetValue(kObjectIDs), params.GetValue(kIncludeConnected));
 		return true;
 	});
 
@@ -286,7 +286,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		bool bAllowRoomAnalysis = true;
 		bool bIncludeConnected = params.GetValue(kIncludeConnected);
 
-		GetDocument()->DeleteObjects(obs, bAllowRoomAnalysis, bIncludeConnected);
+		GetDocument()->DeleteObjects(obs, bIncludeConnected);
 		return true;
 	});
 

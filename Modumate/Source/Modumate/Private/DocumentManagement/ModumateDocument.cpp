@@ -1302,9 +1302,6 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	CalculateSideEffectDeltas(ur->Deltas, World, false);
 
-	// TODO: this should be a proper side effect
-	UpdateRoomAnalysis(World);
-
 	EndUndoRedoMacro();
 	if (controller && controller->InputAutomationComponent)
 	{
@@ -1835,21 +1832,18 @@ FBox UModumateDocument::GetAffectedBounds(const FAffectedObjMap& AffectedObjects
 	return FBox(allMOIPoints);
 }
 
-void UModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis, bool bDeleteConnected)
+void UModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bDeleteConnected)
 {
 	TArray<AModumateObjectInstance*> mois;
 	Algo::Transform(obIds,mois,[this](int32 id) { return GetObjectById(id);});
 
-	DeleteObjects(
-		mois.FilterByPredicate([](AModumateObjectInstance *ob) { return ob != nullptr; }),
-		bAllowRoomAnalysis, bDeleteConnected
-	);
+	DeleteObjects(mois.FilterByPredicate([](AModumateObjectInstance *ob) { return ob != nullptr; }),bDeleteConnected);
 }
 
-void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
+void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& initialObjectsToDelete, bool bDeleteConnected)
 {
 	TArray<FDeltaPtr> deleteDeltas;
-	if (!GetDeleteObjectsDeltas(deleteDeltas, initialObjectsToDelete, bAllowRoomAnalysis, bDeleteConnected))
+	if (!GetDeleteObjectsDeltas(deleteDeltas, initialObjectsToDelete, bDeleteConnected))
 	{
 		return;
 	}
@@ -1862,7 +1856,7 @@ void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& in
 	ApplyDeltas(deleteDeltas, world);
 }
 
-bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &InitialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected, bool bDeleteDescendents)
+bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &InitialObjectsToDelete, bool bDeleteConnected, bool bDeleteDescendents)
 {
 	if (InitialObjectsToDelete.Num() == 0)
 	{
@@ -2178,16 +2172,6 @@ bool UModumateDocument::GetGraph2DDeletionDeltas(int32 Graph2DID, int32& InNextI
 	surfaceGraph->DeleteObjects(deltas, InNextID, allIDs);
 
 	return FinalizeGraph2DDeltas(deltas, InNextID, OutDeltas);
-}
-
-int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRoom"));
-
-	// TODO: reimplement
-	//UModumateRoomStatics::SetRoomConfigFromKey(newRoomObj, UModumateRoomStatics::DefaultRoomConfigKey);
-
-	return MOD_ID_NONE;
 }
 
 bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points,
@@ -3643,9 +3627,6 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
-	// Just in case the loaded document's rooms don't match up with our current room analysis logic, do that now.
-	UpdateRoomAnalysis(world);
-
 	// Hide all cut planes on load
 	TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
 	TArray<int32> hideCutPlaneIds;
@@ -3929,165 +3910,6 @@ void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 			}
 		}
 	}
-}
-
-bool UModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
-{
-	const FGraph3DFace *graphFace = GetVolumeGraph()->FindFace(FaceID);
-	const AModumateObjectInstance *planeObj = GetObjectById(FMath::Abs(FaceID));
-
-	if ((graphFace == nullptr) || (planeObj == nullptr))
-	{
-		return false;
-	}
-
-	// Only allow traversing to planes facing upwards (even slightly)
-	FVector signedFaceNormal = FMath::Sign(FaceID) * FVector(graphFace->CachedPlane);
-	float normalUpDot = (signedFaceNormal | FVector::UpVector);
-	if (FMath::IsNearlyZero(normalUpDot) || (normalUpDot < 0.0f))
-	{
-		return false;
-	}
-
-	// Only allow traversing to planes that have a Floor child
-	const TArray<int32> &planeChildIDs = planeObj->GetChildIDs();
-	for (int32 planeChildID : planeChildIDs)
-	{
-		const AModumateObjectInstance *planeChildObj = GetObjectById(planeChildID);
-		if (planeChildObj && (planeChildObj->GetObjectType() == EObjectType::OTFloorSegment))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void UModumateDocument::UpdateRoomAnalysis(UWorld *world)
-{
-#if 0
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UpdateRoomAnalysis"));
-
-	bool bStartedMacro = false;
-	bool bAnyChange = false;
-	TMap<int32, int32> oldRoomIDsToNewRoomIndices;
-	TMap<int32, TArray<int32>> newRoomsFaceIDs;
-	TSet<int32> oldRoomsToDeleteIDs, newRoomsToCreateIndices;
-
-	UModumateRoomStatics::CalculateRoomChanges(this, bAnyChange,
-		oldRoomIDsToNewRoomIndices, newRoomsFaceIDs, oldRoomsToDeleteIDs, newRoomsToCreateIndices);
-
-	if (bAnyChange)
-	{
-		// We actually have to make a change to rooms - start the undo/redo operations
-		BeginUndoRedoMacro();
-		ClearRedoBuffer();
-		bStartedMacro = true;
-
-		// Step 1 - modify old rooms
-		UndoRedo *urModifyOldRooms = new UndoRedo();
-
-		urModifyOldRooms->Redo = [this, world, urModifyOldRooms, oldRoomIDsToNewRoomIndices, newRoomsFaceIDs]()
-		{
-			TMap<int32, TArray<int32>> oldRoomsFaceIDs;
-
-			// Use our room mapping to make the changes from old rooms to new rooms
-			for (auto &oldToNew : oldRoomIDsToNewRoomIndices)
-			{
-				int32 oldRoomObjID = oldToNew.Key;
-				int32 newRoomIndex = oldToNew.Value;
-
-				AModumateObjectInstance *oldRoomObj = GetObjectById(oldRoomObjID);
-				const TArray<int32> *newRoomFaceIDs = newRoomsFaceIDs.Find(newRoomIndex);
-				if (oldRoomObj && newRoomFaceIDs)
-				{
-					// Keep track of the room's previous face IDs
-					oldRoomsFaceIDs.Add(oldRoomObjID, oldRoomObj->GetControlPointIndices());
-
-					oldRoomObj->SetControlPointIndices(*newRoomFaceIDs);
-					oldRoomObj->MarkDirty(EObjectDirtyFlags::Structure);
-				}
-			}
-
-			urModifyOldRooms->Undo = [this, world, urModifyOldRooms, oldRoomIDsToNewRoomIndices, oldRoomsFaceIDs]()
-			{
-				// Use our room mapping to restore the old rooms
-				for (auto &oldRoomKVP : oldRoomsFaceIDs)
-				{
-					AModumateObjectInstance *oldRoomObj = GetObjectById(oldRoomKVP.Key);
-					if (oldRoomObj)
-					{
-						oldRoomObj->SetControlPointIndices(oldRoomKVP.Value);
-						oldRoomObj->MarkDirty(EObjectDirtyFlags::Structure);
-					}
-				}
-			};
-		};
-
-		UndoBuffer.Add(urModifyOldRooms);
-		urModifyOldRooms->Redo();
-
-		// Step 2 - create new rooms that don't have a mapping from an old room
-		for (int32 newRoomIndex : newRoomsToCreateIndices)
-		{
-			TArray<int32> *newRoomFaceIDs = newRoomsFaceIDs.Find(newRoomIndex);
-			if (newRoomFaceIDs)
-			{
-				MakeRoom(world, *newRoomFaceIDs);
-			}
-		}
-
-		// Step 3 - delete old rooms that don't have a mapping to a new room
-		TArray<int32> oldRoomsToDeleteIDsArray = oldRoomsToDeleteIDs.Array();
-		DeleteObjects(oldRoomsToDeleteIDsArray, false, false);
-	}
-
-	// Step 1/4 - re-sequence rooms to have the correct room numbers
-	TMap<int32, FString> oldRoomNumbers, newRoomNumbers;
-	UModumateRoomStatics::CalculateRoomNumbers(this, oldRoomNumbers, newRoomNumbers);
-	if (newRoomNumbers.Num() > 0)
-	{
-		// Start the macro if we haven't already, since there might not have been any room content changes,
-		// but there may have been room number changes. Room numbering changes can occur independently,
-		// so these undo/redoable actions are separated.
-		if (!bStartedMacro)
-		{
-			BeginUndoRedoMacro();
-			ClearRedoBuffer();
-			bStartedMacro = true;
-		}
-
-		UndoRedo *urSequenceRooms = new UndoRedo();
-
-		urSequenceRooms->Redo = [this, urSequenceRooms, oldRoomNumbers, newRoomNumbers]()
-		{
-			for (auto &kvp : newRoomNumbers)
-			{
-				AModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
-				const FString &newRoomNumber = kvp.Value;
-				roomObj->SetProperty(EScope::Room, BIMPropertyNames::Number, newRoomNumber);
-			}
-
-			urSequenceRooms->Undo = [this, oldRoomNumbers]()
-			{
-				for (auto &kvp : oldRoomNumbers)
-				{
-					AModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
-					const FString &oldRoomNumber = kvp.Value;
-					roomObj->SetProperty(EScope::Room, BIMPropertyNames::Number, oldRoomNumber);
-				}
-			};
-		};
-
-		UndoBuffer.Add(urSequenceRooms);
-		urSequenceRooms->Redo();
-	}
-
-	if (bStartedMacro)
-	{
-		EndUndoRedoMacro();
-	}
-#endif
 }
 
 FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*/)

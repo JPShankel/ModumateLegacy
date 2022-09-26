@@ -91,7 +91,7 @@ private:
 	TArray<int32> UndoRedoMacroStack;
 
 	// The volume connectivity information, for the purpose of keeping track of connectivity of all planar objects;
-	// the source of truth for mitering, room detection, volume calculation, slicing floorplans/sections/elevations, heat/acoustics, etc.
+	// the source of truth for mitering, volume calculation, slicing floorplans/sections/elevations, heat/acoustics, etc.
 	TMap<int32, TSharedPtr<FGraph3D>> VolumeGraphs;
 	int32 RootVolumeGraph = MOD_ID_NONE;
 	// TODO: move active graph to EMPlayerState or elsewhere since it isn't really part of the document.
@@ -175,7 +175,6 @@ public:
 	void SetDefaultJustificationXY(float newValue);
 	float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
-	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
 	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, 
 		TArray<FGraph3DDelta>& OutGraphDeltas, bool bSplitAndUpdateFaces = true);
 
@@ -201,9 +200,6 @@ public:
 	const AModumateObjectInstance *ObjectFromActor(const AActor *actor) const;
 
 	void UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs);
-
-	bool CanRoomContainFace(FGraphSignedID FaceID);
-	void UpdateRoomAnalysis(UWorld *world);
 
 	FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE);
 	const FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE) const;
@@ -327,10 +323,10 @@ public:
 
 	AModumateObjectInstance *TryGetDeletedObject(int32 id);
 
-	void DeleteObjects(const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
-	bool GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &InitialObjectsToDelete, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true, bool bDeleteDescendents = false);
+	void DeleteObjects(const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bDeleteConnected = true);
+	bool GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &InitialObjectsToDelete, bool bDeleteConnected = true, bool bDeleteDescendents = false);
 	void RestoreDeletedObjects(const TArray<int32> &ids);
-	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
+	void DeleteObjects(const TArray<int32> &obIds, bool bDeleteConnected = true);
 
 	void MakeNew(UWorld* World, bool bClearName = true);
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);

@@ -140,7 +140,7 @@ bool ARetractRoofFacesHandle::BeginUse()
 	}
 
 	// TODO: migrate this to one or more deltas, when we can delete objects that way.
-	doc->DeleteObjects(TempFaceIDs, true, true);
+	doc->DeleteObjects(TempFaceIDs, true);
 
 	return false;
 }
