@@ -13,6 +13,7 @@
 #include "Runtime/Engine/Classes/Components/RectLightComponent.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/EditModelUserWidget.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
@@ -436,6 +437,11 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	case EObjectType::OTEdgeHosted:
 	case EObjectType::OTFaceHosted:
 		return SetIconMeshForPointHostedAssembly(Assembly, InRenderTarget);
+ 	case EObjectType::OTMetaGraph:
+	{
+		const auto* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(Assembly.PresetGUID);
+		return SetIconMeshForSymbol(preset, InRenderTarget);
+	}
 	}
 	return false;
 }
@@ -453,6 +459,14 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 	{
 		return false;
 	}
+
+	// Currently only cache Symbols at the Web-string level.
+	if (childPreset->NodeScope == EBIMValueScope::Symbol && WebCache.Contains(AsmKey))
+	{
+		OutResponse = WebCache[AsmKey];
+		return true;
+	}
+
 	// Find if an assembly exists for this preset
 	bool bCaptureSuccess = false;
 	const FBIMAssemblySpec* assembly = presetCollection.AssemblySpecFromGUID(childPreset->ObjectType, AsmKey);
@@ -503,6 +517,11 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 				}
 				break;
 			}			
+			case EBIMValueScope::Symbol:
+			{
+				bCaptureSuccess = SetIconMeshForSymbol(childPreset, IconRenderTargetForWeb);
+				break;
+			}
 		}
 	}	
 	
@@ -521,6 +540,10 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 			return false;
 		}
 		OutResponse = FBase64::Encode(imageBuffer);
+		if (childPreset->NodeScope == EBIMValueScope::Symbol)
+		{
+			WebCache.Add(AsmKey, OutResponse);
+		}
 		return true;
 	}
 	return false;
@@ -1226,6 +1249,82 @@ bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FBIMPresetCollection
 	FBIMPresetCollectionProxy mutableCollection(PresetCollection);
 	EBIMResult result = mutableCollection.CreateAssemblyFromLayerPreset(PresetID, objType, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
+}
+
+bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* SymbolPreset, UTextureRenderTarget2D* InRenderTarget)
+{
+	FBIMSymbolPresetData symbolData;
+	if (ensure(SymbolPreset->TryGetCustomData(symbolData)) && symbolData.EquivalentIDs.Num() != 0
+		&& symbolData.EquivalentIDs.CreateConstIterator()->Value.IDSet.Num() != 0)
+	{
+		// Capture any group currently in project.
+		int32 groupMember = *symbolData.EquivalentIDs.CreateConstIterator()->Value.IDSet.CreateConstIterator();
+		UModumateDocument* doc = GameState->Document;
+		int32 groupID = UModumateObjectStatics::GetGroupIdForObject(doc, groupMember);
+		AModumateObjectInstance* groupMoi = doc->GetObjectById(groupID);
+		if (!groupMoi)
+		{
+			return false;
+		}
+
+		TSet<AModumateObjectInstance*> groupObjects;
+		UModumateObjectStatics::GetObjectsInGroups(doc, { groupID }, groupObjects);
+
+		SceneCaptureComp->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
+		SceneCaptureComp->ClearShowOnlyComponents();
+
+		for (AModumateObjectInstance* object : groupObjects)
+		{
+			EToolCategories category = UModumateTypeStatics::GetObjectCategory(object->GetObjectType());
+			if (category == EToolCategories::Separators || category == EToolCategories::Attachments)
+			{
+				SceneCaptureComp->ShowOnlyActorComponents(object->GetActor());
+			}
+		}
+
+		FBox groupBox(ForceInit);
+		for (int32 i = 0; i < groupMoi->GetNumCorners(); ++i)
+		{
+			groupBox += groupMoi->GetCorner(i);
+		}
+
+		// Modify scene capture to our needs:
+		FTransform originalTransform = SceneCaptureComp->GetRelativeTransform();
+		FMinimalViewInfo originalView;
+		SceneCaptureComp->GetCameraView(0, originalView);
+		FMinimalViewInfo newView(originalView);
+		newView.FOV = 40.0f;
+		SceneCaptureComp->SetCameraView(newView);
+		FPostProcessSettings& postProcess = SceneCaptureComp->PostProcessSettings;
+		if (postProcess.WeightedBlendables.Array.Num() > 0)
+		{
+			postProcess.WeightedBlendables.Array[0].Weight = 0.0f;  // No icon PP
+		}
+
+		const FVector boxSize = groupBox.GetSize();
+		FVector viewDir(boxSize.X > boxSize.Y ? FVector(-0.5f, -0.85f, -0.4f) : FVector(-0.85f, 0.5f, -0.4f));
+		viewDir.Normalize();
+		const FVector viewPos = groupBox.GetCenter() - 1.1f * boxSize.Size() * viewDir;
+		
+		SceneCaptureComp->SetWorldTransform(FTransform(viewDir.ToOrientationQuat(), viewPos));
+
+		SceneCaptureComp->TextureTarget = InRenderTarget;
+		SceneCaptureComp->CaptureScene();
+
+		// Restore scene capture settings:
+		if (postProcess.WeightedBlendables.Array.Num() > 0)
+		{
+			postProcess.WeightedBlendables.Array[0].Weight = 1.0f;
+		}
+		SceneCaptureComp->SetCameraView(originalView);
+		SceneCaptureComp->SetRelativeTransform(originalTransform);
+		SceneCaptureComp->ClearShowOnlyComponents();
+		SceneCaptureComp->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_LegacySceneCapture;
+
+		return true;
+	}
+
+	return false;
 }
 
 bool ADynamicIconGenerator::SetIconFromColor(const FBIMKey& ColorHex, UMaterialInterface*& OutMaterial)

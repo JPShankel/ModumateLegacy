@@ -85,6 +85,8 @@ bool AMOIMetaGraph::SetupBoundingBox()
 		TArray<FStructurePoint> structurePoints;  // unused
 		TArray<FStructureLine> structureLines;
 
+		CachedCorners.Empty();
+		UModumateGeometryStatics::GetBoxCorners(CachedBounds, CachedCorners);
 		GetStructuralPointsAndLines(structurePoints, structureLines, false, false);
 
 		for (const auto* graphObject: childObjects)
@@ -110,6 +112,9 @@ bool AMOIMetaGraph::SetupBoundingBox()
 		{
 			GetParentObject()->MarkDirty(EObjectDirtyFlags::Structure);
 		}
+
+		CachedCorners.Empty();
+		UModumateGeometryStatics::GetBoxCorners(CachedBounds, CachedCorners);
 	}
 
 	return true;
@@ -120,25 +125,23 @@ void AMOIMetaGraph::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoin
 	if (!bForSnapping && !bForSelection && CachedBounds.IsValid)
 	{
 		TArray<FEdge> lines;
-		TArray<FVector> corners;
-		UModumateGeometryStatics::GetBoxCorners(CachedBounds, corners);
-		if (!ensure(corners.Num() == 8))
+		if (!ensure(CachedCorners.Num() == 8))
 		{
 			return;
 		}
 
-		lines.Emplace(corners[0], corners[1]);
-		lines.Emplace(corners[1], corners[3]);
-		lines.Emplace(corners[3], corners[2]);
-		lines.Emplace(corners[2], corners[0]);
-		lines.Emplace(corners[4], corners[5]);
-		lines.Emplace(corners[5], corners[7]);
-		lines.Emplace(corners[7], corners[6]);
-		lines.Emplace(corners[6], corners[4]);
-		lines.Emplace(corners[0], corners[4]);
-		lines.Emplace(corners[1], corners[5]);
-		lines.Emplace(corners[2], corners[6]);
-		lines.Emplace(corners[3], corners[7]);
+		lines.Emplace(CachedCorners[0], CachedCorners[1]);
+		lines.Emplace(CachedCorners[1], CachedCorners[3]);
+		lines.Emplace(CachedCorners[3], CachedCorners[2]);
+		lines.Emplace(CachedCorners[2], CachedCorners[0]);
+		lines.Emplace(CachedCorners[4], CachedCorners[5]);
+		lines.Emplace(CachedCorners[5], CachedCorners[7]);
+		lines.Emplace(CachedCorners[7], CachedCorners[6]);
+		lines.Emplace(CachedCorners[6], CachedCorners[4]);
+		lines.Emplace(CachedCorners[0], CachedCorners[4]);
+		lines.Emplace(CachedCorners[1], CachedCorners[5]);
+		lines.Emplace(CachedCorners[2], CachedCorners[6]);
+		lines.Emplace(CachedCorners[3], CachedCorners[7]);
 
 		for (const auto& line : lines)
 		{
@@ -241,4 +244,9 @@ bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 	}
 
 	return false;
+}
+
+FVector AMOIMetaGraph::GetCorner(int32 Index) const
+{
+	return CachedCorners[Index];
 }

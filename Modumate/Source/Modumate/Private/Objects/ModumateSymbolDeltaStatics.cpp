@@ -14,6 +14,8 @@
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 #include "Algo/ForEach.h"
 #include "TransformTypes.h"
 
@@ -58,6 +60,8 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 	{
 		return;
 	}
+
+	bool bRefreshIcon = false;
 
 	switch (DeltaState.DeltaType)
 	{
@@ -113,6 +117,7 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 				}
 			}
 
+			bRefreshIcon = true;
 		}
 		break;
 	}
@@ -163,6 +168,12 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 
 	default:
 		break;
+	}
+
+	if (bRefreshIcon)
+	{
+		auto * controller = Doc->GetWorld()-> GetFirstPlayerController<AEditModelPlayerController>();
+		controller && controller->DynamicIconGenerator && controller->DynamicIconGenerator->InvalidateWebCacheEntry(symbolPreset->GUID);
 	}
 }
 
@@ -271,6 +282,10 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 	FBIMPresetInstance newPresetInstance(*symbolPreset);
 	newPresetInstance.SetCustomData(symbolData);
 	OutDeltas.Add(presets.MakeUpdateDelta(newPresetInstance));
+
+	// Need new icon:
+	auto* controller = Doc->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	controller && controller->DynamicIconGenerator && controller->DynamicIconGenerator->InvalidateWebCacheEntry(symbolPreset->GUID);
 }
 
 bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, TArray<FDeltaPtr>& OutDeltas)
@@ -603,6 +618,10 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 	newSymbolPreset.SetCustomData(newSymbolData);
 	FDeltaPtr presetDelta(presets.MakeUpdateDelta(newSymbolPreset));
 	OutDeltas.Add(presetDelta);
+
+	// Need new icon:
+	auto* controller = Doc->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	controller && controller->DynamicIconGenerator && controller->DynamicIconGenerator->InvalidateWebCacheEntry(symbolPreset->GUID);
 }
 
 bool FModumateSymbolDeltaStatics::CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group)

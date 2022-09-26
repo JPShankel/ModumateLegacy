@@ -152,7 +152,7 @@ private:
 	int32 StairLayerRiserAssemblyPartIndex = -2;
 
 	UMaterialInterface* CreateMaterialForIconTexture(UTexture2D* InTexture);
-
+	TMap<FGuid, FString> WebCache;
 
 public:
 
@@ -191,6 +191,7 @@ public:
 	bool SetIconMeshForModule(const FBIMPresetCollectionProxy& PresetCollection, bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForLayerNodeID(const FBIMPresetCollectionProxy& PresetCollection, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForLayerPreset(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& PresetID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForSymbol(const FBIMPresetInstance* SymbolPreset, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconFromColor(const FBIMKey& ColorHex, UMaterialInterface*& OutMaterial);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
@@ -203,6 +204,8 @@ public:
 	void SetCaptureCompTransformForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents);
 
 	void UpdateCachedAssemblies(const FBIMPresetCollectionProxy& PresetCollection, const TArray<FGuid>& AsmKeys);
+
+	bool InvalidateWebCacheEntry(const FGuid& Key) { return WebCache.Remove(Key) != 0; }
 
 	// TODO: This is a temp function for releasing saved render targets related to BIM presets	
 	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	
