@@ -749,11 +749,11 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 		return false;
 	}
 
-	StateData.DisplayName = webMOI.DisplayName;
-	StateData.ParentID = webMOI.Parent;
-	StateData.AssemblyGUID = webMOI.PresetID;
-	StateData.Alignment = webMOI.Alignment;
-	StateData.Alignment.SubjectPZP.PresetGUID = webMOI.PresetID;
+	StateData.DisplayName = webMOI.displayName;
+	StateData.ParentID = webMOI.parent;
+	StateData.AssemblyGUID = webMOI.presetId;
+	StateData.Alignment = webMOI.alignment;
+	StateData.Alignment.subjectPZP.presetGuid = webMOI.presetId;
 
 	bVisible = webMOI.isVisible;
 
@@ -768,14 +768,14 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 			if(it->GetName() == MOI_DISPLAY_NAME_FIELD)
 			{
 				FStrProperty* strProp = CastField<FStrProperty>(*it);
-				if (strProp != nullptr && !webMOI.DisplayName.IsEmpty())
+				if (strProp != nullptr && !webMOI.displayName.IsEmpty())
 				{
-					strProp->SetPropertyValue_InContainer(structPtr, webMOI.DisplayName);
+					strProp->SetPropertyValue_InContainer(structPtr, webMOI.displayName);
 				}
 			}
 			
-			FWebMOIProperty* moiProp = webMOI.Properties.Find(it->GetName());
-			if (moiProp == nullptr || moiProp->ValueArray.Num() == 0)
+			FWebMOIProperty* moiProp = webMOI.properties.Find(it->GetName());
+			if (moiProp == nullptr || moiProp->valueArray.Num() == 0)
 			{
 				continue;
 			}
@@ -783,35 +783,35 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 			FStrProperty* strProp = CastField<FStrProperty>(*it);
 			if (strProp != nullptr)
 			{
-				strProp->SetPropertyValue_InContainer(structPtr, moiProp->ValueArray[0]);
+				strProp->SetPropertyValue_InContainer(structPtr, moiProp->valueArray[0]);
 				continue;
 			}
 
 			FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
 			if (boolProp != nullptr)
 			{
-				boolProp->SetPropertyValue_InContainer(structPtr, moiProp->ValueArray[0].Equals(TEXT("true")));
+				boolProp->SetPropertyValue_InContainer(structPtr, moiProp->valueArray[0].Equals(TEXT("true")));
 				continue;
 			}
 
 			FDoubleProperty* doubleProp = CastField<FDoubleProperty>(*it);
 			if (doubleProp != nullptr)
 			{
-				doubleProp->SetPropertyValue_InContainer(structPtr, static_cast<double>(FCString::Atod(*moiProp->ValueArray[0])));
+				doubleProp->SetPropertyValue_InContainer(structPtr, static_cast<double>(FCString::Atod(*moiProp->valueArray[0])));
 				continue;
 			}
 
 			FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
 			if (floatProp != nullptr)
 			{
-				floatProp->SetPropertyValue_InContainer(structPtr, static_cast<float>(FCString::Atof(*moiProp->ValueArray[0])));
+				floatProp->SetPropertyValue_InContainer(structPtr, static_cast<float>(FCString::Atof(*moiProp->valueArray[0])));
 				continue;
 			}
 
 			FIntProperty* intProp = CastField<FIntProperty>(*it);
 			if (intProp != nullptr)
 			{
-				intProp->SetPropertyValue_InContainer(structPtr, static_cast<int32>(FCString::Atoi(*moiProp->ValueArray[0])));
+				intProp->SetPropertyValue_InContainer(structPtr, static_cast<int32>(FCString::Atoi(*moiProp->valueArray[0])));
 				continue;
 			}
 
@@ -820,22 +820,22 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 			{
 				const void* propAddr = arrayProp->ContainerPtrToValuePtr<void>(structPtr);
 				FScriptArrayHelper arrayHelp(arrayProp, propAddr);
-				arrayHelp.EmptyAndAddValues(moiProp->ValueArray.Num());
+				arrayHelp.EmptyAndAddValues(moiProp->valueArray.Num());
 
 				if (arrayProp->Inner->IsA<FIntProperty>())
 				{
 					int32* rawPtr = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
-					for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
+					for (int32 i = 0; i < moiProp->valueArray.Num(); ++i)
 					{
-						rawPtr[i] = FCString::Atoi(*moiProp->ValueArray[i]);
+						rawPtr[i] = FCString::Atoi(*moiProp->valueArray[i]);
 					}
 				}
 				else if (arrayProp->Inner->IsA<FStrProperty>())
 				{
 					FString* rawPtr = reinterpret_cast<FString*>(arrayHelp.GetRawPtr());
-					for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
+					for (int32 i = 0; i < moiProp->valueArray.Num(); ++i)
 					{
-						rawPtr[i] = moiProp->ValueArray[i];
+						rawPtr[i] = moiProp->valueArray[i];
 					}
 				}
 
@@ -852,7 +852,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FDimensionOffset* demoPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
 					if (demoPtr != nullptr)
 					{
-						demoPtr->FromString(moiProp->ValueArray[0]);
+						demoPtr->FromString(moiProp->valueArray[0]);
 					}
 				}
 
@@ -861,7 +861,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FMOIAlignment* offsetPtr = structProp->ContainerPtrToValuePtr<FMOIAlignment>(structPtr);
 					if (offsetPtr != nullptr)
 					{
-						offsetPtr->FromString(moiProp->ValueArray[0]);
+						offsetPtr->FromString(moiProp->valueArray[0]);
 					}
 				}
 				
@@ -870,7 +870,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
 					if (vectorPtr != nullptr)
 					{
-						vectorPtr->InitFromString(*moiProp->ValueArray[0]);
+						vectorPtr->InitFromString(*moiProp->valueArray[0]);
 					}
 				}
 
@@ -879,7 +879,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FVector2D* vectorPtr = structProp->ContainerPtrToValuePtr<FVector2D>(structPtr);
 					if (vectorPtr != nullptr)
 					{
-						vectorPtr->InitFromString(*moiProp->ValueArray[0]);
+						vectorPtr->InitFromString(*moiProp->valueArray[0]);
 					}
 				}
 
@@ -888,7 +888,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FRotator* rotatorPtr = structProp->ContainerPtrToValuePtr<FRotator>(structPtr);
 					if (rotatorPtr != nullptr)
 					{
-						rotatorPtr->InitFromString(*moiProp->ValueArray[0]);
+						rotatorPtr->InitFromString(*moiProp->valueArray[0]);
 					}
 				}
 
@@ -897,7 +897,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FQuat* quatPtr = structProp->ContainerPtrToValuePtr<FQuat>(structPtr);
 					if (quatPtr != nullptr)
 					{
-						quatPtr->InitFromString(*moiProp->ValueArray[0]);
+						quatPtr->InitFromString(*moiProp->valueArray[0]);
 					}
 				}
 
@@ -906,7 +906,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FGuid* guidPtr = structProp->ContainerPtrToValuePtr<FGuid>(structPtr);
 					if (guidPtr != nullptr)
 					{
-						FGuid::Parse(moiProp->ValueArray[0].TrimQuotes(), *guidPtr);
+						FGuid::Parse(moiProp->valueArray[0].TrimQuotes(), *guidPtr);
 					}
 				}
 
@@ -915,7 +915,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					FDateTime* dateTimePtr = structProp->ContainerPtrToValuePtr<FDateTime>(structPtr);
 					if (dateTimePtr != nullptr)
 					{
-						FDateTime::ParseIso8601(*moiProp->ValueArray[0], *dateTimePtr);
+						FDateTime::ParseIso8601(*moiProp->valueArray[0], *dateTimePtr);
 					}
 				}
 
@@ -934,14 +934,14 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 	// Reset
 	OutMOI = FWebMOI();
 
-	OutMOI.ID = ID;
-	OutMOI.DisplayName = GetStateData().DisplayName;
-	OutMOI.Parent = GetParentID();
-	OutMOI.Type = GetObjectType();
-	OutMOI.Children = GetChildIDs();
-	OutMOI.PresetID = GetStateData().AssemblyGUID;
-	OutMOI.Alignment = GetStateData().Alignment;
-	OutMOI.Alignment.SubjectPZP.PresetGUID = GetStateData().AssemblyGUID;
+	OutMOI.id = ID;
+	OutMOI.displayName = GetStateData().DisplayName;
+	OutMOI.parent = GetParentID();
+	OutMOI.type = GetObjectType();
+	OutMOI.children = GetChildIDs();
+	OutMOI.presetId = GetStateData().AssemblyGUID;
+	OutMOI.alignment = GetStateData().Alignment;
+	OutMOI.alignment.subjectPZP.presetGuid = GetStateData().AssemblyGUID;
 
 	// Get custom data
 	UScriptStruct* structDef;
@@ -959,7 +959,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 			FStrProperty* strProp = CastField<FStrProperty>(*it);
 			if (strProp != nullptr)
 			{
-				OutMOI.DisplayName = strProp->GetPropertyValue_InContainer(structPtr);
+				OutMOI.displayName = strProp->GetPropertyValue_InContainer(structPtr);
 			}
 		}
 
@@ -976,40 +976,40 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 		FStrProperty* strProp = CastField<FStrProperty>(*it);
 		if (strProp != nullptr)
 		{
-			webProp.ValueArray.Add(strProp->GetPropertyValue_InContainer(structPtr));
-			OutMOI.Properties.Add(webProp.Name, webProp);
+			webProp.valueArray.Add(strProp->GetPropertyValue_InContainer(structPtr));
+			OutMOI.properties.Add(webProp.name, webProp);
 			continue;
 		}
 
 		FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
 		if (boolProp != nullptr)
 		{
-			webProp.ValueArray.Add(boolProp->GetPropertyValue_InContainer(structPtr) ? TEXT("true") : TEXT("false"));
-			OutMOI.Properties.Add(webProp.Name, webProp);
+			webProp.valueArray.Add(boolProp->GetPropertyValue_InContainer(structPtr) ? TEXT("true") : TEXT("false"));
+			OutMOI.properties.Add(webProp.name, webProp);
 			continue;
 		}
 
 		FIntProperty* intProp = CastField<FIntProperty>(*it);
 		if (intProp != nullptr)
 		{
-			webProp.ValueArray.Add(FString::Printf(TEXT("%d"), static_cast<int32>(intProp->GetPropertyValue_InContainer(structPtr))));
-			OutMOI.Properties.Add(webProp.Name, webProp);
+			webProp.valueArray.Add(FString::Printf(TEXT("%d"), static_cast<int32>(intProp->GetPropertyValue_InContainer(structPtr))));
+			OutMOI.properties.Add(webProp.name, webProp);
 			continue;
 		}
 
 		FDoubleProperty* doubleProp = CastField<FDoubleProperty>(*it);
 		if (doubleProp != nullptr)
 		{
-			webProp.ValueArray.Add(FString::Printf(TEXT("%f"), static_cast<double>(doubleProp->GetPropertyValue_InContainer(structPtr))));
-			OutMOI.Properties.Add(webProp.Name, webProp);
+			webProp.valueArray.Add(FString::Printf(TEXT("%f"), static_cast<double>(doubleProp->GetPropertyValue_InContainer(structPtr))));
+			OutMOI.properties.Add(webProp.name, webProp);
 			continue;
 		}
 
 		FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
 		if (floatProp != nullptr)
 		{
-			webProp.ValueArray.Add(FString::Printf(TEXT("%f"), static_cast<float>(floatProp->GetPropertyValue_InContainer(structPtr))));
-			OutMOI.Properties.Add(webProp.Name, webProp);
+			webProp.valueArray.Add(FString::Printf(TEXT("%f"), static_cast<float>(floatProp->GetPropertyValue_InContainer(structPtr))));
+			OutMOI.properties.Add(webProp.name, webProp);
 			continue;
 		}
 
@@ -1026,7 +1026,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				for (int32 i = 0; i < numElements; ++i)
 				{
 					FString value = FString::Printf(TEXT("%d"), intArray[i]);
-					webProp.ValueArray.AddUnique(value);
+					webProp.valueArray.AddUnique(value);
 				}
 			}
 			else if (arrayProp->Inner->IsA<FStrProperty>())
@@ -1035,11 +1035,11 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				for (int32 i = 0; i < numElements; ++i)
 				{
 					FString value = strArray[i];
-					webProp.ValueArray.AddUnique(value);
+					webProp.valueArray.AddUnique(value);
 				}
 			}
 
-			OutMOI.Properties.Add(webProp.Name, webProp);
+			OutMOI.properties.Add(webProp.name, webProp);
 			continue;
 		}
 
@@ -1053,15 +1053,15 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FDimensionOffset* offsetPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
 				if (offsetPtr != nullptr)
 				{
-					webProp.ValueArray.Add(offsetPtr->ToString());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(offsetPtr->ToString());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 
 			if (structProp->Struct == FMOIAlignment::StaticStruct())
 			{
-				webProp.ValueArray.Add(StateData.Alignment.ToString());
-				OutMOI.Properties.Add(webProp.Name, webProp);
+				webProp.valueArray.Add(StateData.Alignment.ToString());
+				OutMOI.properties.Add(webProp.name, webProp);
 			}
 
 			if (structProp->Struct->GetName() == TEXT("Vector"))
@@ -1069,8 +1069,8 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
 				if (vectorPtr != nullptr)
 				{
-					webProp.ValueArray.Add(vectorPtr->ToString());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(vectorPtr->ToString());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 
@@ -1079,8 +1079,8 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FVector2D* vectorPtr = structProp->ContainerPtrToValuePtr<FVector2D>(structPtr);
 				if (vectorPtr != nullptr)
 				{
-					webProp.ValueArray.Add(vectorPtr->ToString());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(vectorPtr->ToString());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 
@@ -1089,8 +1089,8 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FRotator* rotatorPtr = structProp->ContainerPtrToValuePtr<FRotator>(structPtr);
 				if (rotatorPtr != nullptr)
 				{
-					webProp.ValueArray.Add(rotatorPtr->ToString());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(rotatorPtr->ToString());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 
@@ -1099,8 +1099,8 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FQuat* quatPtr = structProp->ContainerPtrToValuePtr<FQuat>(structPtr);
 				if (quatPtr != nullptr)
 				{
-					webProp.ValueArray.Add(quatPtr->ToString());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(quatPtr->ToString());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 
@@ -1109,8 +1109,8 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FGuid* guidPtr = structProp->ContainerPtrToValuePtr<FGuid>(structPtr);
 				if (guidPtr != nullptr)
 				{
-					webProp.ValueArray.Add(guidPtr->ToString());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(guidPtr->ToString());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 
@@ -1119,8 +1119,8 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				const FDateTime* dateTimePtr = structProp->ContainerPtrToValuePtr<FDateTime>(structPtr);
 				if (dateTimePtr != nullptr)
 				{
-					webProp.ValueArray.Add(dateTimePtr->ToIso8601());
-					OutMOI.Properties.Add(webProp.Name, webProp);
+					webProp.valueArray.Add(dateTimePtr->ToIso8601());
+					OutMOI.properties.Add(webProp.name, webProp);
 				}
 			}
 

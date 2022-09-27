@@ -24,10 +24,10 @@ struct MODUMATE_API FDimensionOffset
 	FDimensionOffset(EDimensionOffsetType InType, float InCustomValue);
 
 	UPROPERTY()
-	EDimensionOffsetType Type = EDimensionOffsetType::Centered;
+	EDimensionOffsetType type = EDimensionOffsetType::Centered;
 
 	UPROPERTY()
-	float CustomValue = 0.0f;
+	float customValue = 0.0f;
 
 	bool operator==(const FDimensionOffset& Other) const;
 	bool operator!=(const FDimensionOffset& Other) const;

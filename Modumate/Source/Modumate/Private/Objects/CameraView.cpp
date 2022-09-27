@@ -16,61 +16,61 @@ AMOICameraView::AMOICameraView()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("FOV");
-	prop.Type = EWebMOIPropertyType::text;
-	prop.DisplayName = TEXT("FOV");
+	prop.name = TEXT("FOV");
+	prop.type = EWebMOIPropertyType::text;
+	prop.displayName = TEXT("FOV");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("SavedTime");
-	prop.Type = EWebMOIPropertyType::cameraTime;
-	prop.DisplayName = TEXT("Date");
+	prop.name = TEXT("SavedTime");
+	prop.type = EWebMOIPropertyType::cameraTime;
+	prop.displayName = TEXT("Date");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("bViewCubeVisibility");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("View Cube");
+	prop.name = TEXT("bViewCubeVisibility");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("View Cube");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("bAxesActorVisibility");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("World Axes");
+	prop.name = TEXT("bAxesActorVisibility");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("World Axes");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("bOrthoView");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("Orthogonal");
+	prop.name = TEXT("bOrthoView");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Orthogonal");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("bCutPlanesColorVisibility");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("Cut plane colors");
+	prop.name = TEXT("bCutPlanesColorVisibility");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Cut plane colors");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("bGraphDirectionVisibility");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("Graph Direction");
+	prop.name = TEXT("bGraphDirectionVisibility");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Graph Direction");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("UpdateCameraPosition");
-	prop.Type = EWebMOIPropertyType::cameraPositionUpdate;
-	prop.DisplayName = TEXT("Camera Position");
+	prop.name = TEXT("UpdateCameraPosition");
+	prop.type = EWebMOIPropertyType::cameraPositionUpdate;
+	prop.displayName = TEXT("Camera Position");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor* AMOICameraView::CreateActor(const FVector& loc, const FQuat& rot)
@@ -131,8 +131,8 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 			return false;
 		}
 
-		const FWebMOIProperty* FormPropUpdatePosition = WebMOI.Properties.Find(TEXT("UpdateCameraPosition"));
-		const bool bUpdatePosition = FormPropUpdatePosition->ValueArray[0] == TEXT("true");
+		const FWebMOIProperty* FormPropUpdatePosition = WebMOI.properties.Find(TEXT("UpdateCameraPosition"));
+		const bool bUpdatePosition = FormPropUpdatePosition->valueArray[0] == TEXT("true");
 
 		if (bUpdatePosition)
 		{
@@ -156,9 +156,9 @@ bool AMOICameraView::ToWebMOI(FWebMOI& OutMOI) const
 	{
 		const FWebMOIProperty* formPropUpdatePosition = WebProperties.Find(TEXT("UpdateCameraPosition"));
 		FWebMOIProperty webPropUpdatePosition = *formPropUpdatePosition;
-		webPropUpdatePosition.ValueArray.Empty();
-		webPropUpdatePosition.ValueArray.Add(TEXT("false"));
-		OutMOI.Properties.Add(TEXT("UpdateCameraPosition"), webPropUpdatePosition);
+		webPropUpdatePosition.valueArray.Empty();
+		webPropUpdatePosition.valueArray.Add(TEXT("false"));
+		OutMOI.properties.Add(TEXT("UpdateCameraPosition"), webPropUpdatePosition);
 		
 		return true;
 	}

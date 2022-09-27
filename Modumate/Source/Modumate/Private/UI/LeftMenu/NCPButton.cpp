@@ -82,9 +82,9 @@ void UNCPButton::BuildCategoryButton(class UNCPNavigator* InParentNCPNavigator, 
 	{
 		FBIMPresetTaxonomyNode taxNode;
 		EMPlayerController->GetDocument()->GetPresetCollection().PresetTaxonomy.GetExactMatch(NCPTag, taxNode);
-		if (!taxNode.DisplayName.IsEmpty())
+		if (!taxNode.displayName.IsEmpty())
 		{
-			ButtonText->SetText(taxNode.DisplayName);
+			ButtonText->SetText(taxNode.displayName);
 		}
 		else
 		{

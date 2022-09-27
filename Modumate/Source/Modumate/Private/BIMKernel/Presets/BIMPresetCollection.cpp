@@ -384,27 +384,27 @@ EBIMResult FBIMPresetCollection::PostLoad()
 			{
 				if (kvp.Value.CategoryTitle.IsEmpty())
 				{
-					kvp.Value.CategoryTitle = node.DesignerTitle;
+					kvp.Value.CategoryTitle = node.designerTitle;
 				}
 
 				if (kvp.Value.MeasurementMethod == EPresetMeasurementMethod::None)
 				{
-					kvp.Value.MeasurementMethod = node.MeasurementMethod;
+					kvp.Value.MeasurementMethod = node.measurementMethod;
 				}
 
 				if (kvp.Value.ObjectType == EObjectType::OTNone)
 				{
-					kvp.Value.ObjectType = node.ObjectType;
+					kvp.Value.ObjectType = node.objectType;
 				}
 
 				if (kvp.Value.DisplayName.IsEmpty())
 				{
-					kvp.Value.DisplayName = node.DisplayName;
+					kvp.Value.DisplayName = node.displayName;
 				}
 
 				if (kvp.Value.AssetType == EBIMAssetType::None)
 				{
-					kvp.Value.AssetType = node.AssetType;
+					kvp.Value.AssetType = node.assetType;
 				}
 			}
 		}
@@ -1259,7 +1259,7 @@ EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPrese
 		kvp.Value.ToWebPreset(webPreset, World);
 	}
 
-	OutPresets.ncpTaxonomy = PresetTaxonomy.Nodes;
+	OutPresets.ncpTaxonomy = PresetTaxonomy.nodes;
 
 	return EBIMResult::Success;
 }

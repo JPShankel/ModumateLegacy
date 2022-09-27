@@ -416,7 +416,7 @@ void UNCPNavigator::GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& T
 	{
 		FBIMPresetTaxonomyNode taxNode;
 		EMPlayerController->GetDocument()->GetPresetCollection().PresetTaxonomy.GetExactMatch(TopTraversalNCP, taxNode);
-		bCanTraverse = TopTraversalNCP.Tags.Num() > 1 && !taxNode.BlockUpwardTraversal;
+		bCanTraverse = TopTraversalNCP.Tags.Num() > 1 && !taxNode.blockUpwardTraversal;
 		if (bCanTraverse)
 		{
 			FBIMTagPath partialPath;

@@ -31,40 +31,40 @@ AMOIEdgeHosted::AMOIEdgeHosted()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("FlipSigns");
-	prop.Type = EWebMOIPropertyType::flip3D;
-	prop.DisplayName = TEXT("Flip");
+	prop.name = TEXT("FlipSigns");
+	prop.type = EWebMOIPropertyType::flip3D;
+	prop.displayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("OffsetUp");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset Y");
+	prop.name = TEXT("OffsetUp");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset Y");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("OffsetNormal");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset X");
+	prop.name = TEXT("OffsetNormal");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset X");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Extensions");
-	prop.Type = EWebMOIPropertyType::extension;
-	prop.DisplayName = TEXT("Extensions");
+	prop.name = TEXT("Extensions");
+	prop.type = EWebMOIPropertyType::extension;
+	prop.displayName = TEXT("Extensions");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Rotation");
-	prop.Type = EWebMOIPropertyType::text;
-	prop.DisplayName = TEXT("Rotation");
+	prop.name = TEXT("Rotation");
+	prop.type = EWebMOIPropertyType::text;
+	prop.displayName = TEXT("Rotation");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor* AMOIEdgeHosted::CreateActor(const FVector& loc, const FQuat& rot)
@@ -168,7 +168,7 @@ bool AMOIEdgeHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOIStat
 
 	FMOIEdgeHostedData modifiedInstanceData = InstanceData;
 	FDimensionOffset& nextOffset = (targetProfileAxisIdx == 0) ? modifiedInstanceData.OffsetNormal : modifiedInstanceData.OffsetUp;
-	nextOffset.Type = nextOffsetType;
+	nextOffset.type = nextOffsetType;
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedInstanceData);

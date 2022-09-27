@@ -18,12 +18,12 @@ AMOITerrainVertex::AMOITerrainVertex()
 
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("Height");
-	prop.Type = EWebMOIPropertyType::height;
-	prop.DisplayName = TEXT("Height");
+	prop.name = TEXT("Height");
+	prop.type = EWebMOIPropertyType::height;
+	prop.displayName = TEXT("Height");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 FVector AMOITerrainVertex::GetLocation() const
@@ -122,17 +122,17 @@ bool AMOITerrainVertex::ToWebMOI(FWebMOI& OutMOI) const
 	FMOITerrainData newInstanceData = terrainMoi->InstanceData;
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
-		FWebMOIProperty* moiProp = OutMOI.Properties.Find(TEXT("Height"));
+		FWebMOIProperty* moiProp = OutMOI.properties.Find(TEXT("Height"));
 		if (!ensure(moiProp))
 		{
 			return false;
 		}
 
-		moiProp->ValueArray.Empty();
+		moiProp->valueArray.Empty();
 		double* height = newInstanceData.Heights.Find(ID);
 		if (ensure(height != nullptr))
 		{
-			moiProp->ValueArray.Add(FString::SanitizeFloat(*height));
+			moiProp->valueArray.Add(FString::SanitizeFloat(*height));
 		}
 
 		return true;

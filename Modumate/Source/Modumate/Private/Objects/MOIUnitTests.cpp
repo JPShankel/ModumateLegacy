@@ -154,42 +154,42 @@ namespace
 		auto* hostedSub = spanSub->GetChildObjects()[0];
 		auto* hostedTar = spanTar->GetChildObjects()[0];
 
-		hostedSub->GetStateData().Alignment.SubjectPZP.ZoneID = originalZone;
-		hostedSub->GetStateData().Alignment.TargetPZP.ZoneID = originalZone;
+		hostedSub->GetStateData().Alignment.subjectPZP.zoneId = originalZone;
+		hostedSub->GetStateData().Alignment.targetPZP.zoneId = originalZone;
 		hostedSub->ToWebMOI(webMOIJson);
-		hostedSub->GetStateData().Alignment.SubjectPZP.ZoneID = modifiedZone;
-		hostedSub->GetStateData().Alignment.TargetPZP.ZoneID = modifiedZone;
+		hostedSub->GetStateData().Alignment.subjectPZP.zoneId = modifiedZone;
+		hostedSub->GetStateData().Alignment.targetPZP.zoneId = modifiedZone;
 		hostedSub->FromWebMOI(webMOIJson);
 		
-		bSuccess = hostedSub->GetStateData().Alignment.SubjectPZP.ZoneID.Equals(originalZone) && bSuccess;
-		bSuccess = hostedSub->GetStateData().Alignment.TargetPZP.ZoneID.Equals(originalZone) && bSuccess;
+		bSuccess = hostedSub->GetStateData().Alignment.subjectPZP.zoneId.Equals(originalZone) && bSuccess;
+		bSuccess = hostedSub->GetStateData().Alignment.targetPZP.zoneId.Equals(originalZone) && bSuccess;
 
 		// Test alignment PZPs
 		FWebMOI webMOI;
 		ReadJsonGeneric<FWebMOI>(*webMOIJson, &webMOI);
 
-		hostedSub->GetStateData().Alignment.SubjectPZP.Displacement = 50.0f;
-		hostedSub->GetStateData().Alignment.SubjectPZP.MoiId = hostedSub->ID;
-		hostedSub->GetStateData().Alignment.SubjectPZP.Origin = EZoneOrigin::Back;
-		hostedSub->GetStateData().Alignment.SubjectPZP.ZoneID = hostedSub->GetAssembly().Layers[0].PresetZoneID;
+		hostedSub->GetStateData().Alignment.subjectPZP.displacement = 50.0f;
+		hostedSub->GetStateData().Alignment.subjectPZP.moiId = hostedSub->ID;
+		hostedSub->GetStateData().Alignment.subjectPZP.origin = EZoneOrigin::Back;
+		hostedSub->GetStateData().Alignment.subjectPZP.zoneId = hostedSub->GetAssembly().Layers[0].PresetZoneID;
 
-		hostedSub->GetStateData().Alignment.TargetPZP.Displacement = 25.0f;
-		hostedSub->GetStateData().Alignment.TargetPZP.MoiId = hostedTar->ID;
-		hostedSub->GetStateData().Alignment.TargetPZP.Origin = EZoneOrigin::MassingPlane;
-		hostedSub->GetStateData().Alignment.TargetPZP.ZoneID = hostedTar->GetAssembly().Layers[0].PresetZoneID;
+		hostedSub->GetStateData().Alignment.targetPZP.displacement = 25.0f;
+		hostedSub->GetStateData().Alignment.targetPZP.moiId = hostedTar->ID;
+		hostedSub->GetStateData().Alignment.targetPZP.origin = EZoneOrigin::MassingPlane;
+		hostedSub->GetStateData().Alignment.targetPZP.zoneId = hostedTar->GetAssembly().Layers[0].PresetZoneID;
 
 		hostedSub->CleanObject(EObjectDirtyFlags::Mitering, nullptr);
 
 		FMOIPlaneHostedObjData phd;
 		hostedSub->GetStateData().CustomData.LoadStructData(phd);
-		bSuccess = (phd.Offset.CustomValue > 40.0f && phd.Offset.CustomValue < 41.0f) && bSuccess;
+		bSuccess = (phd.Offset.customValue > 40.0f && phd.Offset.customValue < 41.0f) && bSuccess;
 
-		hostedSub->GetStateData().Alignment.SubjectPZP.Origin = EZoneOrigin::MassingPlane;
-		hostedSub->GetStateData().Alignment.TargetPZP.MoiId = 0;
+		hostedSub->GetStateData().Alignment.subjectPZP.origin = EZoneOrigin::MassingPlane;
+		hostedSub->GetStateData().Alignment.targetPZP.moiId = 0;
 		hostedSub->CleanObject(EObjectDirtyFlags::Mitering, nullptr);
 
 		hostedSub->GetStateData().CustomData.LoadStructData(phd);
-		bSuccess = (phd.Offset.CustomValue > 42.0f && phd.Offset.CustomValue < 43.0f);
+		bSuccess = (phd.Offset.customValue > 42.0f && phd.Offset.customValue < 43.0f);
 
 		// Delete spans:
 		deltas.Empty();

@@ -41,16 +41,16 @@ struct MODUMATE_API FWebMOIProperty
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString Name;
+	FString name;
 
 	UPROPERTY()
-	EWebMOIPropertyType Type = EWebMOIPropertyType::text;
+	EWebMOIPropertyType type = EWebMOIPropertyType::text;
 
 	UPROPERTY()
-	TArray<FString> ValueArray;
+	TArray<FString> valueArray;
 
 	UPROPERTY()
-	FString DisplayName;
+	FString displayName;
 
 	UPROPERTY()
 	bool isVisible;
@@ -65,10 +65,10 @@ struct MODUMATE_API FWebMOIZone
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString ID;
+	FString id;
 
 	UPROPERTY()
-	FString DisplayName;
+	FString displayName;
 };
 
 USTRUCT()
@@ -77,16 +77,16 @@ struct MODUMATE_API FWebMOIAlignmentTarget
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 MoiID;
+	int32 moiId;
 	
 	UPROPERTY()
-	FGuid PresetID;
+	FGuid presetId;
 
 	UPROPERTY()
-	FString DisplayName;
+	FString displayName;
 
 	UPROPERTY()
-	TArray<FWebMOIZone> Zones;
+	TArray<FWebMOIZone> zones;
 };
 
 USTRUCT()
@@ -95,38 +95,38 @@ struct MODUMATE_API FWebMOI
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 ID = 0;
+	int32 id = 0;
 
 	UPROPERTY()
-	FString DisplayName;
+	FString displayName;
 
 	UPROPERTY()
-	TArray<int32> Children;
+	TArray<int32> children;
 
 	UPROPERTY()
-	FGuid PresetID;
+	FGuid presetId;
 
 	UPROPERTY()
-	int32 Parent = 0;
+	int32 parent = 0;
 
 	UPROPERTY()
-	EObjectType Type = EObjectType::OTNone;
+	EObjectType type = EObjectType::OTNone;
 
 	UPROPERTY()
 	bool isVisible = true;
 
 	UPROPERTY()
-	TMap<FString, FWebMOIProperty> Properties;
+	TMap<FString, FWebMOIProperty> properties;
 
 	friend bool operator==(const FWebMOI& Lhs, const FWebMOI& RHS)
 	{
-		return Lhs.ID == RHS.ID
-			&& Lhs.DisplayName == RHS.DisplayName
-			&& Lhs.PresetID == RHS.PresetID
-			&& Lhs.Parent == RHS.Parent
-			&& Lhs.Type == RHS.Type
+		return Lhs.id == RHS.id
+			&& Lhs.displayName == RHS.displayName
+			&& Lhs.presetId == RHS.presetId
+			&& Lhs.parent == RHS.parent
+			&& Lhs.type == RHS.type
 			&& Lhs.isVisible == RHS.isVisible
-			&& Lhs.Children == RHS.Children;
+			&& Lhs.children == RHS.children;
 	}
 
 	friend bool operator!=(const FWebMOI& Lhs, const FWebMOI& RHS)
@@ -135,13 +135,13 @@ struct MODUMATE_API FWebMOI
 	}
 
 	UPROPERTY()
-	FMOIAlignment Alignment;
+	FMOIAlignment alignment;
 
 	UPROPERTY()
-	TArray<FWebMOIZone> Zones;
+	TArray<FWebMOIZone> zones;
 
 	UPROPERTY()
-	TArray<FWebMOIAlignmentTarget> AlignmentTargets;
+	TArray<FWebMOIAlignmentTarget> alignmentTargets;
 };
 
 USTRUCT()

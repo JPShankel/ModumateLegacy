@@ -21,19 +21,19 @@ AMOITerrain::AMOITerrain()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("Xray");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("X-Ray");
+	prop.name = TEXT("Xray");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("X-Ray");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Visible");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("Visible");
+	prop.name = TEXT("Visible");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Visible");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 FVector AMOITerrain::GetCorner(int32 index) const
@@ -460,14 +460,14 @@ bool AMOITerrain::FromWebMOI(const FString& InJson)
 		return false;
 	}
 
-	const FWebMOIProperty* formPropXray = webMOI.Properties.Find(TEXT("Xray"));
-	bool bXray = formPropXray->ValueArray[0] == TEXT("true");
+	const FWebMOIProperty* formPropXray = webMOI.properties.Find(TEXT("Xray"));
+	bool bXray = formPropXray->valueArray[0] == TEXT("true");
 	if (bXray != GetIsTranslucent()) {
 		SetIsTranslucent(bXray);
 	}
 
-	const FWebMOIProperty* formPropVisible = webMOI.Properties.Find(TEXT("Visible"));
-	bool bLocalVisible = formPropVisible->ValueArray[0] == TEXT("true");
+	const FWebMOIProperty* formPropVisible = webMOI.properties.Find(TEXT("Visible"));
+	bool bLocalVisible = formPropVisible->valueArray[0] == TEXT("true");
 	if (bLocalVisible == HideRequests.Contains(FName(TEXT("WebPropertiesPanel")))) {
 		RequestHidden(FName(TEXT("WebPropertiesPanel")), !bLocalVisible);
 	}
@@ -482,14 +482,14 @@ bool AMOITerrain::ToWebMOI(FWebMOI& OutMOI) const
 		const FWebMOIProperty* formPropXray = WebProperties.Find(TEXT("Xray"));
 		FWebMOIProperty webPropXray = *formPropXray;
 		FString translucent = GetIsTranslucent() ? TEXT("true") : TEXT("false");
-		webPropXray.ValueArray.Add(translucent);
-		OutMOI.Properties.Add("Xray", webPropXray);
+		webPropXray.valueArray.Add(translucent);
+		OutMOI.properties.Add("Xray", webPropXray);
 
 		const FWebMOIProperty* formPropVisible = WebProperties.Find(TEXT("Visible"));
 		FWebMOIProperty webPropVisible = *formPropVisible;
 		FString visible = HideRequests.Contains(FName(TEXT("WebPropertiesPanel"))) ? TEXT("false") : TEXT("true");
-		webPropVisible.ValueArray.Add(visible);
-		OutMOI.Properties.Add("Visible", webPropVisible);
+		webPropVisible.valueArray.Add(visible);
+		OutMOI.properties.Add("Visible", webPropVisible);
 		
 		return true;
 	}

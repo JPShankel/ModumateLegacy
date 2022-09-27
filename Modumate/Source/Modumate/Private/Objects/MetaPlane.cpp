@@ -20,19 +20,19 @@ AMOIMetaPlane::AMOIMetaPlane()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("FlipDirection");
-	prop.Type = EWebMOIPropertyType::flipDirection;
-	prop.DisplayName = TEXT("Flip Direction");
+	prop.name = TEXT("FlipDirection");
+	prop.type = EWebMOIPropertyType::flipDirection;
+	prop.displayName = TEXT("Flip Direction");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("CalculatedArea");
-	prop.Type = EWebMOIPropertyType::label;
-	prop.DisplayName = TEXT("Area");
+	prop.name = TEXT("CalculatedArea");
+	prop.type = EWebMOIPropertyType::label;
+	prop.displayName = TEXT("Area");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 bool AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
@@ -149,9 +149,9 @@ bool AMOIMetaPlane::ToWebMOI(FWebMOI& OutMOI) const
 	{
 		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 
-		FWebMOIProperty* moiProp = OutMOI.Properties.Find(TEXT("FlipDirection"));
-		moiProp->ValueArray.Empty();
-		moiProp->ValueArray.Add("false");
+		FWebMOIProperty* moiProp = OutMOI.properties.Find(TEXT("FlipDirection"));
+		moiProp->valueArray.Empty();
+		moiProp->valueArray.Add("false");
 
 		const double area = CalculateArea(controller);
 
@@ -161,11 +161,11 @@ bool AMOIMetaPlane::ToWebMOI(FWebMOI& OutMOI) const
 			EDimensionUnits unitType = controller->GetDocument()->GetCurrentSettings().DimensionType;
 			FText areaDisplayText = UModumateDimensionStatics::CentimetersToDisplayText(area, 2, unitType, defaultUnit);
 
-			moiProp = OutMOI.Properties.Find(TEXT("CalculatedArea"));
+			moiProp = OutMOI.properties.Find(TEXT("CalculatedArea"));
 			if (ensure(moiProp))
 			{
-				moiProp->ValueArray.Empty();
-				moiProp->ValueArray.Add(areaDisplayText.ToString());
+				moiProp->valueArray.Empty();
+				moiProp->valueArray.Add(areaDisplayText.ToString());
 			}
 		}
 

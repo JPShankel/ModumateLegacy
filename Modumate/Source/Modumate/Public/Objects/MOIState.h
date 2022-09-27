@@ -51,19 +51,19 @@ struct MODUMATE_API FMOIPresetZonePlane
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 MoiId = 0;
+	int32 moiId = 0;
 
 	UPROPERTY()
-	FString ZoneID;
+	FString zoneId;
 
 	UPROPERTY()
-	EZoneOrigin Origin = EZoneOrigin::Center;
+	EZoneOrigin origin = EZoneOrigin::Center;
 
 	UPROPERTY()
-	FGuid PresetGUID;
+	FGuid presetGuid;
 
 	UPROPERTY()
-	float Displacement = 0.0f;
+	float displacement = 0.0f;
 
 	bool operator==(const FMOIPresetZonePlane& Other) const;
 	bool operator!=(const FMOIPresetZonePlane& Other) const;
@@ -75,13 +75,13 @@ struct MODUMATE_API FMOIAlignment
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString DisplayName = TEXT("Alignment Preset");
+	FString displayName = TEXT("Alignment Preset");
 
 	UPROPERTY()
-	FMOIPresetZonePlane SubjectPZP;
+	FMOIPresetZonePlane subjectPZP;
 	
 	UPROPERTY()
-	FMOIPresetZonePlane TargetPZP;
+	FMOIPresetZonePlane targetPZP;
 	
 	bool operator==(const FMOIAlignment& Other) const;
 	bool operator!=(const FMOIAlignment& Other) const;

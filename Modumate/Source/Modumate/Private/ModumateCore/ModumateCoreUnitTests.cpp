@@ -28,6 +28,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "ModumateCore/ModumateAutomationStatics.h"
+#include "ModumateCore/PrettyJSONWriter.h"
 #include "Tests/AutomationCommon.h"
 
 #define LOCTEXT_NAMESPACE "CoreUnitTests"
@@ -1989,6 +1990,29 @@ bool FModumateGroupTest::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateJSonParsingTest, "Modumate.Core.JSONParsing", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter
+	| EAutomationTestFlags::HighPriority)
+	bool FModumateJSonParsingTest::RunTest(const FString& Parameters)
+{
+	FModumateJsonTest ustructIn, ustructOut;
+	FString jsonIn;
+
+	ustructIn.ID = TEXT("Unit Test Value");
+	ustructIn.IntegerValue = 123;
+	bool bSuccess = WriteJsonGeneric<FModumateJsonTest>(jsonIn, &ustructIn);
+
+	// Make sure Epic didn't "fix" our capitalization
+	bSuccess = jsonIn.Contains(TEXT("ID"),ESearchCase::CaseSensitive) && bSuccess;
+
+	bSuccess = ReadJsonGeneric<FModumateJsonTest>(jsonIn, &ustructOut);
+
+	bSuccess = (ustructOut.ID == ustructIn.ID) && bSuccess;
+	bSuccess = (ustructOut.IntegerValue == ustructIn.IntegerValue) && bSuccess;
+
+	return bSuccess;
+}
+
 
 #endif
 

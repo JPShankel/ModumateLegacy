@@ -8,16 +8,16 @@ FDimensionOffset FDimensionOffset::Centered(EDimensionOffsetType::Centered, 0.0f
 FDimensionOffset FDimensionOffset::Negative(EDimensionOffsetType::Negative, 0.0f);
 
 FDimensionOffset::FDimensionOffset(EDimensionOffsetType InType, float InCustomValue)
-	: Type(InType)
-	, CustomValue(InCustomValue)
+	: type(InType)
+	, customValue(InCustomValue)
 {
 }
 
 bool FDimensionOffset::operator==(const FDimensionOffset& Other) const
 {
 	return
-		(Type == Other.Type) &&
-		(CustomValue == Other.CustomValue);
+		(type == Other.type) &&
+		(customValue == Other.customValue);
 }
 
 bool FDimensionOffset::operator!=(const FDimensionOffset& Other) const
@@ -27,7 +27,7 @@ bool FDimensionOffset::operator!=(const FDimensionOffset& Other) const
 
 float FDimensionOffset::GetOffsetDistance(float FlipSign, float TargetThickness) const
 {
-	switch (Type)
+	switch (type)
 	{
 	case EDimensionOffsetType::Centered:
 		return 0.0f;
@@ -36,7 +36,7 @@ float FDimensionOffset::GetOffsetDistance(float FlipSign, float TargetThickness)
 	case EDimensionOffsetType::Positive:
 		return 0.5f * FlipSign * TargetThickness;
 	case EDimensionOffsetType::Custom:
-		return FlipSign * CustomValue;
+		return FlipSign * customValue;
 	default:
 		ensureAlways(false);
 		return 0.0f;
@@ -47,11 +47,11 @@ EDimensionOffsetType FDimensionOffset::GetNextType(int32 Delta, float FlipSign) 
 {
 	if (Delta == 0.0f)
 	{
-		return Type;
+		return type;
 	}
 
 	bool bPositive = (FlipSign * Delta > 0);
-	switch (Type)
+	switch (type)
 	{
 	case EDimensionOffsetType::Centered:
 		return bPositive ? EDimensionOffsetType::Positive : EDimensionOffsetType::Negative;
@@ -61,25 +61,25 @@ EDimensionOffsetType FDimensionOffset::GetNextType(int32 Delta, float FlipSign) 
 		return bPositive ? EDimensionOffsetType::Positive : EDimensionOffsetType::Centered;
 	case EDimensionOffsetType::Custom:
 		return bPositive ?
-			((CustomValue < 0.0f) ? EDimensionOffsetType::Centered : EDimensionOffsetType::Positive) :
-			((CustomValue > 0.0f) ? EDimensionOffsetType::Centered : EDimensionOffsetType::Negative);
+			((customValue < 0.0f) ? EDimensionOffsetType::Centered : EDimensionOffsetType::Positive) :
+			((customValue > 0.0f) ? EDimensionOffsetType::Centered : EDimensionOffsetType::Negative);
 	default:
-		return Type;
+		return type;
 	}
 }
 
 void FDimensionOffset::Invert()
 {
-	switch (Type)
+	switch (type)
 	{
 	case EDimensionOffsetType::Negative:
-		Type = EDimensionOffsetType::Positive;
+		type = EDimensionOffsetType::Positive;
 		break;
 	case EDimensionOffsetType::Positive:
-		Type = EDimensionOffsetType::Negative;
+		type = EDimensionOffsetType::Negative;
 		break;
 	case EDimensionOffsetType::Custom:
-		CustomValue *= -1.0f;
+		customValue *= -1.0f;
 		break;
 	default:
 		break;

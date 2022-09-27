@@ -22,40 +22,40 @@ AMOIPointHosted::AMOIPointHosted()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("FlipSigns");
-	prop.Type = EWebMOIPropertyType::flip3D;
-	prop.DisplayName = TEXT("Flip");
+	prop.name = TEXT("FlipSigns");
+	prop.type = EWebMOIPropertyType::flip3D;
+	prop.displayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("OffsetX");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset X");
+	prop.name = TEXT("OffsetX");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset X");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("OffsetY");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset Y");
+	prop.name = TEXT("OffsetY");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset Y");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("OffsetZ");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset Z");
+	prop.name = TEXT("OffsetZ");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset Z");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Rotation");
-	prop.Type = EWebMOIPropertyType::eulerRotation3D;
-	prop.DisplayName = TEXT("Rotation");
+	prop.name = TEXT("Rotation");
+	prop.type = EWebMOIPropertyType::eulerRotation3D;
+	prop.displayName = TEXT("Rotation");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor* AMOIPointHosted::CreateActor(const FVector& loc, const FQuat& rot)
@@ -136,19 +136,19 @@ bool AMOIPointHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOISta
 	{
 		curOffset = InstanceData.OffsetX;
 		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().X, InstanceData.FlipSigns.X);
-		modifiedInstanceData.OffsetX.Type = nextOffsetType;
+		modifiedInstanceData.OffsetX.type = nextOffsetType;
 	}
 	else if (absDir.Y > absDir.X && absDir.Y > absDir.Z)
 	{
 		curOffset = InstanceData.OffsetY;
 		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Y, InstanceData.FlipSigns.Y);
-		modifiedInstanceData.OffsetY.Type = nextOffsetType;
+		modifiedInstanceData.OffsetY.type = nextOffsetType;
 	}
 	else if (absDir.Z > absDir.X && absDir.Z > absDir.Y)
 	{
 		curOffset = InstanceData.OffsetZ;
 		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Z, InstanceData.FlipSigns.Z);
-		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
+		modifiedInstanceData.OffsetZ.type = nextOffsetType;
 	}
 	else
 	{

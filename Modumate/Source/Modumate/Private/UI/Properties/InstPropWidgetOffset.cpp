@@ -66,9 +66,9 @@ void UInstPropWidgetOffset::DisplayValue()
 	{
 		OffsetTypeDropdown->ComboBoxStringJustification->RemoveOption(mixedString);
 
-		EDimensionOffsetType displayOffsetType = CurrentValue.Type;
+		EDimensionOffsetType displayOffsetType = CurrentValue.type;
 		auto offsetTypeEnum = StaticEnum<EDimensionOffsetType>();
-		int32 offsetTypeIdx = offsetTypeEnum->GetIndexByValue(static_cast<int64>(CurrentValue.Type));
+		int32 offsetTypeIdx = offsetTypeEnum->GetIndexByValue(static_cast<int64>(CurrentValue.type));
 		if (offsetTypeIdx != INDEX_NONE)
 		{
 			OffsetTypeDropdown->ComboBoxStringJustification->SetSelectedIndex(offsetTypeIdx);
@@ -80,12 +80,12 @@ void UInstPropWidgetOffset::DisplayValue()
 		OffsetTypeDropdown->ComboBoxStringJustification->SetSelectedOption(mixedString);
 	}
 
-	if (CurrentValue.Type == EDimensionOffsetType::Custom)
+	if (CurrentValue.type == EDimensionOffsetType::Custom)
 	{
 		const auto& settings = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->GetDocument()->GetCurrentSettings();
 		CustomValueTitle->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		CustomValueText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue.CustomValue,1,settings.DimensionType,settings.DimensionUnit));
+		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue.customValue,1,settings.DimensionType,settings.DimensionUnit));
 	}
 	else
 	{
@@ -113,22 +113,22 @@ void UInstPropWidgetOffset::OnOffsetTypeSelected(FString SelectedItem, ESelectIn
 	}
 
 	EDimensionOffsetType selectedType = DimensionTypeByString[SelectedItem];
-	if (CurrentValue.Type != selectedType)
+	if (CurrentValue.type != selectedType)
 	{
-		CurrentValue.Type = selectedType;
+		CurrentValue.type = selectedType;
 		PostValueChanged();
 	}
 }
 
 void UInstPropWidgetOffset::OnCustomValueTextCommitted(const FText& NewText, ETextCommit::Type CommitMethod)
 {
-	if ((CurrentValue.Type == EDimensionOffsetType::Custom) &&
+	if ((CurrentValue.type == EDimensionOffsetType::Custom) &&
 		((CommitMethod == ETextCommit::OnEnter) || (CommitMethod == ETextCommit::OnUserMovedFocus)))
 	{
 		auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(NewText.ToString());
-		if (CurrentValue.CustomValue != enteredDimension.Centimeters)
+		if (CurrentValue.customValue != enteredDimension.Centimeters)
 		{
-			CurrentValue.CustomValue = enteredDimension.Centimeters;
+			CurrentValue.customValue = enteredDimension.Centimeters;
 			PostValueChanged();
 		}
 	}

@@ -37,7 +37,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 		return false;
 	}
 
-	AModumateObjectInstance* moi = Doc->GetObjectById(viewRequest.moi_id);
+	AModumateObjectInstance* moi = Doc->GetObjectById(viewRequest.moiId);
 	auto* gameMode = Doc->GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane) || !gameMode)
 	{
@@ -54,16 +54,16 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 	const FVector planeCentre((corners[0] + corners[2]) / 2.0f);
 	const float planeWidth = (corners[1] - corners[0]).Size();
 	const float planeHeight = (corners[2] - corners[1]).Size();
-	const FVector ll(corners[2] + viewRequest.roi.A.x * (corners[0] - corners[1])
-		+ viewRequest.roi.A.y * (corners[1] - corners[2]));
-	const FVector ur(corners[2] + viewRequest.roi.B.x * (corners[0] - corners[1])
-		+ viewRequest.roi.B.y * (corners[1] - corners[2]));
+	const FVector ll(corners[2] + viewRequest.roi.a.x * (corners[0] - corners[1])
+		+ viewRequest.roi.a.y * (corners[1] - corners[2]));
+	const FVector ur(corners[2] + viewRequest.roi.b.x * (corners[0] - corners[1])
+		+ viewRequest.roi.b.y * (corners[1] - corners[2]));
 	FVector cameraCentre((ll + ur) / 2.0f);
-	const float viewWidth = planeWidth * FMath::Abs(viewRequest.roi.B.x - viewRequest.roi.A.x);
-	const float viewHeight = planeHeight * FMath::Abs(viewRequest.roi.B.y - viewRequest.roi.A.y);
+	const float viewWidth = planeWidth * FMath::Abs(viewRequest.roi.b.x - viewRequest.roi.a.x);
+	const float viewHeight = planeHeight * FMath::Abs(viewRequest.roi.b.y - viewRequest.roi.a.y);
 
 	static constexpr float minFeatureSizeScale = 3.0f;
-	float scaleLength = FMath::Sqrt(viewWidth * viewHeight / (viewRequest.minimum_resolution_pixels.x * viewRequest.minimum_resolution_pixels.y))
+	float scaleLength = FMath::Sqrt(viewWidth * viewHeight / (viewRequest.minimumResolutionPixels.x * viewRequest.minimumResolutionPixels.y))
 		* minFeatureSizeScale;
 
 	CachedXAxis = (corners[0] - corners[1]).GetSafeNormal();
@@ -127,7 +127,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 		}
 	}
 
-	renderer->SetupRenderTarget(viewRequest.minimum_resolution_pixels.x);
+	renderer->SetupRenderTarget(viewRequest.minimumResolutionPixels.x);
 	renderer->RenderImage(cutPlane, scaleLength, &selectedOptions);
 
 	// Restore cutplane
@@ -149,16 +149,16 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 
 		FDrawingDesignerDrawingResponse viewResponse;
 		viewResponse.request = viewRequest;
-		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
+		viewResponse.response.resolutionPixels = viewRequest.minimumResolutionPixels;
 		viewResponse.response.view = webMoi;
-		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
+		viewResponse.response.resolutionPixels = viewRequest.minimumResolutionPixels;
 		viewResponse.response.scale = FModumateUnitValue(CachedSize.Y, EModumateUnitType::WorldCentimeters).AsWorldInches();
 
 		//(D) 100ms
 		FString b64Png(FBase64::Encode(rawPng));
-		viewResponse.response.image_base64 = MoveTemp(b64Png);
+		viewResponse.response.imageBase64 = MoveTemp(b64Png);
 		//(/D)
-		GetSnapPoints(viewRequest.moi_id, viewResponse.response.snaps);
+		GetSnapPoints(viewRequest.moiId, viewResponse.response.snaps);
 		bSuccess = WriteJsonGeneric(OutJsonResponse, &viewResponse);
 
 		//Anything remaining is ~5-10ms
@@ -170,7 +170,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 	SceneProcMaterialMap.Empty();
 
 	double endTime = FPlatformTime::Seconds();
-	UE_LOG(LogTemp, Warning, TEXT("Created view for cut plane id %d in %lf s"), viewRequest.moi_id, endTime - currentTime);
+	UE_LOG(LogTemp, Warning, TEXT("Created view for cut plane id %d in %lf s"), viewRequest.moiId, endTime - currentTime);
 
 	return bSuccess;
 }

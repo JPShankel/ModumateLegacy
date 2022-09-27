@@ -29,34 +29,34 @@ AMOIFaceHosted::AMOIFaceHosted()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("OffsetZ");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset");
+	prop.name = TEXT("OffsetZ");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("FlipSigns");
-	prop.Type = EWebMOIPropertyType::flip3D;
-	prop.DisplayName = TEXT("Flip");
+	prop.name = TEXT("FlipSigns");
+	prop.type = EWebMOIPropertyType::flip3D;
+	prop.displayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("BasisEdge");
-	prop.Type = EWebMOIPropertyType::button;
-	prop.DisplayName = TEXT("Basis");
+	prop.name = TEXT("BasisEdge");
+	prop.type = EWebMOIPropertyType::button;
+	prop.displayName = TEXT("Basis");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
     // TODO: make this a lamba property
-	prop.Name = TEXT("NumEdges");
-	prop.Type = EWebMOIPropertyType::button;
-	prop.DisplayName = TEXT("NumEdges");
+	prop.name = TEXT("NumEdges");
+	prop.type = EWebMOIPropertyType::button;
+	prop.displayName = TEXT("NumEdges");
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor* AMOIFaceHosted::CreateActor(const FVector& loc, const FQuat& rot)
@@ -87,19 +87,19 @@ bool AMOIFaceHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOIStat
 	{
 		curOffset = InstanceData.OffsetZ;
 		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().X, InstanceData.FlipSigns.Z);
-		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
+		modifiedInstanceData.OffsetZ.type = nextOffsetType;
 	}
 	else if (absDir.Y > absDir.X && absDir.Y > absDir.Z)
 	{
 		curOffset = InstanceData.OffsetZ;
 		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Y * -1, InstanceData.FlipSigns.Z);
-		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
+		modifiedInstanceData.OffsetZ.type = nextOffsetType;
 	}
 	else if (absDir.Z > absDir.X && absDir.Z > absDir.Y)
 	{
 		curOffset = InstanceData.OffsetZ;
 		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Z, InstanceData.FlipSigns.Z);
-		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
+		modifiedInstanceData.OffsetZ.type = nextOffsetType;
 	}
 	else
 	{

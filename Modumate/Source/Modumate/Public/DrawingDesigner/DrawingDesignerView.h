@@ -27,9 +27,9 @@ struct MODUMATE_API FDrawingDesignerViewRegion
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FDrawingDesignerPoint A;
+	FDrawingDesignerPoint a;
 	UPROPERTY()
-	FDrawingDesignerPoint B;
+	FDrawingDesignerPoint b;
 
 	bool operator==(const FDrawingDesignerViewRegion& RHS) const;
 	bool operator!=(const FDrawingDesignerViewRegion& RHS) const;
@@ -146,13 +146,13 @@ struct MODUMATE_API FDrawingDesignerDrawingImage
 	TMap<FString, FDrawingDesignerSnap> snaps;
 
 	UPROPERTY()
-	FString image_base64;
+	FString imageBase64;
 
 	UPROPERTY()
 	float scale = 0.0f;
 
 	UPROPERTY()
-	FDrawingDesignerPoint resolution_pixels;
+	FDrawingDesignerPoint resolutionPixels;
 
 	bool operator==(const FDrawingDesignerDrawingImage& RHS) const;
 	bool operator!=(const FDrawingDesignerDrawingImage& RHS) const;
@@ -184,13 +184,13 @@ struct MODUMATE_API FDrawingDesignerDrawingRequest
 	FDrawingDesignerDrawingRequest() = default;
 
 	UPROPERTY()
-	int32 moi_id = INDEX_NONE;
+	int32 moiId = INDEX_NONE;
 
 	UPROPERTY()
 	FDrawingDesignerViewRegion roi;
 
 	UPROPERTY()
-	FDrawingDesignerPoint minimum_resolution_pixels;
+	FDrawingDesignerPoint minimumResolutionPixels;
 
 	UPROPERTY()
 	FJsonObjectWrapper attributes;

@@ -54,19 +54,19 @@ AMOIPortal::AMOIPortal()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("Offset");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset");
+	prop.name = TEXT("Offset");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("FlipIndex");
-	prop.Type = EWebMOIPropertyType::flip2DXY;
-	prop.DisplayName = TEXT("Flip");
+	prop.name = TEXT("FlipIndex");
+	prop.type = EWebMOIPropertyType::flip2DXY;
+	prop.displayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor *AMOIPortal::CreateActor(const FVector &loc, const FQuat &rot)
@@ -473,7 +473,7 @@ bool AMOIPortal::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateDat
 	EDimensionOffsetType nextOffsetType = InstanceData.Offset.GetNextType(projectedAdjustmentSign, normalFlipSign);
 
 	FMOIPortalData modifiedPortalData = InstanceData;
-	modifiedPortalData.Offset.Type = nextOffsetType;
+	modifiedPortalData.Offset.type = nextOffsetType;
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedPortalData);
@@ -633,15 +633,15 @@ void AMOIPortal::PostLoadInstanceData()
 			float flippedJustification = 1.0f - InstanceData.Justification_DEPRECATED;
 			if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
 			{
-				InstanceData.Offset.Type = EDimensionOffsetType::Negative;
+				InstanceData.Offset.type = EDimensionOffsetType::Negative;
 			}
 			else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
 			{
-				InstanceData.Offset.Type = EDimensionOffsetType::Positive;
+				InstanceData.Offset.type = EDimensionOffsetType::Positive;
 			}
 			else
 			{
-				InstanceData.Offset.Type = EDimensionOffsetType::Centered;
+				InstanceData.Offset.type = EDimensionOffsetType::Centered;
 			}
 		}
 

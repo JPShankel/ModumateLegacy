@@ -14,7 +14,7 @@
 
 bool FDrawingDesignerDrawingImage::operator==(const FDrawingDesignerDrawingImage& RHS) const
 {
-	if (this->image_base64 != RHS.image_base64 || this->resolution_pixels != RHS.resolution_pixels)
+	if (this->imageBase64 != RHS.imageBase64 || this->resolutionPixels != RHS.resolutionPixels)
 	{
 		return false;
 	}
@@ -130,7 +130,7 @@ bool FDrawingDesignerPoint::operator!=(const FDrawingDesignerPoint& RHS) const
  */
 bool FDrawingDesignerViewRegion::operator==(const FDrawingDesignerViewRegion& RHS) const
 {
-	return this->A == RHS.A && this->B == RHS.B;
+	return this->a == RHS.a && this->b == RHS.b;
 }
 
 bool FDrawingDesignerViewRegion::operator!=(const FDrawingDesignerViewRegion& RHS) const
@@ -180,9 +180,9 @@ bool FDrawingDesignerViewList::ReadJson(const FString& InJson)
  */
 bool FDrawingDesignerDrawingRequest::operator==(const FDrawingDesignerDrawingRequest& RHS) const
 {
-		return this->moi_id == RHS.moi_id &&
+		return this->moiId == RHS.moiId &&
 		this->roi == RHS.roi &&
-		this->minimum_resolution_pixels == RHS.minimum_resolution_pixels;
+		this->minimumResolutionPixels == RHS.minimumResolutionPixels;
 }
 
 bool FDrawingDesignerDrawingRequest::operator!=(const FDrawingDesignerDrawingRequest& RHS) const

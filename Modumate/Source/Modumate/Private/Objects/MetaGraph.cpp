@@ -14,19 +14,19 @@ AMOIMetaGraph::AMOIMetaGraph()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = PropertyName;
-	prop.Type = EWebMOIPropertyType::text;
-	prop.DisplayName = TEXT("Name");
+	prop.name = PropertyName;
+	prop.type = EWebMOIPropertyType::text;
+	prop.displayName = TEXT("Name");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("SymbolGuid");
-	prop.Type = EWebMOIPropertyType::text;
-	prop.DisplayName = TEXT("Symbol Guid");
+	prop.name = TEXT("SymbolGuid");
+	prop.type = EWebMOIPropertyType::text;
+	prop.displayName = TEXT("Symbol Guid");
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 void AMOIMetaGraph::PostCreateObject(bool bNewObject)
@@ -195,9 +195,9 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 		const FGuid& symbolID = StateData.AssemblyGUID;
 		const FWebMOIProperty* formPropUpdateSymbolGuid = WebProperties.Find(TEXT("SymbolGuid"));
 		FWebMOIProperty webPropSymbolGuid = *formPropUpdateSymbolGuid;
-		webPropSymbolGuid.ValueArray.Empty();
-		webPropSymbolGuid.ValueArray.Add(symbolID.ToString());
-		OutMOI.Properties.Add(TEXT("SymbolGuid"), webPropSymbolGuid);
+		webPropSymbolGuid.valueArray.Empty();
+		webPropSymbolGuid.valueArray.Add(symbolID.ToString());
+		OutMOI.properties.Add(TEXT("SymbolGuid"), webPropSymbolGuid);
 
 		if (symbolID.IsValid())
 		{
@@ -206,9 +206,9 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 			{
 				const FWebMOIProperty* formPropUpdateSymbolName = WebProperties.Find(PropertyName);
 				FWebMOIProperty webPropName = *formPropUpdateSymbolName;
-				webPropName.ValueArray.Empty();
-				webPropName.ValueArray.Add(preset->DisplayName.ToString());
-				OutMOI.Properties.Add(formPropUpdateSymbolName->Name, webPropName);
+				webPropName.valueArray.Empty();
+				webPropName.valueArray.Add(preset->DisplayName.ToString());
+				OutMOI.properties.Add(formPropUpdateSymbolName->name, webPropName);
 			}
 		}
 		return true;
@@ -226,11 +226,11 @@ bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 		{
 			return false;
 		}
-		const auto* nameProp = webMOI.Properties.Find(PropertyName);
+		const auto* nameProp = webMOI.properties.Find(PropertyName);
 
-		if (nameProp && nameProp->Type == EWebMOIPropertyType::text && nameProp->ValueArray.Num() == 1)
+		if (nameProp && nameProp->type == EWebMOIPropertyType::text && nameProp->valueArray.Num() == 1)
 		{
-			const FString& symbolName = nameProp->ValueArray[0];
+			const FString& symbolName = nameProp->valueArray[0];
 			const auto* preset = Document->GetPresetCollection().PresetFromGUID(StateData.AssemblyGUID);
 			if (preset && preset->DisplayName.ToString() != symbolName)
 			{

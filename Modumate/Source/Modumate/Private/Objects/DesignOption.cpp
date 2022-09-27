@@ -10,33 +10,33 @@ AMOIDesignOption::AMOIDesignOption()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("hexColor");
-	prop.Type = EWebMOIPropertyType::color;
-	prop.DisplayName = TEXT("Color");
+	prop.name = TEXT("hexColor");
+	prop.type = EWebMOIPropertyType::color;
+	prop.displayName = TEXT("Color");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name,prop);
+	WebProperties.Add(prop.name,prop);
 
-	prop.Name = TEXT("groups");
-	prop.Type = EWebMOIPropertyType::moiId;
-	prop.DisplayName = TEXT("Groups");
+	prop.name = TEXT("groups");
+	prop.type = EWebMOIPropertyType::moiId;
+	prop.displayName = TEXT("Groups");
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("subOptions");
-	prop.Type = EWebMOIPropertyType::moiId;
-	prop.DisplayName = TEXT("Sub-Options");
+	prop.name = TEXT("subOptions");
+	prop.type = EWebMOIPropertyType::moiId;
+	prop.displayName = TEXT("Sub-Options");
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("isShowing");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("Showing");
+	prop.name = TEXT("isShowing");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Showing");
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 TSharedPtr<FMOIDelta> AMOIDesignOption::MakeCreateDelta(UModumateDocument* Doc, const FString& DisplayName, int32 ParentID)

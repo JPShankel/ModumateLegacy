@@ -34,32 +34,32 @@ AMOIMetaEdge::AMOIMetaEdge()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("FlipDirection");
-	prop.Type = EWebMOIPropertyType::flipDirection;
-	prop.DisplayName = TEXT("Flip Direction");
+	prop.name = TEXT("FlipDirection");
+	prop.type = EWebMOIPropertyType::flipDirection;
+	prop.displayName = TEXT("Flip Direction");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("CalculatedLength");
-	prop.Type = EWebMOIPropertyType::label;
-	prop.DisplayName = TEXT("Length");
+	prop.name = TEXT("CalculatedLength");
+	prop.type = EWebMOIPropertyType::label;
+	prop.displayName = TEXT("Length");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("CachedEdgeDetail");
-	prop.Type = EWebMOIPropertyType::edgeDetail;
-	prop.DisplayName = TEXT("Detail");
+	prop.name = TEXT("CachedEdgeDetail");
+	prop.type = EWebMOIPropertyType::edgeDetail;
+	prop.displayName = TEXT("Detail");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("CachedMiterHash");
-	prop.Type = EWebMOIPropertyType::edgeDetailHash;
+	prop.name = TEXT("CachedMiterHash");
+	prop.type = EWebMOIPropertyType::edgeDetailHash;
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -289,9 +289,9 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 {
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
-		FWebMOIProperty* prop = OutMOI.Properties.Find(TEXT("FlipDirection"));
-		prop->ValueArray.Empty();
-		prop->ValueArray.Add("false");
+		FWebMOIProperty* prop = OutMOI.properties.Find(TEXT("FlipDirection"));
+		prop->valueArray.Empty();
+		prop->valueArray.Add("false");
 
 		const auto* graph = GetDocument()->FindVolumeGraph(ID);
 		auto edge = graph ? graph->FindEdge(ID) : nullptr;
@@ -302,9 +302,9 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 			EDimensionUnits unitType = Document->GetCurrentSettings().DimensionType;
 			FText calculatedLength = UModumateDimensionStatics::CentimetersToDisplayText(CalculateLength(controller), 1, unitType, defaultUnit);
 
-			prop = OutMOI.Properties.Find(TEXT("CalculatedLength"));
-			prop->ValueArray.Empty();
-			prop->ValueArray.Add(calculatedLength.ToString());
+			prop = OutMOI.properties.Find(TEXT("CalculatedLength"));
+			prop->valueArray.Empty();
+			prop->valueArray.Add(calculatedLength.ToString());
 		}
 
 		FString edgeDetailDescription;
@@ -315,13 +315,13 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 		static const FString CachedEdgeDetailName(TEXT("CachedEdgeDetail"));
 		static const FString CachedMiterHashName(TEXT("CachedMiterHash"));
 
-		prop = &OutMOI.Properties.FindOrAdd(CachedEdgeDetailName);
+		prop = &OutMOI.properties.FindOrAdd(CachedEdgeDetailName);
 		*prop = *WebProperties.Find(CachedEdgeDetailName);
-		prop->ValueArray.Add(edgeDetailDescription);
+		prop->valueArray.Add(edgeDetailDescription);
 
-		prop = &OutMOI.Properties.FindOrAdd(CachedMiterHashName);
+		prop = &OutMOI.properties.FindOrAdd(CachedMiterHashName);
 		*prop = *WebProperties.Find(CachedMiterHashName);
-		prop->ValueArray.Add(FString::Printf(TEXT("%u"), CachedEdgeDetailConditionHash));
+		prop->valueArray.Add(FString::Printf(TEXT("%u"), CachedEdgeDetailConditionHash));
 
 		return true;
 	}

@@ -317,7 +317,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			CsvHeaderLines += commas(depth);
 			FBIMPresetTaxonomyNode ncpNode;
 			presets.PresetTaxonomy.GetExactMatch(currentTagPath, ncpNode);
-			FString nodeName = ncpNode.DisplayName.ToString();
+			FString nodeName = ncpNode.displayName.ToString();
 			CsvHeaderLines += CsvEscape(nodeName);
 			if (child.MaterialCost + child.LaborCost != 0.0f)
 			{

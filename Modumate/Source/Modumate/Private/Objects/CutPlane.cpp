@@ -33,26 +33,26 @@ AMOICutPlane::AMOICutPlane()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("Rotation");
-	prop.Type = EWebMOIPropertyType::quatRotation;
-	prop.DisplayName = TEXT("Flip Direction");
+	prop.name = TEXT("Rotation");
+	prop.type = EWebMOIPropertyType::quatRotation;
+	prop.displayName = TEXT("Flip Direction");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Visible");
-	prop.Type = EWebMOIPropertyType::boolean;
-	prop.DisplayName = TEXT("Visibility");
+	prop.name = TEXT("Visible");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Visibility");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Size");
-	prop.Type = EWebMOIPropertyType::size;
-	prop.DisplayName = TEXT("Size");
+	prop.name = TEXT("Size");
+	prop.type = EWebMOIPropertyType::size;
+	prop.displayName = TEXT("Size");
 	prop.isEditable = false;
 	prop.isVisible = false;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor* AMOICutPlane::CreateActor(const FVector& loc, const FQuat& rot)
@@ -774,8 +774,8 @@ bool AMOICutPlane::FromWebMOI(const FString& InJson)
 			return false;
 		}
 
-		const FWebMOIProperty* FormPropVisible = WebMOI.Properties.Find(TEXT("Visible"));
-		const bool bLocalVisible = FormPropVisible->ValueArray[0] == TEXT("true");
+		const FWebMOIProperty* FormPropVisible = WebMOI.properties.Find(TEXT("Visible"));
+		const bool bLocalVisible = FormPropVisible->valueArray[0] == TEXT("true");
 
 		const auto state = GetWorld()->GetFirstPlayerController()->GetPlayerState<AEditModelPlayerState>();
 		if(state)
@@ -804,15 +804,15 @@ bool AMOICutPlane::ToWebMOI(FWebMOI& OutMOI) const
 		FWebMOIProperty WebPropVisible = *FormPropVisible;
 
 		const FString Visible = HideRequests.Contains(UModumateDocument::DocumentHideRequestTag) ? TEXT("false") : TEXT("true");
-		WebPropVisible.ValueArray.Add(Visible);
-		OutMOI.Properties.Add("Visible", WebPropVisible);
+		WebPropVisible.valueArray.Add(Visible);
+		OutMOI.properties.Add("Visible", WebPropVisible);
 		
 		const FWebMOIProperty* FormPropSize = WebProperties.Find(TEXT("Size"));
 		FWebMOIProperty WebPropSize = *FormPropSize;
 
 		const FVector2D Size = GetSize();
-		WebPropSize.ValueArray.Add(Size.ToString());
-		OutMOI.Properties.Add("Size", WebPropSize);
+		WebPropSize.valueArray.Add(Size.ToString());
+		OutMOI.properties.Add("Size", WebPropSize);
 		
 		return true;
 	}

@@ -32,10 +32,10 @@ bool FMOIStateData::operator!=(const FMOIStateData& Other) const
 
 bool FMOIPresetZonePlane::operator==(const FMOIPresetZonePlane& Other) const
 {
-	return (MoiId == Other.MoiId) &&
-		(ZoneID == Other.ZoneID) &&
-		(Origin == Other.Origin) &&
-		(FMath::IsNearlyEqual(Displacement, Other.Displacement));
+	return (moiId == Other.moiId) &&
+		(zoneId == Other.zoneId) &&
+		(origin == Other.origin) &&
+		(FMath::IsNearlyEqual(displacement, Other.displacement));
 }
 
 bool FMOIPresetZonePlane::operator!=(const FMOIPresetZonePlane& Other) const
@@ -45,8 +45,8 @@ bool FMOIPresetZonePlane::operator!=(const FMOIPresetZonePlane& Other) const
 
 bool FMOIAlignment::operator==(const FMOIAlignment& Other) const
 {
-	return (SubjectPZP == Other.SubjectPZP) &&
-		(TargetPZP == Other.TargetPZP);
+	return (subjectPZP == Other.subjectPZP) &&
+		(targetPZP == Other.targetPZP);
 }
 
 bool FMOIAlignment::operator!=(const FMOIAlignment& Other) const

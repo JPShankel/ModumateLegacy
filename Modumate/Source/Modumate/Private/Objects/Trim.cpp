@@ -46,33 +46,33 @@ AMOITrim::AMOITrim()
 {
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("FlipIndex");
-	prop.Type = EWebMOIPropertyType::flip2DYZ;
-	prop.DisplayName = TEXT("Flip");
+	prop.name = TEXT("FlipIndex");
+	prop.type = EWebMOIPropertyType::flip2DYZ;
+	prop.displayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("OffsetNormal");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset X");
+	prop.name = TEXT("OffsetNormal");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset X");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 	
-	prop.Name = TEXT("OffsetUp");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset Y");
+	prop.name = TEXT("OffsetUp");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset Y");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("Extensions");
-	prop.Type = EWebMOIPropertyType::extension;
-	prop.DisplayName = TEXT("Extensions");
+	prop.name = TEXT("Extensions");
+	prop.type = EWebMOIPropertyType::extension;
+	prop.displayName = TEXT("Extensions");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 FVector AMOITrim::GetLocation() const
@@ -213,7 +213,7 @@ bool AMOITrim::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData&
 	EDimensionOffsetType nextOffsetType = InstanceData.OffsetUp.GetNextType(projectedAdjustmentSign, InstanceData.FlipSigns.Y);
 
 	FMOITrimData modifiedTrimData = InstanceData;
-	modifiedTrimData.OffsetUp.Type = nextOffsetType;
+	modifiedTrimData.OffsetUp.type = nextOffsetType;
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
@@ -335,15 +335,15 @@ void AMOITrim::PostLoadInstanceData()
 			float flippedJustification = (InstanceData.FlipSigns.Y * (InstanceData.UpJustification_DEPRECATED - 0.5f)) + 0.5f;
 			if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
 			{
-				InstanceData.OffsetUp.Type = EDimensionOffsetType::Negative;
+				InstanceData.OffsetUp.type = EDimensionOffsetType::Negative;
 			}
 			else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
 			{
-				InstanceData.OffsetUp.Type = EDimensionOffsetType::Positive;
+				InstanceData.OffsetUp.type = EDimensionOffsetType::Positive;
 			}
 			else
 			{
-				InstanceData.OffsetUp.Type = EDimensionOffsetType::Centered;
+				InstanceData.OffsetUp.type = EDimensionOffsetType::Centered;
 			}
 		}
 

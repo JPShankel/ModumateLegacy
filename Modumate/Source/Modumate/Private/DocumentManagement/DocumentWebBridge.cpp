@@ -795,7 +795,7 @@ void UModumateDocumentWebBridge::request_alignment_presets(const FString& Generi
 		{
 			if (ensure(subject != nullptr))
 			{
-				if (subject->GetStateData().AssemblyGUID == moiAlignment.SubjectPZP.PresetGUID)
+				if (subject->GetStateData().AssemblyGUID == moiAlignment.subjectPZP.presetGuid)
 				{
 					FBIMWebPreset webPreset;
 					if (ensure(preset->ToWebPreset(webPreset, GetWorld()) == EBIMResult::Success))
@@ -858,7 +858,7 @@ void UModumateDocumentWebBridge::create_alignment_preset(int32 SubjectMOI, int32
 		return;
 	}
 
-	subject->GetStateData().Alignment.SubjectPZP.PresetGUID = subject->GetAssembly().PresetGUID;
+	subject->GetStateData().Alignment.subjectPZP.presetGuid = subject->GetAssembly().PresetGUID;
 
 	FBIMPresetInstance newPreset = *basePreset;
 	newPreset.GUID = FGuid();

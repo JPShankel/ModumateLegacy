@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-
+#include "CoreMinimal.h"
 #include "ModumateCore/StructDataWrapper.h"
 #include "VectorTypes.h"
 
@@ -172,4 +172,16 @@ public:
 	virtual bool GetInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 
 	FModumateTestStruct1 CustomData;
+};
+
+USTRUCT()
+struct MODUMATE_API FModumateJsonTest
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString ID;
+
+	UPROPERTY()
+	int32 IntegerValue = 0;
 };

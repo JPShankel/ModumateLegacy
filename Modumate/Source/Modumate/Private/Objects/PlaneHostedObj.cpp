@@ -44,19 +44,19 @@ AMOIPlaneHostedObj::AMOIPlaneHostedObj()
 {
 	FWebMOIProperty prop;
 	
-	prop.Name = TEXT("Offset");
-	prop.Type = EWebMOIPropertyType::offset;
-	prop.DisplayName = TEXT("Offset");
+	prop.name = TEXT("Offset");
+	prop.type = EWebMOIPropertyType::offset;
+	prop.displayName = TEXT("Offset");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 
-	prop.Name = TEXT("FlipSigns");
-	prop.Type = EWebMOIPropertyType::flip3D;
-	prop.DisplayName = TEXT("Flip");
+	prop.name = TEXT("FlipSigns");
+	prop.type = EWebMOIPropertyType::flip3D;
+	prop.displayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);	
+	WebProperties.Add(prop.name, prop);	
 }
 
 FQuat AMOIPlaneHostedObj::GetRotation() const
@@ -318,7 +318,7 @@ bool AMOIPlaneHostedObj::GetOffsetState(const FVector& AdjustmentDirection, FMOI
 	EDimensionOffsetType nextOffsetType = InstanceData.Offset.GetNextType(projectedAdjustmentSign, InstanceData.FlipSigns.Y);
 
 	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
-	modifiedPlaneHostedObjData.Offset.Type = nextOffsetType;
+	modifiedPlaneHostedObjData.Offset.type = nextOffsetType;
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
@@ -533,15 +533,15 @@ void AMOIPlaneHostedObj::PostLoadInstanceData()
 			float flippedJustification = (-InstanceData.FlipSigns.Y * (InstanceData.Justification_DEPRECATED - 0.5f)) + 0.5f;
 			if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
 			{
-				InstanceData.Offset.Type = EDimensionOffsetType::Negative;
+				InstanceData.Offset.type = EDimensionOffsetType::Negative;
 			}
 			else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
 			{
-				InstanceData.Offset.Type = EDimensionOffsetType::Positive;
+				InstanceData.Offset.type = EDimensionOffsetType::Positive;
 			}
 			else 
 			{
-				InstanceData.Offset.Type = EDimensionOffsetType::Centered;
+				InstanceData.Offset.type = EDimensionOffsetType::Centered;
 			}
 		}
 
@@ -998,20 +998,20 @@ void AMOIPlaneHostedObj::UpdateAlignmentTargets()
 	}
 
 	// If we don't have any alignment data, we're done
-	if (StateData.Alignment.SubjectPZP.ZoneID.IsEmpty())
+	if (StateData.Alignment.subjectPZP.zoneId.IsEmpty())
 	{
 		return;
 	}
 
 	FPlane myPZP;
-	UModumateObjectStatics::GetPlaneHostedZonePlane(this, StateData.Alignment.SubjectPZP.ZoneID, StateData.Alignment.SubjectPZP.Origin, StateData.Alignment.SubjectPZP.Displacement, myPZP);
+	UModumateObjectStatics::GetPlaneHostedZonePlane(this, StateData.Alignment.subjectPZP.zoneId, StateData.Alignment.subjectPZP.origin, StateData.Alignment.subjectPZP.displacement, myPZP);
 
-	const AMOIPlaneHostedObj* target = Cast<AMOIPlaneHostedObj>(Document->GetObjectById(StateData.Alignment.TargetPZP.MoiId));
+	const AMOIPlaneHostedObj* target = Cast<AMOIPlaneHostedObj>(Document->GetObjectById(StateData.Alignment.targetPZP.moiId));
 	float delta=0.0f;
 	if (target != nullptr)
 	{
 		FPlane theirPZP;
-		UModumateObjectStatics::GetPlaneHostedZonePlane(target, StateData.Alignment.TargetPZP.ZoneID, StateData.Alignment.TargetPZP.Origin, StateData.Alignment.TargetPZP.Displacement, theirPZP);
+		UModumateObjectStatics::GetPlaneHostedZonePlane(target, StateData.Alignment.targetPZP.zoneId, StateData.Alignment.targetPZP.origin, StateData.Alignment.targetPZP.displacement, theirPZP);
 		delta = FVector::PointPlaneDist(theirPZP.GetOrigin(), myPZP.GetOrigin(), myPZP.GetNormal());
 	}
 	else
@@ -1019,8 +1019,8 @@ void AMOIPlaneHostedObj::UpdateAlignmentTargets()
 		delta = FVector::PointPlaneDist(myPZP.GetOrigin(), parentSpan->GetPerimeterFace()->CachedPlane.GetOrigin(), myPZP.GetNormal());
 	}
 
-	InstanceData.Offset.Type = EDimensionOffsetType::Custom;
-	InstanceData.Offset.CustomValue = delta;
+	InstanceData.Offset.type = EDimensionOffsetType::Custom;
+	InstanceData.Offset.customValue = delta;
 	StateData.CustomData.SaveStructData(InstanceData);
 }
 
@@ -1030,9 +1030,9 @@ bool AMOIPlaneHostedObj::ToWebMOI(FWebMOI& OutMOI) const
 	{
 		for (auto& layer : GetAssembly().Layers)
 		{
-			FWebMOIZone& zone = OutMOI.Zones.AddDefaulted_GetRef();
-			zone.ID = layer.PresetZoneID;
-			zone.DisplayName = layer.ZoneDisplayName;
+			FWebMOIZone& zone = OutMOI.zones.AddDefaulted_GetRef();
+			zone.id = layer.PresetZoneID;
+			zone.displayName = layer.ZoneDisplayName;
 		}
 
 		for (auto& alignmentTarget : CachedAlignmentTargets)
@@ -1040,22 +1040,22 @@ bool AMOIPlaneHostedObj::ToWebMOI(FWebMOI& OutMOI) const
 			const AModumateObjectInstance* MOI = Document->GetObjectById(alignmentTarget);
 			if (ensure(MOI != nullptr))
 			{
-				FWebMOIAlignmentTarget& newTarget = OutMOI.AlignmentTargets.AddDefaulted_GetRef();
-				newTarget.MoiID = MOI->ID;
+				FWebMOIAlignmentTarget& newTarget = OutMOI.alignmentTargets.AddDefaulted_GetRef();
+				newTarget.moiId = MOI->ID;
 				
 				FBIMPresetCollection& presetCollection = Document->GetPresetCollection();
 				const FBIMPresetInstance* preset = presetCollection.PresetFromGUID(MOI->GetStateData().AssemblyGUID);
 				if (ensure(preset != nullptr))
 				{
-					newTarget.PresetID = MOI->GetStateData().AssemblyGUID;
-					newTarget.DisplayName = preset->DisplayName.ToString();
+					newTarget.presetId = MOI->GetStateData().AssemblyGUID;
+					newTarget.displayName = preset->DisplayName.ToString();
 				}
 				
 				for (auto& layer : MOI->GetAssembly().Layers)
 				{
-					FWebMOIZone& newZone = newTarget.Zones.AddDefaulted_GetRef();
-					newZone.ID = layer.PresetZoneID;
-					newZone.DisplayName = layer.ZoneDisplayName;
+					FWebMOIZone& newZone = newTarget.zones.AddDefaulted_GetRef();
+					newZone.id = layer.PresetZoneID;
+					newZone.displayName = layer.ZoneDisplayName;
 				}
 			}
 		}

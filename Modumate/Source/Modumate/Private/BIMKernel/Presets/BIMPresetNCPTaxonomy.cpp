@@ -32,8 +32,8 @@ EBIMResult FBIMPresetNCPTaxonomy::LoadCSVRows(const FCsvParser::FRows& Rows)
 			continue;
 		}
 
-		FBIMPresetTaxonomyNode& newNode = Nodes.AddDefaulted_GetRef();
-		newNode.TagPath = tagPath;
+		FBIMPresetTaxonomyNode& newNode = nodes.AddDefaulted_GetRef();
+		newNode.tagPath = tagPath;
 
 		for (auto& kvp : columnTypes)
 		{
@@ -47,36 +47,36 @@ EBIMResult FBIMPresetNCPTaxonomy::LoadCSVRows(const FCsvParser::FRows& Rows)
 				case EBIMTaxonomyColumn::StopNCPTraversal:
 					{
 						// set to false by default, non-empty sets to true
-						newNode.BlockUpwardTraversal = true;
+						newNode.blockUpwardTraversal = true;
 					}
 					break;
 				case EBIMTaxonomyColumn::ObjectType:
-					if (!ensureAlways(FindEnumValueByName(*cell, newNode.ObjectType)))
+					if (!ensureAlways(FindEnumValueByName(*cell, newNode.objectType)))
 					{
 						return EBIMResult::Error;
 					}
 					break;
 
 				case EBIMTaxonomyColumn::AssetType:
-					if (!ensureAlways(FindEnumValueByName(*cell, newNode.AssetType)))
+					if (!ensureAlways(FindEnumValueByName(*cell, newNode.assetType)))
 					{
 						return EBIMResult::Error;
 					}
 					break;
 
 				case EBIMTaxonomyColumn::BIMDesignerNodeTitle:
-					newNode.DesignerTitle = FText::FromString(cell);
+					newNode.designerTitle = FText::FromString(cell);
 					break;
 
 				case EBIMTaxonomyColumn::MeasurementMethods:
-					if (!ensureAlways(FindEnumValueByName(*cell, newNode.MeasurementMethod)))
+					if (!ensureAlways(FindEnumValueByName(*cell, newNode.measurementMethod)))
 					{
 						return EBIMResult::Error;
 					}
 					break;
 
 				case EBIMTaxonomyColumn::DisplayName:
-					newNode.DisplayName = FText::FromString(cell);
+					newNode.displayName = FText::FromString(cell);
 					break;
 			};
 
@@ -90,9 +90,9 @@ EBIMResult FBIMPresetNCPTaxonomy::LoadCSVRows(const FCsvParser::FRows& Rows)
 
 EBIMResult FBIMPresetNCPTaxonomy::GetFirstPartialMatch(const FBIMTagPath& TagPath, FBIMPresetTaxonomyNode& OutNode) const
 {
-	for (auto& node : Nodes)
+	for (auto& node : nodes)
 	{
-		if (node.TagPath.MatchesPartial(TagPath))
+		if (node.tagPath.MatchesPartial(TagPath))
 		{
 			OutNode = node;
 			return EBIMResult::Success;
@@ -103,9 +103,9 @@ EBIMResult FBIMPresetNCPTaxonomy::GetFirstPartialMatch(const FBIMTagPath& TagPat
 
 EBIMResult FBIMPresetNCPTaxonomy::GetAllPartialMatches(const FBIMTagPath& TagPath, TArray<FBIMPresetTaxonomyNode>& OutNodes) const
 {
-	for (auto& node : Nodes)
+	for (auto& node : nodes)
 	{
-		if (node.TagPath.MatchesPartial(TagPath))
+		if (node.tagPath.MatchesPartial(TagPath))
 		{
 			OutNodes.Add(node);
 		}
@@ -115,9 +115,9 @@ EBIMResult FBIMPresetNCPTaxonomy::GetAllPartialMatches(const FBIMTagPath& TagPat
 
 EBIMResult FBIMPresetNCPTaxonomy::GetExactMatch(const FBIMTagPath& TagPath, FBIMPresetTaxonomyNode& OutNode) const
 {
-	for (auto& node : Nodes)
+	for (auto& node : nodes)
 	{
-		if (node.TagPath.MatchesExact(TagPath))
+		if (node.tagPath.MatchesExact(TagPath))
 		{
 			OutNode = node;
 			return EBIMResult::Success;
@@ -128,11 +128,11 @@ EBIMResult FBIMPresetNCPTaxonomy::GetExactMatch(const FBIMTagPath& TagPath, FBIM
 
 int32 FBIMPresetNCPTaxonomy::GetNodePosition(const FBIMTagPath& TagPath) const
 {
-	for (const auto& node : Nodes)
+	for (const auto& node : nodes)
 	{
-		if (node.TagPath.MatchesExact(TagPath))
+		if (node.tagPath.MatchesExact(TagPath))
 		{
-			return &node - &Nodes[0];
+			return &node - &nodes[0];
 		}
 	}
 	return INDEX_NONE;

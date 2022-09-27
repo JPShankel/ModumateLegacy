@@ -197,7 +197,7 @@ void AEditModelPlayerState::TryInitController()
 
 void AEditModelPlayerState::RenderSelectedAlignmentTargetLines(UModumateDocument& Document, const FMOIAlignment& SelectedMOIAlignment)
 {
-	AModumateObjectInstance* targetMoi = Document.GetObjectById(SelectedMOIAlignment.TargetPZP.MoiId);
+	AModumateObjectInstance* targetMoi = Document.GetObjectById(SelectedMOIAlignment.targetPZP.moiId);
 	targetMoi->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, EMPlayerController->GetCurrentCullingPlane());
 	for (const auto line : TempObjectStructureLines)
 	{
@@ -226,7 +226,7 @@ void AEditModelPlayerState::BatchRenderLines()
 	{
 		for (auto *selectedObj : SelectedObjects)
 		{
-			if (selectedObj->GetStateData().Alignment.TargetPZP.MoiId != 0)
+			if (selectedObj->GetStateData().Alignment.targetPZP.moiId != 0)
 			{
 				RenderSelectedAlignmentTargetLines(*doc, selectedObj->GetStateData().Alignment);
 			}
@@ -1797,7 +1797,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 {
 #if !UE_SERVER
 	TArray<int32> webObIds;
-	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.ID; });
+	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.id; });
 
 	TArray<const AModumateObjectInstance*> obs;
 	obs.Append(SelectedObjects.Array());
@@ -1867,9 +1867,9 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	}
 	
 	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
-	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView && newSelected.Contains(InState.selectedObjects[0].ID))
+	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].type == EObjectType::OTCameraView && newSelected.Contains(InState.selectedObjects[0].id))
 	{
-		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
+		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].id));
 		cameraView->UpdateCameraPosition();
 	}
 	else if (EMPlayerController)
@@ -1892,8 +1892,6 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 			EMPlayerController->EMPlayerPawn->SetCameraOrtho(InState.camera.bOrthoView);
 		}
 
-		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
-
 		if (EMPlayerController->SkyActor != nullptr)
 		{
 			EMPlayerController->SkyActor->SetCurrentDateTime(dateTime);
@@ -1908,6 +1906,9 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		{
 			EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 		}
+
+		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
+
 		// Cache the camera state to send back to the web
 		CachedInputCameraState = InState.camera;
 	}

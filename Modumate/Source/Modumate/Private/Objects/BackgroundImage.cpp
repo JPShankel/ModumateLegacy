@@ -25,12 +25,12 @@ AMOIBackgroundImage::AMOIBackgroundImage()
 
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("Scale");
-	prop.Type = EWebMOIPropertyType::number;
-	prop.DisplayName = TEXT("Scale");
+	prop.name = TEXT("Scale");
+	prop.type = EWebMOIPropertyType::number;
+	prop.displayName = TEXT("Scale");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 void AMOIBackgroundImage::PostCreateObject(bool bNewObject)

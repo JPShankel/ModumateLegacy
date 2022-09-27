@@ -18,12 +18,12 @@ AMOITerrainMaterial::AMOITerrainMaterial()
 { 
 	FWebMOIProperty prop;
 
-	prop.Name = TEXT("Material");
-	prop.Type = EWebMOIPropertyType::terrainMaterial;
-	prop.DisplayName = TEXT("Terrain Material");
+	prop.name = TEXT("Material");
+	prop.type = EWebMOIPropertyType::terrainMaterial;
+	prop.displayName = TEXT("Terrain Material");
 	prop.isEditable = true;
 	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
+	WebProperties.Add(prop.name, prop);
 }
 
 bool AMOITerrainMaterial::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)

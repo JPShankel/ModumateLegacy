@@ -27,28 +27,28 @@ struct FBIMPresetTaxonomyNode
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FBIMTagPath TagPath;
+	FBIMTagPath tagPath;
 
 	UPROPERTY()
-	FText DisplayName;
+	FText displayName;
 
 	UPROPERTY()
-	FText DesignerTitle;
+	FText designerTitle;
 
 	UPROPERTY()
-	FText ToolTip;
+	FText toolTip;
 
 	UPROPERTY()
-	EObjectType ObjectType = EObjectType::OTNone;
+	EObjectType objectType = EObjectType::OTNone;
 
 	UPROPERTY()
-	EBIMAssetType AssetType = EBIMAssetType::None;
+	EBIMAssetType assetType = EBIMAssetType::None;
 
 	UPROPERTY()
-	bool BlockUpwardTraversal = false;
+	bool blockUpwardTraversal = false;
 
 	UPROPERTY()
-	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
+	EPresetMeasurementMethod measurementMethod = EPresetMeasurementMethod::None;
 };
 
 USTRUCT()
@@ -57,7 +57,7 @@ struct FBIMPresetNCPTaxonomy
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TArray<FBIMPresetTaxonomyNode> Nodes;
+	TArray<FBIMPresetTaxonomyNode> nodes;
 
 	EBIMResult LoadCSVRows(const FCsvParser::FRows& Rows);
 
