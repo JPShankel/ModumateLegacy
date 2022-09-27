@@ -311,6 +311,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		newSymbolPreset.NodeType = symbolNodeType;
 		newSymbolPreset.NodeScope = EBIMValueScope::Symbol;
 		newSymbolPreset.MyTagPath.FromString(symbolNcp);
+		newSymbolPreset.ObjectType = EObjectType::OTMetaGraph;
 
 		int32 idNumber = 1;
 		FText displayName;
@@ -425,24 +426,19 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 
 	for (const auto& kvp : graph.Faces)
 	{
+		oldIDToNewID.Add(kvp.Key, NextID++);
+	}
+
+	for (const auto& kvp : graph.Faces)
+	{
 		TArray<int32> newVertices;
 		Algo::ForEach(kvp.Value.VertexIDs, [&](int32 v)
 			{ newVertices.Add(oldIDToNewID[v]); });
 
-		newElementsDelta->FaceAdditions.Add(NextID, FGraph3DObjDelta(newVertices));
-		oldIDToNewID.Add(kvp.Key, NextID++);
-	}
-
-	// Map old contained/containing face IDs:
-	for (auto& kvp : newElementsDelta->FaceAdditions)
-	{
-		kvp.Value.ContainingObjID = oldIDToNewID[kvp.Value.ContainingObjID];
-		TSet<int32> containedFaces;
-		for (int32 oldVert : kvp.Value.ContainedObjIDs)
-		{
-			containedFaces.Add(oldIDToNewID[oldVert]);
-		}
-		kvp.Value.ContainedObjIDs = containedFaces;
+		FGraph3DObjDelta& newFace = newElementsDelta->FaceAdditions.Add(oldIDToNewID[kvp.Key], FGraph3DObjDelta(newVertices));
+		newFace.ContainingObjID = oldIDToNewID[kvp.Value.ContainingFaceID];
+		Algo::ForEach(kvp.Value.ContainedFaceIDs, [&](int32 f)
+			{ newFace.ContainedObjIDs.Add(oldIDToNewID[f]); });
 	}
 
 	OutDeltas.Add(newElementsDelta);
@@ -607,7 +603,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		}
 
 		AModumateObjectInstance* otherGroupMoi = Doc->GetObjectById(otherGroup);
-		if (ensure(otherGroupMoi))
+		if (otherGroupMoi)
 		{
 			FModumateObjectDeltaStatics::GetDeltasForGraphDelete(Doc, otherGroup, OutDeltas, false);
 			FTransform transform(otherGroupMoi->GetWorldTransform());
