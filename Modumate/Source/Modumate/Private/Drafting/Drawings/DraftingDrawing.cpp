@@ -186,30 +186,11 @@ bool FDraftingDrawing::MakeWorldObjects()
 	TSharedPtr<FDraftingComposite> section = MakeShareable(new FDraftingComposite());
 
 	auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
-#if 0
-	auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
-	FVector scopeBoxNormal = scopeBox->GetNormal();
-#else
-	FVector scopeBoxNormal = cutPlane->GetNormal();
-#endif
-
+	
 	FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
 	TArray<FVector> intersection;
-#if 0
-	bool bValidIntersection = true;
-	const int32 numPoints = 4;
-	intersection.SetNumZeroed(numPoints);
-	for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
-	{
-		FVector corner = scopeBox->GetCorner(cornerIdx);
-		FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->GetExtents().Y);
 
-		bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
-		bValidIntersection = bValidIntersection && bIntersects;
-	}
-#else
 	intersection = GetCorners(cutPlane);
-#endif
 
 	FVector axisX, axisY, center;
 	TArray<FVector2D> cached2DPositions;

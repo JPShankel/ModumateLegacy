@@ -49,13 +49,16 @@ public:
 
 	UFUNCTION()
 	void drawing_get_drawing_image(const FString& InRequest);
-
+	
+	UFUNCTION()
+	void drawing_get_drawing_autodims(const FString& CutplaneId);
+	
 	UFUNCTION()
 	void drawing_get_clicked(const FString& InRequest);
 
 	UFUNCTION()
 	void drawing_get_cutplane_lines(const FString& InRequest);
-
+	
 	UFUNCTION()
 	void string_to_inches(const FString& InRequest);
 

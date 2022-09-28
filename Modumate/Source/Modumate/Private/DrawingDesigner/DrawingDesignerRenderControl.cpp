@@ -397,15 +397,25 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		yAxis = -yAxis;
 	}
 	
-	//TODO: Get non-active graphs as well (meta graph objects) -JN
-	//Mass Graph Vertices
 	FGraph3D* graph = Doc->GetVolumeGraph();
-
+	FBox box = Doc->CalculateProjectBounds().GetBox();
+	FVector extrema[] = { box.Min, {box.Min.X, box.Min.Y, box.Max.Z},
+		{box.Min.X, box.Max.Y, box.Min.Z}, {box.Min.X, box.Max.Y, box.Max.Z},
+		{box.Max.X, box.Min.Y, box.Min.Z}, {box.Max.X, box.Min.Y, box.Max.Z},
+		{box.Max.X, box.Max.Y, box.Min.Z}, box.Max };
+	FBox2D projectBoundingBox(ForceInitToZero);
+	for (auto v: extrema)
+	{
+		projectBoundingBox += UModumateGeometryStatics::ProjectPoint2D(v, xAxis, yAxis, origin);
+	}
+	
+	TSharedPtr<FGraph2D> cutGraph = MakeShared<FGraph2D>();
+	TMap<int32, int32> graphIDToObjID;
+	graph->Create2DGraph(cutPlane, xAxis, yAxis, origin, projectBoundingBox, cutGraph,graphIDToObjID);
 	//Mass Graph Lines-->
-	auto& edges = graph->GetEdges();
-	auto& vertices = graph->GetVertices();
-
-
+	auto& edges = cutGraph->GetEdges();
+	auto& vertices = cutGraph->GetVertices();
+	
 	//This lambda will cut short a line given 2 points around the cut plane
 	auto correctPointVector = [&](const FVector& Valid, FVector& InOutReproject) {
 
@@ -415,17 +425,7 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		InOutReproject.Y = corrected.Y;
 		InOutReproject.Z = corrected.Z;
 	};
-
-	auto correctPoint = [&](const FGraph3DVertex& Valid, FGraph3DVertex& InOutReproject) {
-		FVector first; first.X = Valid.Position.X; first.Y = Valid.Position.Y; first.Z = Valid.Position.Z;
-		FVector second; second.X = InOutReproject.Position.X; second.Y = InOutReproject.Position.Y; second.Z = InOutReproject.Position.Z;
-		correctPointVector(first, second);
-
-		InOutReproject.Position.X = second.X;
-		InOutReproject.Position.Y = second.Y;
-		InOutReproject.Position.Z = second.Z;
-	};
-
+	
 	auto copyPoint = [&](FDrawingDesignerSnapId Id, FVector& Position, FDrawingDesignerSnapPoint& OutSnap) {
 		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(Position, xAxis, yAxis, origin));
 		FVector2D scaledPoint(projectedPoint / CachedSize);
@@ -434,6 +434,55 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		OutSnap.id = Id;
 	};
 
+	for (auto& kvp : edges) {
+		const FGraph2DEdge val = kvp.Value;
+
+		FGraph2DVertex v1 = vertices[val.StartVertexID];
+		FGraph2DVertex v2 = vertices[val.EndVertexID];
+
+		int32 moiId = graphIDToObjID[kvp.Key];
+		int32 spanId = Doc->GetObjectById(moiId)->GetParentID();
+
+		//One snap per edge/line
+		FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::cutgraph_line, FString::FromInt(viewId), moiId , spanId, INDEX_NONE, kvp.Key);
+		FDrawingDesignerSnap edgeSnap = FDrawingDesignerSnap(edgeId);
+
+		//Two points per line snap
+		FDrawingDesignerSnapPoint p1, p2;
+		p1.x = v1.Position.X / CachedSize.X;
+		p1.y = v1.Position.Y / CachedSize.Y;
+		p1.id = edgeId;
+		p1.id.pointIndex = 0;
+		
+		p2.x = v2.Position.X / CachedSize.X;
+		p2.y = v2.Position.Y / CachedSize.Y;
+		p2.id = edgeId;
+		p2.id.pointIndex = 1;
+		edgeSnap.points.Add(p1);
+		edgeSnap.points.Add(p2);
+
+		//Add the mid snap as well
+		FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::cutgraph_midpoint, FString::FromInt(viewId), moiId , spanId, INDEX_NONE, kvp.Key);
+		FDrawingDesignerSnap midSnap = FDrawingDesignerSnap(midSnapId);
+
+		//mid point for mid snap
+		FDrawingDesignerSnapPoint mid;
+		mid.x = (p1.x + p2.x) / 2;
+		mid.y = (p1.y + p2.y) / 2;
+		mid.id = midSnapId;
+		mid.id.pointIndex = 0;
+		midSnap.points.Add(mid);
+
+		//KLUDGE: Javascript sucks -JN
+		FString edgeEntryKey = TEXT("");
+		edgeSnap.id.EncodeKey(edgeEntryKey);
+		OutSnapPoints.Add(edgeEntryKey, edgeSnap);
+
+		FString midEntryKey = TEXT("");
+		midSnap.id.EncodeKey(midEntryKey);
+		OutSnapPoints.Add(midEntryKey, midSnap);
+	}
+	
 	//MOI-Based bounding points
 	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType(
 		{
@@ -548,7 +597,7 @@ void FDrawingDesignerRenderControl::DestroyLineActors()
 	LinePool.Empty();
 }
 
-bool FDrawingDesignerRenderControl::IsFloorplan(const AMOICutPlane& View) const
+bool FDrawingDesignerRenderControl::IsFloorplan(const AMOICutPlane& View)
 {	
 	const FQuat cutPlaneRotation(View.GetRotation());
 	return (FVector::Parallel(cutPlaneRotation * FVector::UpVector, FVector::UpVector));

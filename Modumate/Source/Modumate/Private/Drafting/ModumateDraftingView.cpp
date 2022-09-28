@@ -29,9 +29,11 @@
 #include "Drafting/Schedules/RoomLegend.h"
 
 // drawings
+#include "Drafting/ModumateDimensions.h"
 #include "Drafting/Drawings/DrawingArea.h"
 #include "Drafting/Drawings/PresentationPlan.h"
 #include "Drafting/Drawings/Floorplan.h"
+#include "DrawingDesigner/DrawingDesignerRenderControl.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDraftingView"
 

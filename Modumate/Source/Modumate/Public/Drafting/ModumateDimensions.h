@@ -7,34 +7,67 @@
 #include "VectorTypes.h"
 
 #include "Objects/ModumateObjectEnums.h"
+#include "Drafting/ModumateDraftingElements.h"
+
+#include "ModumateDimensions.generated.h"
 
 class UModumateDocument;
 class FGraph2D;
-class FDraftingComposite;
 
+UENUM()
+enum class EDimensionType { Opening, Framing, Massing, Bridging, Reference };
+	
+UENUM()
+enum class EDimensionSide { Left, Right };
 
-class FModumateDimension
+USTRUCT()
+struct MODUMATE_API FModumateDimension
 {
-public:
+	GENERATED_BODY()
+
 	FModumateDimension() = default;
 	FModumateDimension(FVec2d StartVec, FVec2d EndVec);
 	explicit operator bool() const { return bActive; }
 
+	UPROPERTY()
 	FVec2d Points[2];  // World units, ie. cm.
+	
+	UPROPERTY()
 	FVec2d TextPosition;
+
+	UPROPERTY()
 	FVec2d Dir;
+
+	UPROPERTY()
 	double Length = 0.0;
+
+	UPROPERTY()
 	int32 Graph2DID[2] = { MOD_ID_NONE, MOD_ID_NONE };
+
+	UPROPERTY()
 	int32 MetaplaneID = 0;
+
+	UPROPERTY()
 	int32 Depth = INT_MAX;  // Graph hops from perimeter, filled in by breadth-first search.
+
+	UPROPERTY()
 	bool bActive = false;
+
+	UPROPERTY()
 	bool bHorizontal = false;
+
+	UPROPERTY()
 	bool bVertical = false;
+
+	UPROPERTY()
 	bool bPortal = false;
-	enum EType { Opening, Framing, Massing, Bridging, Reference };
-	enum ESide { Left, Right };
-	EType DimensionType = Framing;
-	ESide LineSide = Left;
+
+	UPROPERTY()
+	EDimensionType DimensionType = EDimensionType::Framing;
+
+	UPROPERTY()
+	EDimensionSide LineSide = EDimensionSide::Left;
+	
 	FVector2<bool> StartFixed = { false, false };
 	FVector2<bool> EndFixed = { false, false };
 	TArray<int32> Connections[2];  // start, end connected dimensions, by index number.
@@ -55,10 +88,19 @@ public:
 class FModumateDimensions
 {
 public:
-	bool AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page, const UModumateDocument * Doc,
-		FPlane Plane, FVector Origin, FVector AxisX);
 
+	
+	bool AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page, const UModumateDocument * Doc,
+	                               FPlane Plane, FVector Origin, FVector AxisX);
+
+
+	TArray<FModumateDimension> GetDimensions(const UModumateDocument * Doc,
+							FPlane Plane, FVector Origin, FVector AxisX);
+	
 private:
+
+	bool PopulateAndProcessDimensions(const UModumateDocument * Doc,
+							FPlane Plane, FVector Origin, FVector AxisX);
 	void ProcessDimensions();
 	void AddEdgeAndConnected(int32 Edge, TSet<int32>& OutEdges) const;
 	void ProcessConnectedGroup(const TSet<int32>& Group);
@@ -71,14 +113,13 @@ private:
 	void CreateAngularDimension(int32 Edge1, int32 Vertex, int32 Edge2);
 	void ConnectIslands(const TArray<TSet<int32>>& plans);
 	FVec2d FarPoint(int32 DimensionIndex, int32 VertexIndex, int32 ConnectionIndex) const;
-
-
+	
 	TSharedPtr<FGraph2D> CutGraph;
 	TMap<int32, int32> GraphIDToObjID;
 	TMap<int32, int32> GraphIDToDimID;
 	TArray<FModumateDimension> Dimensions;
 	TArray<FModumateAngularDimension> AngularDimensions;
-
+	
 	static constexpr double OpeningDimOffset = 56.0;
 	static constexpr double FramingDimOffset = 76.0;
 	static constexpr double MassingDimOffset = 96.0;

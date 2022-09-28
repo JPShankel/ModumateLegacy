@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Drafting/ModumateDimensions.h"
 #include "ModumateCore/PrettyJSONWriter.h"
 #include "Objects/WebMOI.h"
 #include "DrawingDesignerView.generated.h"
@@ -41,7 +42,9 @@ enum class EDDSnapType
 	unknown = 0,
 	point,
 	line,
-	midpoint
+	midpoint,
+	cutgraph_line,
+	cutgraph_midpoint,
 };
 
 USTRUCT()
@@ -221,4 +224,15 @@ struct MODUMATE_API FDrawingDesignerDrawingResponse
 	bool operator!=(const FDrawingDesignerDrawingResponse& RHS) const;
 };
 
+USTRUCT()
+struct MODUMATE_API FDrawingDesignerDimensionResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString view;
+
+	UPROPERTY()
+	TArray<FModumateDimension> dimensions;
+};
 

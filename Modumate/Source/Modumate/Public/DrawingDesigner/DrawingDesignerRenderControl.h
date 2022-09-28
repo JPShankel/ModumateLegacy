@@ -28,7 +28,7 @@ public:
 	void AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render);
 	ALineActor* GetLineActor();
 	void FreeLineActor(ALineActor* LineActor);
-
+	static bool IsFloorplan(const AMOICutPlane& View);
 private:
 	
 	FName MOITraceTag = FName(TEXT("MOITrace"));
@@ -37,7 +37,7 @@ private:
 	void RestorePortalMaterials();  // unused
 	void GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints) const;
 	void DestroyLineActors();
-	bool IsFloorplan(const AMOICutPlane& View) const;
+	
 
 	FVector CachedXAxis;
 	FVector CachedYAxis;

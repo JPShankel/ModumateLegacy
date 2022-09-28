@@ -22,6 +22,7 @@
 #include "Drafting/DraftingManager.h"
 #include "Drafting/ModumateDraftingView.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "DrawingDesigner/DrawingDesignerAutomation.h"
 #include "Objects/CameraView.h"
 #include "Objects/CutPlane.h"
 #include "Objects/DesignOption.h"
@@ -148,6 +149,24 @@ void UModumateDocumentWebBridge::drawing_get_drawing_image(const FString& InRequ
 	if (ensure(bResult))
 	{
 		Document->DrawingSendResponse(TEXT("pushViewImage"), response);
+	}
+}
+
+void UModumateDocumentWebBridge::drawing_get_drawing_autodims(const FString& CutplaneId)
+{
+	int32 cutPlane = FCString::Atoi(*CutplaneId);
+
+	if (cutPlane != MOD_ID_NONE)
+	{
+		FDrawingDesignerAutomation generator{Document};
+		auto dims = generator.GenerateDimensions(cutPlane);
+		FString rsp;
+		//We need a container because you cannot directly serialize TArray<>
+		FDrawingDesignerDimensionResponse container;
+		container.dimensions = dims;
+		container.view = CutplaneId;
+		WriteJsonGeneric(rsp, &container);
+		Document->DrawingSendResponse(TEXT("pushAutoDims"), rsp);
 	}
 }
 

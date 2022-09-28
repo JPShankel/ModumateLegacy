@@ -31,8 +31,9 @@ FModumateDimension::FModumateDimension(FVec2d StartVec, FVec2d EndVec)
 	bVertical = AreParallel(Dir, FVec2d::UnitY());
 }
 
-bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page,
-	const UModumateDocument * Doc, FPlane Plane, FVector Origin, FVector AxisX)
+//This is only called by the DD currently
+bool FModumateDimensions::PopulateAndProcessDimensions(const UModumateDocument * Doc,
+                                                       FPlane Plane, FVector Origin, FVector AxisX)
 {
 	const FGraph3D& graph = *Doc->GetVolumeGraph();
 
@@ -83,40 +84,53 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposit
 			dimension.bPortal = children.Num() != 0 && portalTypes.Contains(children[0]->GetObjectType());
 		}
 
-		Dimensions.Add(dimension);
+		if(dimension.Length > SMALL_NUMBER)
+		{
+			//All dimensions at this point are framing dimensions
+			double offset = FramingDimOffset;
+			FVec2d positionOffset = dimension.Dir * offset;
+			if (dimension.LineSide == EDimensionSide::Left)
+			{
+				positionOffset = -positionOffset;
+			}
+
+			dimension.TextPosition = (dimension.Points[0] + dimension.Points[1]) / 2 + FVec2d(positionOffset.Y, -positionOffset.X);
+			Dimensions.Add(dimension);	
+		}
 	}
 
 	ProcessDimensions();
+	return true;
+}
 
+bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page,
+                                                    const UModumateDocument * Doc, FPlane Plane, FVector Origin, FVector AxisX)
+{
+	PopulateAndProcessDimensions(Doc, Plane, Origin, AxisX);
 	for (auto& dim: Dimensions)
 	{
 		if (dim && dim.Length > SMALL_NUMBER)
 		{
-			double offset = 0.0;
 			FModumateLayerType layerType = FModumateLayerType::kDimensionOpening;
 			switch (dim.DimensionType)
 			{
-			case FModumateDimension::EType::Opening:
-				offset = OpeningDimOffset;
+			case EDimensionType::Opening:
 				layerType = FModumateLayerType::kDimensionOpening;
 				break;
 
-			case FModumateDimension::EType::Framing:
+			case EDimensionType::Framing:
 				layerType = FModumateLayerType::kDimensionFraming;
-				offset = FramingDimOffset;
 				break;
 
-			case FModumateDimension::EType::Massing:
-				offset = MassingDimOffset;
+			case EDimensionType::Massing:
 				layerType = FModumateLayerType::kDimensionMassing;
 				break;
 
-			case FModumateDimension::Bridging:
-				offset = BridgingDimOffset;
+			case EDimensionType::Bridging:
 				layerType = FModumateLayerType::kDimensionMassing;
 				break;
 
-			case FModumateDimension::Reference:
+			case EDimensionType::Reference:
 				layerType = FModumateLayerType::KDimensionReference;
 				break;
 
@@ -125,7 +139,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposit
 				break;
 			}
 
-			if (dim.DimensionType == FModumateDimension::Reference)
+			if (dim.DimensionType == EDimensionType::Reference)
 			{
 				TSharedPtr<FDraftingLine> refLine = MakeShared<FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
@@ -137,13 +151,6 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposit
 			}
 			else
 			{
-				FVec2d positionOffset = dim.Dir * offset;
-				if (dim.LineSide == FModumateDimension::Left)
-				{
-					positionOffset = -positionOffset;
-				}
-				dim.TextPosition = (dim.Points[0] + dim.Points[1]) / 2 + FVec2d(positionOffset.Y, -positionOffset.X);
-
 				TSharedPtr<FDimensionPrimitive> dimPrim = MakeShared<FDimensionPrimitive>(
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[1])),
@@ -167,6 +174,13 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposit
 	}
 
 	return true;
+}
+
+TArray<FModumateDimension> FModumateDimensions::GetDimensions(const UModumateDocument* Doc, FPlane Plane,
+	FVector Origin, FVector AxisX)
+{
+	PopulateAndProcessDimensions(Doc, Plane, Origin, AxisX);
+	return this->Dimensions; //Copy on purpose
 }
 
 void FModumateDimensions::ProcessDimensions()
@@ -246,7 +260,7 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 	for (int32 d: Group)
 	{
 		auto& dim = Dimensions[d];
-		dim.LineSide = dim.Dir.Cross(centrePoint - dim.Points[0]) > 0 ? FModumateDimension::Left : FModumateDimension::Right;
+		dim.LineSide = dim.Dir.Cross(centrePoint - dim.Points[0]) > 0 ? EDimensionSide::Left : EDimensionSide::Right;
 	}
 
 	// 2. Replace portals in a single wall section, plus wall section, with new framing dimension.
@@ -347,13 +361,13 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 					// Mark dropped dimensions as unused for main dimensions:
 					DropLongestOpeningDimension(removeIds);
 					Dimensions[d].bActive = true;
-					Dimensions[d].DimensionType = FModumateDimension::Opening;
+					Dimensions[d].DimensionType = EDimensionType::Opening;
 					d =INDEX_NONE;
 					for (int v = 0; v < 2; ++v)
 					{
 						for (int32 droppedId: removeIds[v])
 						{
-							Dimensions[droppedId].DimensionType = FModumateDimension::Opening;
+							Dimensions[droppedId].DimensionType = EDimensionType::Opening;
 							int32 droppedIndex = framingDimensions.Find(droppedId);
 							if (droppedIndex != INDEX_NONE)
 							{
@@ -443,7 +457,7 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 			{
 				currentPoint = dim.Points[1 - i];
 				current = SmallestConnectedEdgeAngle(currentPoint, i == 0 ? -dim.Dir : dim.Dir, dim.Connections[1 - i]);
-				dim.LineSide = i == 0 ? FModumateDimension::Right : FModumateDimension::Left;  // Text always outside perim
+				dim.LineSide = i == 0 ? EDimensionSide::Right : EDimensionSide::Left;  // Text always outside perim
 				break;
 			}
 
@@ -566,9 +580,9 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 		}
 
 		FModumateDimension massingDim(startPoint, nextPoint);
-		massingDim.DimensionType = FModumateDimension::Massing;
+		massingDim.DimensionType = EDimensionType::Massing;
 		massingDim.bActive = true;
-		massingDim.LineSide = FModumateDimension::Right;
+		massingDim.LineSide = EDimensionSide::Right;
 		if (massingDim.Length > SMALL_NUMBER)
 		{
 			Dimensions.Add(massingDim);
@@ -872,7 +886,7 @@ void FModumateDimensions::ConnectIslands(const TArray<TSet<int32>>& plans)
 			if (!bridges.Contains(newBridge))
 			{
 				FModumateDimension bridgingDim(Dimensions[minPlan1Dim].Points[minVert1], Dimensions[minPlan2Dim].Points[minVert2]);
-				bridgingDim.DimensionType = FModumateDimension::Bridging;
+				bridgingDim.DimensionType = EDimensionType::Bridging;
 				bridgingDim.bActive = true;
 				Dimensions.Add(bridgingDim);
 
@@ -887,12 +901,12 @@ void FModumateDimensions::ConnectIslands(const TArray<TSet<int32>>& plans)
 		FVec2d v2(Dimensions[bridge.DimB].Points[bridge.VertB]);
 
 		FModumateDimension bridgingDim(v1, v2);
-		bridgingDim.DimensionType = FModumateDimension::Bridging;
+		bridgingDim.DimensionType = EDimensionType::Bridging;
 		bridgingDim.bActive = true;
 		Dimensions.Add(bridgingDim);
 
 		FModumateDimension referenceDim(v1, v2);
-		referenceDim.DimensionType = FModumateDimension::Reference;
+		referenceDim.DimensionType = EDimensionType::Reference;
 		referenceDim.bActive = true;
 		int32 refDimIndex = Dimensions.Add(referenceDim);
 

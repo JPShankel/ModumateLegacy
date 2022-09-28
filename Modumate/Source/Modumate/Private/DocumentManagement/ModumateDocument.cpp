@@ -27,6 +27,7 @@
 #include "Objects/ModumateSymbolDeltaStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "DrawingDesigner/DrawingDesignerAutomation.h"
 #include "Objects/MOIFactory.h"
 #include "Objects/DesignOption.h"
 #include "Objects/FaceHosted.h"
@@ -4592,7 +4593,6 @@ void UModumateDocument::DrawingSendResponse(const FString& FunctionName, const F
 		drawingDesigner->DrawingSetWebBrowser->ExecuteJavascript(javaScript);
 	}
 }
-
 
 void UModumateDocument::UpdateWebPresets()
 {

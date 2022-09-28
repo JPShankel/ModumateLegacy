@@ -4,6 +4,7 @@
 
 #include <functional>
 #include "CoreMinimal.h"
+#include "ModumateDimensions.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingPage.h"
 #include "Drafting/ModumateDraftingTags.h"
