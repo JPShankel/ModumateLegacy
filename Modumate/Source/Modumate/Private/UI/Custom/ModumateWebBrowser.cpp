@@ -73,10 +73,17 @@ void UModumateWebBrowser::HandleOnLoadStarted()
 
 void UModumateWebBrowser::WatchdogTriggered()
 {
+	FString error = TEXT("Web Watchdog Triggered, reloading");
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *error);
+	
 	auto controller = GetOwningLocalPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
-		GetOwningLocalPlayer<AEditModelPlayerController>()->PostServerLog(TEXT("Web Watchdog Triggered, reloading"));
+		auto pc = GetOwningLocalPlayer<AEditModelPlayerController>();
+		if(pc)
+		{
+			pc->PostServerLog(error);	
+		}
 	}
 
 	if (WebBrowserWidget)
