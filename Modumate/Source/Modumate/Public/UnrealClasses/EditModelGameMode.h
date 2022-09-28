@@ -138,14 +138,47 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterial *DynamicColorMaterial;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UMaterial* ModumateDatasmithMaterialPbrOpaque;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_Cutout;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UMaterial* ModumateDatasmithMaterialPbrTranslucent;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_Opaque;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UMaterial* ModumateDatasmithMaterialPbrTransparent;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_PbrOpaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_PbrOpaque_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_PbrTranslucent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_PbrTranslucent_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Datasmith")
+	UMaterial* Modumate_DS_Transparent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_Cutout;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_Opaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrOpaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrOpaque_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrTranslucent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrTranslucent_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_Transparent;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;

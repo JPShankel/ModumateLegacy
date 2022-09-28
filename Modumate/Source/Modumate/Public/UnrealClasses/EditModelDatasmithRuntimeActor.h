@@ -55,6 +55,39 @@ struct MODUMATE_API FDatasmithMetaDataMaterial
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString RoughnessMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float NormalMapFading = 0.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString NormalMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString BumpMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float BumpAmount = 1.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float OpacityMapFading = 0.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float Opacity = 1.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString OpacityMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float TransparencyMapFading = 0.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float Transparency = 0.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString TransparencyMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString CutoutOpacityMap;
 };
 
 USTRUCT(BlueprintType)

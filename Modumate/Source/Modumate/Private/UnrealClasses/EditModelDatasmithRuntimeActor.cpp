@@ -63,28 +63,37 @@ void AEditModelDatasmithRuntimeActor::OnImportEnd()
 				StaticMeshTransforms.Add(curStaticMeshComp->GetComponentTransform());		
 				for (const auto curStaticMeshMat : curStaticMeshComp->GetMaterials())
 				{
-					// If material isn't dynamic (ex: missing or static mat), create dynamic material from Modumate's version of Datasmith materials
 					UMaterialInstanceDynamic* originalDatasmithMat = Cast<UMaterialInstanceDynamic>(curStaticMeshMat);
 					if (!originalDatasmithMat)
 					{
-						// Create opaque dynamic mat by default
-						originalDatasmithMat = UMaterialInstanceDynamic::Create(gameMode->ModumateDatasmithMaterialPbrOpaque, this);
+						// If missing, create opaque dynamic mat by default
+						originalDatasmithMat = UMaterialInstanceDynamic::Create(gameMode->Original_DS_PbrOpaque, this);
 					}
-					// By this point, the current material should only be the original dynamic Datasmith material
-					// Replace and copy it with Modumate version of Datasmith material
-					UMaterialInterface* modumateDatasmithParentMat = gameMode->ModumateDatasmithMaterialPbrOpaque;
-					if (originalDatasmithMat->GetBlendMode() != BLEND_Opaque)
+					// Replace the original Datasmith material with Modumate Datasmith material
+					UMaterialInterface* modumateDatasmithParentMat = gameMode->Modumate_DS_PbrOpaque;
+					if (originalDatasmithMat->Parent == gameMode->Original_DS_Cutout)
 					{
-						float opacityValue = 0.f;
-						float transparencyValue = 0.f;
-						if (originalDatasmithMat->GetScalarParameterValue(opacityParamName, opacityValue))
-						{
-							modumateDatasmithParentMat = gameMode->ModumateDatasmithMaterialPbrTranslucent;
-						}
-						else if (originalDatasmithMat->GetScalarParameterValue(transparencyParamName, transparencyValue))
-						{
-							modumateDatasmithParentMat = gameMode->ModumateDatasmithMaterialPbrTransparent;
-						}
+						modumateDatasmithParentMat = gameMode->Modumate_DS_Cutout;
+					}
+					else if (originalDatasmithMat->Parent == gameMode->Original_DS_Opaque)
+					{
+						modumateDatasmithParentMat = gameMode->Modumate_DS_Opaque;
+					}
+					else if (originalDatasmithMat->Parent == gameMode->Original_DS_PbrOpaque_2Sided)
+					{
+						modumateDatasmithParentMat = gameMode->Modumate_DS_PbrOpaque_2Sided;
+					}
+					else if (originalDatasmithMat->Parent == gameMode->Original_DS_PbrTranslucent)
+					{
+						modumateDatasmithParentMat = gameMode->Modumate_DS_PbrTranslucent;
+					}
+					else if (originalDatasmithMat->Parent == gameMode->Original_DS_PbrTranslucent_2Sided)
+					{
+						modumateDatasmithParentMat = gameMode->Modumate_DS_PbrTranslucent_2Sided;
+					}
+					else if (originalDatasmithMat->Parent == gameMode->Original_DS_Transparent)
+					{
+						modumateDatasmithParentMat = gameMode->Modumate_DS_Transparent;
 					}
 					UMaterialInstanceDynamic* newDynMat = UMaterialInstanceDynamic::Create(modumateDatasmithParentMat, this);
 					newDynMat->CopyMaterialUniformParameters(originalDatasmithMat);
@@ -172,6 +181,15 @@ bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
 				// Roughness
 				dynMat->SetScalarParameterValue(TEXT("RoughnessMapFading"), curMaterial.RoughnessMapFading);
 				dynMat->SetScalarParameterValue(TEXT("Roughness"), curMaterial.Roughness);
+				// Normal and Bump
+				dynMat->SetScalarParameterValue(TEXT("NormalMapFading"), curMaterial.NormalMapFading);
+				dynMat->SetScalarParameterValue(TEXT("BumpAmount"), curMaterial.BumpAmount);
+				// Opacity applies to PbrTranslucent materials
+				dynMat->SetScalarParameterValue(TEXT("OpacityMapFading"), curMaterial.OpacityMapFading);
+				dynMat->SetScalarParameterValue(TEXT("Opacity"), curMaterial.Opacity);
+				// Transparency applies to Cutout and Transparent materials only
+				dynMat->SetScalarParameterValue(TEXT("TransparencyMapFading"), curMaterial.TransparencyMapFading);
+				dynMat->SetScalarParameterValue(TEXT("Transparency"), curMaterial.Transparency);
 				// Import textures
 				if (!curMaterial.DiffuseMap.IsEmpty())
 				{
@@ -203,6 +221,49 @@ bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
 					if (roughnessMapTexture)
 					{
 						dynMat->SetTextureParameterValue(TEXT("RoughnessMap"), roughnessMapTexture);
+					}
+				}
+				if (!curMaterial.NormalMap.IsEmpty())
+				{
+					UTexture2D* normalMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.NormalMap);
+					if (normalMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("NormalMap"), normalMapTexture);
+					}
+				}
+				if (!curMaterial.BumpMap.IsEmpty())
+				{
+					UTexture2D* bumpMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.BumpMap);
+					if (bumpMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("BumpMap"), bumpMapTexture);
+					}
+				}
+				// PbrTranslucent materials only
+				if (!curMaterial.OpacityMap.IsEmpty())
+				{
+					UTexture2D* opacityMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.OpacityMap);
+					if (opacityMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("OpacityMap"), opacityMapTexture);
+					}
+				}
+				// Cutout and Transparent materials only
+				if (!curMaterial.TransparencyMap.IsEmpty())
+				{
+					UTexture2D* transparencyMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.TransparencyMap);
+					if (transparencyMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("TransparencyMap"), transparencyMapTexture);
+					}
+				}
+				// Cutout and Transparent materials only
+				if (!curMaterial.CutoutOpacityMap.IsEmpty())
+				{
+					UTexture2D* cutoutOpacityMapTexture = FImageUtils::ImportFileAsTexture2D(assetFolderPathClean + curMaterial.CutoutOpacityMap);
+					if (cutoutOpacityMapTexture)
+					{
+						dynMat->SetTextureParameterValue(TEXT("CutoutOpacityMap"), cutoutOpacityMapTexture);
 					}
 				}
 			}
