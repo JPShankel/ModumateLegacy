@@ -11,6 +11,7 @@
 #include "Objects/MetaGraph.h"
 #include "Objects/MetaEdgeSpan.h"
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/SurfaceGraph.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
@@ -188,7 +189,7 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 	// Return quickly if no movements or not in Symbol group.
 	int32 graphId = GraphDelta->GraphID;
 
-	const AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(graphId));
+	AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(graphId));
 	if (!groupObj || !groupObj->GetStateData().AssemblyGUID.IsValid())
 	{
 		return;
@@ -205,11 +206,8 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 		+ GraphDelta->FaceContainmentUpdates.Num() != 0)
 	{
 		Doc->DirtySymbolGroup(graphId);  // Just re-duplicate group to other symbol instances.
-		auto* moi = Doc->GetObjectById(graphId);
-		if (ensure(moi))
-		{   // Graph might've already been cleaned.
-			moi->MarkDirty(EObjectDirtyFlags::Structure);
-		}
+		// Graph might've already been cleaned.
+		groupObj->MarkDirty(EObjectDirtyFlags::Structure);
 		return;
 	}
 
@@ -270,6 +268,8 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 
 					}
 				}
+
+				break;
 			}
 		}
 	}
@@ -286,6 +286,93 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 	// Need new icon:
 	auto* controller = Doc->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	controller && controller->DynamicIconGenerator && controller->DynamicIconGenerator->InvalidateWebCacheEntry(symbolPreset->GUID);
+}
+
+void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(UModumateDocument* Doc, const FGraph2DDelta* GraphDelta, EMOIDeltaType DeltaType, TArray<FDeltaPtr>& OutDeltas)
+{
+	if (GraphDelta->DeltaType != EGraph2DDeltaType::Edit)
+	{
+		return;
+	}
+
+	// Return quickly if no movements or not in Symbol group.
+	int32 surfaceGraphId = GraphDelta->ID;
+	int32 groupId = UModumateObjectStatics::GetGroupIdForObject(Doc, surfaceGraphId);
+	
+	if (groupId == MOD_ID_NONE || groupId == Doc->GetRootVolumeGraphID())
+	{
+		return;
+	}
+
+	AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupId));
+	if (!ensure(groupObj) || !groupObj->GetStateData().AssemblyGUID.IsValid())
+	{
+		return;
+	}
+
+	if (GraphDelta->EdgeAdditions.Num() + GraphDelta->EdgeDeletions.Num() + GraphDelta->PolygonAdditions.Num() + GraphDelta->PolygonDeletions.Num()
+		+ GraphDelta->PolygonIDUpdates.Num() + GraphDelta->VertexAdditions.Num() + GraphDelta->VertexDeletions.Num() != 0)
+	{
+		Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
+		// Graph might've already been cleaned.
+		groupObj->MarkDirty(EObjectDirtyFlags::Structure);
+		return;
+
+	}
+	
+	if (GraphDelta->VertexMovements.Num() != 0)
+	{
+		const FBIMPresetCollection& presets = Doc->GetPresetCollection();
+		const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupObj->GetStateData().AssemblyGUID);
+		if (!ensure(symbolPreset))
+		{
+			return;
+		}
+
+		FBIMSymbolPresetData symbolData;
+		if (!ensure(symbolPreset->TryGetCustomData(symbolData)))
+		{
+			return;
+		}
+
+		TMap<int32, TSharedPtr<FGraph2DDelta>> newDeltas;  // Per other surface graph
+		for (const auto& vertexMove : GraphDelta->VertexMovements)
+		{
+			int32 vertexId = vertexMove.Key;
+			for (const auto& idMapping : symbolData.EquivalentIDs)
+			{
+				if (idMapping.Value.IDSet.Contains(vertexId))
+				{
+					for (int32 otherVertexId : idMapping.Value.IDSet)
+					{
+						if (otherVertexId != vertexId)
+						{
+							const auto* vertexObj = Doc->GetObjectById(otherVertexId);
+							if (ensure(vertexObj))
+							{
+								int32 otherGraph2d = vertexObj->GetParentID();
+								auto * graphDelta = newDeltas.Find(otherGraph2d);
+								if (graphDelta == nullptr)
+								{
+									(graphDelta) = &newDeltas.Add(otherGraph2d, MakeShared<FGraph2DDelta>(otherGraph2d));
+								}
+								(*graphDelta)->VertexMovements.Add(otherVertexId, vertexMove.Value);
+							}
+						}
+					}
+
+					break;
+				}
+
+			}
+		}
+
+		for (auto& delta : newDeltas)
+		{
+			OutDeltas.Add(delta.Value);
+		}
+
+	}
 }
 
 bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, TArray<FDeltaPtr>& OutDeltas)

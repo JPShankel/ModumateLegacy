@@ -1,5 +1,6 @@
 #include "Graph/Graph2DDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 
 
 FGraph2DObjDelta::FGraph2DObjDelta()
@@ -180,5 +181,14 @@ void FGraph2DDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutA
 	case EGraph2DDeltaType::Remove:
 		OutAffectedObjects.Add(TPair <int32, EMOIDeltaType>(ID, EMOIDeltaType::Destroy));
 		break;
+	}
+}
+
+void FGraph2DDelta::GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation,
+	TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const
+{
+	if (DeltaOperation == EMOIDeltaType::Mutate)
+	{
+		FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(Doc, this, DeltaOperation, OutDeltas);
 	}
 }
