@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DatasmithRuntime.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "EditModelDatasmithRuntimeActor.generated.h"
 
 USTRUCT(BlueprintType)
@@ -13,6 +14,9 @@ struct MODUMATE_API FDatasmithMetaDataMaterial
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Index = 0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	EDatasmithMaterialType MaterialType = EDatasmithMaterialType::None;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString TintColor = TEXT("FFFFFF");
@@ -112,7 +116,7 @@ public:
 	AEditModelDatasmithRuntimeActor();
 
 	UPROPERTY()
-	TWeakObjectPtr<class AEditModelDatasmithImporter> DatasmithImporter = nullptr;
+	TWeakObjectPtr<AEditModelDatasmithImporter> DatasmithImporter = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FGuid PresetKey;
@@ -124,13 +128,19 @@ public:
 	FString AssetFolderPath;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<class UStaticMesh*> StaticMeshRefs;
+	TArray<UStaticMesh*> StaticMeshRefs;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FTransform> StaticMeshTransforms;
+	TMap<UStaticMesh*, TArray<UMaterialInterface*>> StaticMeshMaterialsMap;
+	TMap<UStaticMesh*, TArray<UMaterialInstanceDynamic*>> RuntimeDatasmithMaterialsMap;
 
+	// Used by UMG for material debugger
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<class UMaterialInterface*> StaticMeshMaterials;
+	TArray<UMaterialInterface*> StaticMeshMaterials;
+
+	// Used by UMG for material debugger
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<UMaterialInstanceDynamic*> RuntimeDatasmithMaterials;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FDatasmithMetaData CurrentMetaData;

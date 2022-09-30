@@ -33,6 +33,19 @@ enum class EAssetImportLoadStatus : uint8
 	Loaded
 };
 
+UENUM(BlueprintType)
+enum class EDatasmithMaterialType : uint8
+{
+	None,
+	PbrOpaque,
+	PbrOpaque2Sided,
+	Opaque,
+	PbrTranslucent,
+	PbrTranslucent2Sided,
+	Transparent,
+	Cutout
+};
+
 UCLASS()
 class MODUMATE_API AEditModelDatasmithImporter : public AActor
 {
@@ -48,13 +61,55 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class AEditModelDatasmithRuntimeActor> DatasmithRuntimeActorClass;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_Cutout;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_Opaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_PbrOpaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_PbrOpaque_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_PbrTranslucent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_PbrTranslucent_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "ModumateDatasmith")
+	UMaterial* Modumate_DS_Transparent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_Cutout;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_Opaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrOpaque;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrOpaque_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrTranslucent;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_PbrTranslucent_2Sided;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "OriginalDatasmith")
+	UMaterial* Original_DS_Transparent;
+
 	// This is the time in second for calling a method to check whether a second attempt is necessary
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float CheckAfterImportTime = 5.f;
 
 	TMap<FGuid, TArray<UStaticMesh*>> StaticMeshAssetMap;
 	TMap<FGuid, TArray<FTransform>> StaticMeshTransformMap;
-	TMap<FGuid, TArray<UMaterialInterface*>> ImportedMaterialMap;
+	TMap<UStaticMesh*, TArray<UMaterialInstanceDynamic*>> ImportedMaterialMap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FGuid, EAssetImportLoadStatus> PresetLoadStatusMap;
@@ -77,6 +132,12 @@ public:
 	// Command code for testing via URL
 	UFUNCTION(BlueprintCallable)
 	bool ImportDatasmithFromWeb(const FString& URL);
+
+	UFUNCTION(BlueprintCallable)
+	UMaterialInterface* GetModumateDatasmithMaterialByType(EDatasmithMaterialType InType);
+
+	UFUNCTION(BlueprintCallable)
+	EDatasmithMaterialType GetTypeFromOriginalDatasmithMaterial(const UMaterialInterface* InOriginalMaterial);
 
 	UFUNCTION()
 	bool RequestDownloadFromURL(const FGuid& InGUID, const FString& URL);

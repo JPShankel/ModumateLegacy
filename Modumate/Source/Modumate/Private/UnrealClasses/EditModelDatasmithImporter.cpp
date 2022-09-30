@@ -79,6 +79,67 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromWeb(const FString& URL)
 	return true;
 }
 
+UMaterialInterface* AEditModelDatasmithImporter::GetModumateDatasmithMaterialByType(EDatasmithMaterialType InType)
+{
+	switch (InType)
+	{
+	case EDatasmithMaterialType::PbrOpaque:
+		return Modumate_DS_PbrOpaque;
+	case EDatasmithMaterialType::PbrOpaque2Sided:
+		return Modumate_DS_PbrOpaque_2Sided;
+	case EDatasmithMaterialType::Opaque:
+		return Modumate_DS_Opaque;
+	case EDatasmithMaterialType::PbrTranslucent:
+		return Modumate_DS_PbrTranslucent;
+	case EDatasmithMaterialType::PbrTranslucent2Sided:
+		return Modumate_DS_PbrTranslucent_2Sided;
+	case EDatasmithMaterialType::Transparent:
+		return Modumate_DS_Transparent;
+	case EDatasmithMaterialType::Cutout:
+		return Modumate_DS_Cutout;
+	default:
+		return Modumate_DS_PbrOpaque;;
+	}
+}
+
+EDatasmithMaterialType AEditModelDatasmithImporter::GetTypeFromOriginalDatasmithMaterial(const UMaterialInterface* InOriginalMaterial)
+{
+	const UMaterialInstanceDynamic* dynMat = Cast<UMaterialInstanceDynamic>(InOriginalMaterial);
+	const UMaterialInterface* parentMat = dynMat ? dynMat->Parent : InOriginalMaterial;
+	if (parentMat == Original_DS_PbrOpaque)
+	{
+		return EDatasmithMaterialType::PbrOpaque;
+	}
+	else if (parentMat == Original_DS_Cutout)
+	{
+		return EDatasmithMaterialType::Cutout;
+	}
+	else if (parentMat == Original_DS_Opaque)
+	{
+		return EDatasmithMaterialType::Opaque;
+	}
+	else if (parentMat == Original_DS_PbrOpaque_2Sided)
+	{
+		return EDatasmithMaterialType::PbrOpaque2Sided;
+	}
+	else if (parentMat == Original_DS_PbrTranslucent)
+	{
+		return EDatasmithMaterialType::PbrTranslucent;
+	}
+	else if (parentMat == Original_DS_PbrTranslucent_2Sided)
+	{
+		return EDatasmithMaterialType::PbrTranslucent2Sided;
+	}
+	else if (parentMat == Original_DS_Transparent)
+	{
+		return EDatasmithMaterialType::Transparent;
+	}
+	else
+	{
+		return EDatasmithMaterialType::None;
+	}
+}
+
 bool AEditModelDatasmithImporter::RequestDownloadFromURL(const FGuid& InGUID, const FString& URL)
 {
 	PresetLoadStatusMap.Add(InGUID, EAssetImportLoadStatus::Downloading);
@@ -189,7 +250,7 @@ void AEditModelDatasmithImporter::OnRuntimeActorImportDone(class AEditModelDatas
 	PresetLoadStatusMap.Add(FromActor->PresetKey, EAssetImportLoadStatus::Loaded);
 	StaticMeshAssetMap.Add(FromActor->PresetKey, FromActor->StaticMeshRefs);
 	StaticMeshTransformMap.Add(FromActor->PresetKey, FromActor->StaticMeshTransforms);
-	ImportedMaterialMap.Add(FromActor->PresetKey, FromActor->StaticMeshMaterials);
+	ImportedMaterialMap.Append(FromActor->RuntimeDatasmithMaterialsMap);
 
 	// Clean any objects that are using this model
 	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();

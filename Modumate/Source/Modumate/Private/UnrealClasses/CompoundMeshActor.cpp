@@ -70,7 +70,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 	// Datasmith assets
 	TArray<UStaticMesh*> importedAssets;
 	TArray<FTransform> importedMeshTransforms;
-	TArray<UMaterialInterface*> importedMaterials;
+	TMap<UStaticMesh*, TArray<UMaterialInstanceDynamic*>> importedMaterials;
 	bool bUsesImportedAssets = ObAsm.Parts.Num() > 0 && !ObAsm.Parts[0].Mesh.DatasmithUrl.IsEmpty();
 	if (bUsesImportedAssets)
 	{
@@ -80,7 +80,11 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 		{
 			importedAssets = importer->StaticMeshAssetMap.FindRef(ObAsm.PresetGUID);
 			importedMeshTransforms = importer->StaticMeshTransformMap.FindRef(ObAsm.PresetGUID);
-			importedMaterials = importer->ImportedMaterialMap.FindRef(ObAsm.PresetGUID);
+			for (const auto& curMesh : importedAssets)
+			{
+				importer->ImportedMaterialMap.FindRef(curMesh);
+				importedMaterials.Add(curMesh, importer->ImportedMaterialMap.FindRef(curMesh));
+			}
 			maxNumMeshes = importedAssets.Num();
 		}
 	}
@@ -286,11 +290,13 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 					comp->SetRelativeLocation(rootFlip * importedMeshTransforms[i].GetLocation());
 					comp->SetRelativeRotation(importedMeshTransforms[i].GetRotation());
 					comp->SetRelativeScale3D(rootFlip * partScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
+
+					const auto curImportedMats = importedMaterials.FindRef(comp->GetStaticMesh());
 					for (int32 matId = 0; matId < comp->GetNumMaterials(); ++matId)
 					{
-						if (ensure(importedMaterials.IsValidIndex(matId)))
+						if (ensure(curImportedMats.IsValidIndex(matId)))
 						{
-							comp->SetMaterial(matId, importedMaterials[matId]);
+							comp->SetMaterial(matId, curImportedMats[matId]);
 						}
 					}
 				}
