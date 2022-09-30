@@ -8,18 +8,9 @@
 #include "Objects/ModumateSymbolDeltaStatics.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 
-const FString AMOIMetaGraph::PropertyName(TEXT("Name"));
-
 AMOIMetaGraph::AMOIMetaGraph()
 {
 	FWebMOIProperty prop;
-
-	prop.name = PropertyName;
-	prop.type = EWebMOIPropertyType::text;
-	prop.displayName = TEXT("Name");
-	prop.isEditable = true;
-	prop.isVisible = true;
-	WebProperties.Add(prop.name, prop);
 
 	prop.name = TEXT("SymbolGuid");
 	prop.type = EWebMOIPropertyType::text;
@@ -199,18 +190,6 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 		webPropSymbolGuid.valueArray.Add(symbolID.ToString());
 		OutMOI.properties.Add(TEXT("SymbolGuid"), webPropSymbolGuid);
 
-		if (symbolID.IsValid())
-		{
-			const auto * preset = Document->GetPresetCollection().PresetFromGUID(symbolID);
-			if (ensure(preset))
-			{
-				const FWebMOIProperty* formPropUpdateSymbolName = WebProperties.Find(PropertyName);
-				FWebMOIProperty webPropName = *formPropUpdateSymbolName;
-				webPropName.valueArray.Empty();
-				webPropName.valueArray.Add(preset->DisplayName.ToString());
-				OutMOI.properties.Add(formPropUpdateSymbolName->name, webPropName);
-			}
-		}
 		return true;
 	}
 	return false;
@@ -225,19 +204,6 @@ bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 		if (!ReadJsonGeneric<FWebMOI>(InJson, &webMOI))
 		{
 			return false;
-		}
-		const auto* nameProp = webMOI.properties.Find(PropertyName);
-
-		if (nameProp && nameProp->type == EWebMOIPropertyType::text && nameProp->valueArray.Num() == 1)
-		{
-			const FString& symbolName = nameProp->valueArray[0];
-			const auto* preset = Document->GetPresetCollection().PresetFromGUID(StateData.AssemblyGUID);
-			if (preset && preset->DisplayName.ToString() != symbolName)
-			{
-				auto deltaPtr = Document->GetPresetCollection().MakeUpdateDelta(preset->GUID);
-				deltaPtr->NewState.DisplayName = FText::FromString(symbolName);
-				Document->ApplyDeltas({ deltaPtr }, GetWorld());
-			}
 		}
 
 		return true;

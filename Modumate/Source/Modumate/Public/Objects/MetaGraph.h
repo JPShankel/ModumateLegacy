@@ -46,6 +46,4 @@ public:
 private:
 	FBox CachedBounds { ForceInitToZero };
 	TArray<FVector> CachedCorners;
-
-	static const FString PropertyName;
 };
