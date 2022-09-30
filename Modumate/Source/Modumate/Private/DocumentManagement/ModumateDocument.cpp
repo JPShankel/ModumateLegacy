@@ -4477,38 +4477,29 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 		return;
 	}
 
-	const bool bSymbolDelete = preset->ObjectType == EObjectType::OTMetaGraph;
 	ClearPreviewDeltas(World);
 
-	TArray<AModumateObjectInstance*> obs = GetObjectsOfType(preset->ObjectType).FilterByPredicate(
-		[DeleteGUID](const AModumateObjectInstance* MOI) {return MOI->GetAssembly().PresetGUID == DeleteGUID; });
-
-	if (obs.Num() > 0)
+	if (preset->NodeScope != EBIMValueScope::Symbol)
 	{
-		if (ReplacementGUID.IsValid())
+		TArray<AModumateObjectInstance*> obs = GetObjectsOfType(preset->ObjectType).FilterByPredicate(
+			[DeleteGUID](const AModumateObjectInstance* MOI) {return MOI->GetAssembly().PresetGUID == DeleteGUID; });
+
+		if (obs.Num() > 0)
 		{
-			auto delta = MakeShared<FMOIDelta>();
-			for (auto ob : obs)
+			if (ReplacementGUID.IsValid())
 			{
-				auto& newState = delta->AddMutationState(ob);
-				newState.AssemblyGUID = ReplacementGUID;
+				auto delta = MakeShared<FMOIDelta>();
+				for (auto ob : obs)
+				{
+					auto& newState = delta->AddMutationState(ob);
+					newState.AssemblyGUID = ReplacementGUID;
+				}
+				deltas.Add(delta);
 			}
-			deltas.Add(delta);
-		}
-		else if (bSymbolDelete)
-		{
-			auto delta = MakeShared<FMOIDelta>();
-			for (auto ob : obs)
+			else if (!GetDeleteObjectsDeltas(deltas, obs))
 			{
-				auto& newState = delta->AddMutationState(ob);
-				newState.AssemblyGUID.Invalidate();
+				return;
 			}
-	
-			deltas.Add(delta);
-		}
-		else if (!GetDeleteObjectsDeltas(deltas, obs))
-		{
-			return;
 		}
 	}
 

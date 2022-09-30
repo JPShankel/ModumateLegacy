@@ -88,7 +88,7 @@ void AModumateObjectInstance::UpdateAssemblyFromKey()
 		{
 			CachedAssembly.ObjectType = StateData.ObjectType;
 		}
-		else
+		else if (GetObjectType() != EObjectType::OTMetaGraph)
 		{
 			// Missing assemblies will get default keys, so CachedAssembly will be different if we had to fallback
 			// NOTE: this is a temporary solution to avoid persistent ensures when BIM keys expire

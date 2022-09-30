@@ -20,4 +20,7 @@ struct MODUMATE_API FBIMPresetDelta : public FDocumentDelta
 	virtual bool ApplyTo(UModumateDocument* Doc, UWorld* World) const override;
 	virtual TSharedPtr<FDocumentDelta> MakeInverse() const override;
 	virtual FStructDataWrapper SerializeStruct() override;
+	virtual void GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation,
+		TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const override;
+
 };

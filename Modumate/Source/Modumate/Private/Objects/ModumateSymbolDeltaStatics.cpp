@@ -375,6 +375,23 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(UModumateDocument* 
 	}
 }
 
+bool FModumateSymbolDeltaStatics::GetDerivedDeltasForPresetDelta(UModumateDocument* Doc, const FBIMPresetDelta* PresetDelta, EMOIDeltaType DeltaType, TArray<FDeltaPtr>& OutDeltas)
+{
+	const FGuid& uuid = PresetDelta->OldState.GUID;
+	TArray<const AModumateObjectInstance*> allGroups = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(EObjectType::OTMetaGraph);
+	for (const auto* groupObj : allGroups)
+	{
+		if (groupObj->GetStateData().AssemblyGUID == uuid)
+		{
+			auto groupDelta = MakeShared<FMOIDelta>();
+			groupDelta->AddMutationState(groupObj).AssemblyGUID.Invalidate();
+			OutDeltas.Add(groupDelta);
+		}
+	}
+
+	return true;
+}
+
 bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, TArray<FDeltaPtr>& OutDeltas)
 {
 	const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(SymbolGroup);
