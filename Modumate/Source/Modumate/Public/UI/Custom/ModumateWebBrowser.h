@@ -34,12 +34,19 @@ public:
 
 	// Bind UObject to slate web browser
 	UFUNCTION(BlueprintCallable)
-	void CallBindUObject(const FString& Name, UObject* Object, bool bIsPermanent);
+	void CallBindUObject(const FString& Name, UObject* Object);
 	void SetPlayerInputPosition(const FVector2D& position);
 	static const FName MODUMATE_WEB_TAG;
 
 protected:
+	typedef struct
+	{
+		FString Name;
+		UObject* Object;
+	} BoundObjectRequest;
 
+	TArray<BoundObjectRequest> BoundObjects;
+	
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 
 	void HandleOnLoadCompleted();

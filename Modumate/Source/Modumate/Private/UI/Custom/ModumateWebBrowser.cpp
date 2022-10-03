@@ -6,12 +6,10 @@
 
 const FName UModumateWebBrowser::MODUMATE_WEB_TAG = FName(TEXT("ModumateWebBrowser"));
 
-void UModumateWebBrowser::CallBindUObject(const FString& Name, UObject* Object, bool bIsPermanent)
+void UModumateWebBrowser::CallBindUObject(const FString& Name, UObject* Object)
 {
-	if (WebBrowserWidget.IsValid())
-	{
-		WebBrowserWidget->BindUObject(Name, Object, bIsPermanent);
-	}
+	BoundObjectRequest req; req.Name = Name; req.Object = Object;
+	BoundObjects.Push(req);
 }
 
 void UModumateWebBrowser::SetPlayerInputPosition(const FVector2D& position)
@@ -50,14 +48,22 @@ TSharedRef<SWidget> UModumateWebBrowser::RebuildWidget()
 
 void UModumateWebBrowser::HandleOnLoadCompleted()
 {
-	if(!WebReloadWatchdog)
+	if (WebBrowserWidget.IsValid())
 	{
-		WebReloadWatchdog = NewObject<UWebWatchdog>();
-		WebReloadWatchdog->Rename(nullptr, this);
-		WebReloadWatchdog->OnWatchdogExpired().AddUObject(this, &UModumateWebBrowser::WatchdogTriggered);
-		CallBindUObject(TEXT("watchdog"), WebReloadWatchdog, true);
+		if(!WebReloadWatchdog)
+		{
+			WebReloadWatchdog = NewObject<UWebWatchdog>();
+			WebReloadWatchdog->Rename(nullptr, this);
+			WebReloadWatchdog->OnWatchdogExpired().AddUObject(this, &UModumateWebBrowser::WatchdogTriggered);
+		}
 		
-	}	
+		//Rebind everything we need to function
+		WebBrowserWidget->BindUObject(TEXT("watchdog"), WebReloadWatchdog, false);
+		for(auto& bind : BoundObjects)
+		{
+			WebBrowserWidget->BindUObject(bind.Name, bind.Object, false);	
+		}
+	}
 	OnLoadCompleted.Broadcast();
 }
 

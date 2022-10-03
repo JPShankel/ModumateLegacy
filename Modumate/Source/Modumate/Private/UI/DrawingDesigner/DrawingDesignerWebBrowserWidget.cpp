@@ -61,6 +61,7 @@ void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 
 void UDrawingDesignerWebBrowserWidget::InitWithController()
 {
+	UE_LOG(LogTemp, Log, TEXT("Binding UI..."));
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto gameState = GetWorld() ? Cast<AEditModelGameState>(GetWorld()->GetGameState()) : nullptr;
 	auto gameInstance = controller ? controller->GetGameInstance<UModumateGameInstance>() : nullptr;
@@ -68,10 +69,14 @@ void UDrawingDesignerWebBrowserWidget::InitWithController()
 	
 	if (ensureAlways(controller && controller->GetDocument() && gameState && gameState->DocumentWebBridge))
 	{
-		static const FString bindObjName(TEXT("doc"));
-		DrawingSetWebBrowser->CallBindUObject(bindObjName, gameState->DocumentWebBridge, true);
-		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), controller->InputHandlerComponent, true);
-		DrawingSetWebBrowser->CallBindUObject(TEXT("game"), GetGameInstance(), true);		
+		DrawingSetWebBrowser->CallBindUObject(TEXT("doc"), gameState->DocumentWebBridge);
+		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), controller->InputHandlerComponent);
+		DrawingSetWebBrowser->CallBindUObject(TEXT("game"), GetGameInstance());
+		UE_LOG(LogTemp, Log, TEXT("...Done"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("...Could not bind UI"));
 	}
 
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();

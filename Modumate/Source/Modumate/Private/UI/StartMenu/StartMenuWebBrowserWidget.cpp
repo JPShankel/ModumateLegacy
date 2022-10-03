@@ -6,6 +6,7 @@
 #include "UI/Custom/ModumateWebBrowser.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
 #include "Online/ModumateCloudConnection.h"
+#include "Runtime/WebBrowser/Public/SWebBrowser.h"
 
 #define LOCTEXT_NAMESPACE "StartMenuWebBrowserWidget"
 
@@ -29,7 +30,7 @@ void UStartMenuWebBrowserWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	static const FString bindObjName(TEXT("obj"));
-	ModumateWebBrowser->CallBindUObject(bindObjName, GetGameInstance(), true);
+	ModumateWebBrowser->WebBrowserWidget->BindUObject(bindObjName, GetGameInstance());
 
 	LaunchModumateCloudWebsite();
 }

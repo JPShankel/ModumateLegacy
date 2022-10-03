@@ -152,7 +152,6 @@ void AEditModelPlayerState::ClientInitialize(class AController* C)
 	Super::ClientInitialize(C);
 
 	TryInitController();
-	SendWebPlayerState();
 }
 
 void AEditModelPlayerState::TryInitController()
@@ -1942,6 +1941,10 @@ bool AEditModelPlayerState::SendWebPlayerState() const
 			{
 				doc->DrawingSendResponse(TEXT("onPlayerStateUpdated"), jsonState);
 				return true;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("SendWebPlayerState() called before document was ready"));
 			}
 		}
 	}
