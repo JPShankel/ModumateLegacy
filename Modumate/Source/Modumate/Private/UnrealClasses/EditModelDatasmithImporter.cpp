@@ -226,7 +226,8 @@ void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAsse
 			FString testFile = InAssetRequest.Assembly.Parts[0].Mesh.DatasmithUrl;
 			if (FPaths::FileExists(testFile))
 			{
-				AddDatasmithRuntimeActor(InAssetRequest.Assembly.PresetGUID, testFile);
+				FString localFileClean = testFile.Replace(TEXT("\\"), TEXT("/"));
+				AddDatasmithRuntimeActor(InAssetRequest.Assembly.PresetGUID, localFileClean);
 			}
 			else if (testFile.StartsWith(TEXT("http")))
 			{
@@ -334,7 +335,8 @@ bool AEditModelDatasmithImporter::ImportDatasmithFilesFromPresetFolder(const FGu
 	for (auto curDatasmithFile : dataSmithFiles)
 	{
 		FString fullDatasmithPathName = FPaths::Combine(extractedFolder, curDatasmithFile);
-		if (ensure(AddDatasmithRuntimeActor(InGUID, fullDatasmithPathName)))
+		FString localFileClean = fullDatasmithPathName.Replace(TEXT("\\"), TEXT("/"));
+		if (ensure(AddDatasmithRuntimeActor(InGUID, localFileClean)))
 		{
 			result = true;
 		}
