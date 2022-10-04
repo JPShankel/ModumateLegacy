@@ -468,6 +468,7 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 		TArray<AModumateObjectInstance *> connectedMOIs;
 		ObjToDelete->GetConnectedMOIs(connectedMOIs);
 		int32 objID = ObjToDelete->ID;
+		ObjToDelete->MarkDirty(EObjectDirtyFlags::Structure);  // Dirty any children
 
 		bool bKeepDeletedObj = !bSlowClearingPreviewDeltas;
 		bool bFullyDestroy = !bFastClearingPreviewDeltas && !bApplyingPreviewDeltas;
