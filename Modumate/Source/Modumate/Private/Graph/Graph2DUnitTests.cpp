@@ -300,6 +300,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphSerialization, "Modumate.Graph.2D
 
 	FString expectedJSONString(TEXT(
 "{"
+"   \"epsilon\":0.5,"
 "	\"vertices\":"
 "	{"
 "		\"1\": {\"x\": 0, \"y\": 0},"
@@ -336,7 +337,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphSerialization, "Modumate.Graph.2D
 	graphJSONString.ReplaceInline(TEXT("\r"), TEXT(""));
 	graphJSONString.ReplaceInline(TEXT("\n"), TEXT(""));
 
-	TestEqualInsensitive(TEXT("Graph JSON string"), *expectedJSONString, *graphJSONString);
+	TestEqualInsensitive(TEXT("Graph JSON string"), *graphJSONString, *expectedJSONString);
 
 	auto deserializedGraph = MakeShared<FGraph2D>();
 	bool bLoadSuccess = deserializedGraph->FromDataRecord(&graphRecord);

@@ -593,6 +593,8 @@ bool FGraph2D::ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons, b
 	OutRecord->Edges.Reset();
 	OutRecord->Polygons.Reset();
 
+	OutRecord->Epsilon = Epsilon;
+
 	for (const auto &kvp : Vertices)
 	{
 		const FGraph2DVertex &vertex = kvp.Value;
@@ -627,6 +629,11 @@ bool FGraph2D::ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons, b
 bool FGraph2D::FromDataRecord(const FGraph2DRecord* InRecord)
 {
 	Reset();
+
+	if (InRecord->Epsilon != 0.0f)
+	{
+		Epsilon = InRecord->Epsilon;
+	}
 
 	for (const auto &kvp : InRecord->Vertices)
 	{

@@ -1174,7 +1174,7 @@ bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& Nex
 					OutGraphToSurfaceVertices.Add(FaceToVertices[kvp.Key][idx], NextID);
 				}
 
-				if (!AddVertexDirect(addVerticesDelta, NextID, polygonVertex))
+				if (AddVertex(polygonVertex, NextID) == nullptr || !AddVertexDirect(addVerticesDelta, NextID, polygonVertex))
 				{
 					ApplyInverseDeltas(appliedDeltas);
 					return false;
@@ -1188,12 +1188,6 @@ bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& Nex
 			idx++;
 		}
 
-		if (!ApplyDelta(addVerticesDelta))
-		{
-			ApplyInverseDeltas(appliedDeltas);
-			return false;
-		}
-
 		AggregateAddedVertices({ addVerticesDelta }, faceToSurfaceVertices[kvp.Key]);
 	}
 
@@ -1202,7 +1196,7 @@ bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& Nex
 	{
 		TArray<FGraph2DDelta> addEdgeDeltas;
 		TArray<FVector2D> polygonVertices;
-		UModumateGeometryStatics::GetUniquePoints2D(kvp.Value, polygonVertices);
+		UModumateGeometryStatics::GetUniquePoints2D(kvp.Value, polygonVertices, Epsilon);
 
 		int32 numPolygonVerts = polygonVertices.Num();
 		for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)

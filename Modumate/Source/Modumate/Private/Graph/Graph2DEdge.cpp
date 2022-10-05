@@ -165,11 +165,8 @@ bool FGraph2DEdge::CacheAngle()
 		{
 			FVector2D edgeDelta = endVertex->Position - startVertex->Position;
 			float edgeLength = edgeDelta.Size();
-			if (edgeLength > graph->Epsilon)
-			{
-				CachedEdgeDir = edgeDelta / edgeLength;
-				CachedAngle = FRotator::ClampAxis(FMath::RadiansToDegrees(FMath::Atan2(CachedEdgeDir.Y, CachedEdgeDir.X)));
-			}
+			CachedEdgeDir = edgeDelta / edgeLength;
+			CachedAngle = FRotator::ClampAxis(FMath::RadiansToDegrees(FMath::Atan2(CachedEdgeDir.Y, CachedEdgeDir.X)));
 			return true;
 		}
 	}

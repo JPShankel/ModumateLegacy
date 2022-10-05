@@ -60,6 +60,9 @@ struct FGraph2DRecord
 	GENERATED_BODY()
 
 	UPROPERTY()
+	float Epsilon = 0.0f;
+
+	UPROPERTY()
 	TMap<int32, FVector2D> Vertices;
 
 	UPROPERTY()

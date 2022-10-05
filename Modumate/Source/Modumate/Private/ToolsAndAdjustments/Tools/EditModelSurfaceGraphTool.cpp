@@ -399,7 +399,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 	else
 	{
 		OutSurfaceGraphID = NextID++;
-		HitSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID, THRESH_POINTS_ARE_NEAR);
+		HitSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID);
 	}
 
 	// Create the delta for adding the surface graph object, if it didn't already exist
