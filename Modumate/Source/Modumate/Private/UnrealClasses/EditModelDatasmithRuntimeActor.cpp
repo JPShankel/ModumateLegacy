@@ -133,9 +133,9 @@ bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
 	// Since engine runtime import does not track material name, MetaData needs to track via material ID
 	int32 matIdx = 0;
 	TMap<UMaterialInterface*, UMaterialInstanceDynamic*> originalToDynamicMap;
-	for (const auto meshMatPair : StaticMeshMaterialsMap)
+	for (const auto& meshMatPair : StaticMeshMaterialsMap)
 	{
-		for (const auto staticMeshMaterial : meshMatPair.Value)
+		for (const auto& staticMeshMaterial : meshMatPair.Value)
 		{
 			// Create dynamic material for each original material
 			const auto& existingDynMat = originalToDynamicMap.FindRef(staticMeshMaterial);
