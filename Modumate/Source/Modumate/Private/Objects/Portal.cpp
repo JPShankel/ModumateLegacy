@@ -13,7 +13,6 @@
 #include "Objects/MetaPlaneSpan.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalOrientHandle.h"
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
@@ -416,15 +415,6 @@ void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 		parent->GetObjectType() == EObjectType::OTMetaPlaneSpan)))
 	{
 		return;
-	}
-
-	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
-	int32 numCorners = parent->GetNumCorners();
-	for (int32 i = 0; i < numCorners; ++i)
-	{
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetTargetMOI(parent);
 	}
 
 	auto cwOrientHandle = MakeHandle<AAdjustPortalOrientHandle>();

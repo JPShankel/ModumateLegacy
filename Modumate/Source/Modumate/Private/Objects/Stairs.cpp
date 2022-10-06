@@ -6,7 +6,6 @@
 #include "ModumateCore/ModumateStairStatics.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Algo/Accumulate.h"
 #include "Objects/MetaPlaneSpan.h"
@@ -351,23 +350,5 @@ void AMOIStaircase::GetInPlaneLines(const TSharedPtr<FDraftingComposite>& Parent
 			ParentPage->Children.Add(draftingLine);
 			draftingLine->SetLayerTypeRecursive(dwgLayerType);
 		}
-	}
-}
-
-void AMOIStaircase::SetupAdjustmentHandles(AEditModelPlayerController *controller)
-{
-	AModumateObjectInstance *parent = GetParentObject();
-	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
-	{
-		return;
-	}
-
-	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
-	int32 numCorners = parent->GetNumCorners();
-	for (int32 i = 0; i < numCorners; ++i)
-	{
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetTargetMOI(parent);
 	}
 }

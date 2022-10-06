@@ -25,8 +25,6 @@ public:
 	virtual bool ShowStructureOnSelection() const override;
 	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;
 
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
-
 protected:
 	FArchitecturalMaterial MaterialData;
 

@@ -11,7 +11,6 @@
 #include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Quantities/QuantitiesManager.h"
@@ -121,28 +120,6 @@ void AMOIFinish::ToggleAndUpdateCapGeometry(bool bEnableCap)
 	if (DynamicMeshActor.IsValid())
 	{
 		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
-	}
-}
-
-void AMOIFinish::SetupAdjustmentHandles(AEditModelPlayerController* controller)
-{
-	// parent handles
-	AModumateObjectInstance* parent = GetParentObject();
-	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTSurfacePolygon)))
-	{
-		return;
-	}
-
-	int32 numCorners = parent->GetNumCorners();
-	for (int32 i = 0; i < numCorners; ++i)
-	{
-		auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		cornerHandle->SetTargetIndex(i);
-		cornerHandle->SetTargetMOI(parent);
-
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetTargetMOI(parent);
 	}
 }
 

@@ -15,10 +15,6 @@
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/MOIDelta.h"
 #include "Objects/MetaPlaneSpan.h"
-#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
-#include "ToolsAndAdjustments/Handles/JustificationHandle.h"
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
@@ -226,47 +222,6 @@ void AMOIPlaneHostedObj::ToggleAndUpdateCapGeometry(bool bEnableCap)
 	{
 		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
 	}
-}
-
-void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController *controller)
-{
-	AModumateObjectInstance *parent = GetParentObject();
-	if (!ensureAlways(parent && IsValidParentObjectType(parent->GetObjectType())))
-	{
-		return;
-	}
-
-	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
-	int32 numCorners = parent->GetNumCorners();
-	for (int32 i = 0; i < numCorners; ++i)
-	{
-		// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
-		if (GetObjectType() != EObjectType::OTWallSegment)
-		{
-			auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-			cornerHandle->SetTargetIndex(i);
-			cornerHandle->SetTargetMOI(parent);
-		}
-
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetTargetMOI(parent);
-	}
-}
-
-void AMOIPlaneHostedObj::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
-{
-	// Check if adjustment handles are up to date with current number of corners, if not, clear existing handles to make new ones.
-	// Mismatch can happen when geometry changes during span operation.
-	if (bShow && AdjustmentHandles.Num() > 0)
-	{
-		AModumateObjectInstance* parent = GetParentObject();
-		if (parent && parent->GetNumCorners() != AdjustmentHandles.Num())
-		{
-			ClearAdjustmentHandles();
-		}
-	}
-	Super::ShowAdjustmentHandles(Controller, bShow);
 }
 
 bool AMOIPlaneHostedObj::OnSelected(bool bIsSelected)

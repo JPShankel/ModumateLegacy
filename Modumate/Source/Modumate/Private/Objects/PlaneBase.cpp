@@ -3,7 +3,6 @@
 #include "Objects/PlaneBase.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -72,22 +71,6 @@ void AMOIPlaneBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoin
 
 		outPoints.Add(FStructurePoint(pointA, dir, pointIdxA));
 		outLines.Add(FStructureLine(pointA, pointB, pointIdxA, pointIdxB));
-	}
-}
-
-// Adjustment Handles
-void AMOIPlaneBase::SetupAdjustmentHandles(AEditModelPlayerController *controller)
-{
-	if (HasAdjustmentHandles())
-	{
-		return;
-	}
-
-	int32 numPoints = CachedPoints.Num();
-	for (int32 i = 0; i < numPoints; ++i)
-	{
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
 	}
 }
 

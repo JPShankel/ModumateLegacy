@@ -2,7 +2,6 @@
 
 #include "Objects/ScopeBox.h"
 
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UI/HUDDrawWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -133,18 +132,4 @@ void AMOIScopeBox::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 bool AMOIScopeBox::ShowStructureOnSelection() const
 {
 	return false;
-}
-
-void AMOIScopeBox::SetupAdjustmentHandles(AEditModelPlayerController *controller)
-{
-	for (int32 i = 0; i < 4; ++i)
-	{
-		auto pointHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		pointHandle->SetTargetIndex(i);
-
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
-	}
-
-	// TODO: rewrite extrusion handles specifically for scope boxes
 }

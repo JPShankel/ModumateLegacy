@@ -19,7 +19,6 @@ public:
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
 
 	virtual void SetupDynamicGeometry() override;
 

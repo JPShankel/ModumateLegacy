@@ -46,7 +46,6 @@ public:
 	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;

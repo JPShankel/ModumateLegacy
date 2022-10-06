@@ -5,7 +5,6 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "DocumentManagement/ModumateSnappingView.h"
-#include "ToolsAndAdjustments/Handles/AdjustFFEPointHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFERotateHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFEInvertHandle.h"
 #include "UnrealClasses/EditModelGameMode.h"
@@ -50,15 +49,6 @@ FQuat AMOIFFE::GetRotation() const
 	}
 
 	return CachedRotation;
-}
-
-void AMOIFFE::SetupAdjustmentHandles(AEditModelPlayerController *controller)
-{
-	for (int32 i = 0; i < 4; ++i)
-	{
-		auto ffePointHandle = MakeHandle<AAdjustFFEPointHandle>();
-		ffePointHandle->SetTargetIndex(i);
-	}
 }
 
 void AMOIFFE::SetupDynamicGeometry()

@@ -16,7 +16,6 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
 #include "UnrealClasses/EditModelDatasmithImporter.h"
 
@@ -313,34 +312,6 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cmaTransform.SetScale3D(FVector::OneVector);
 			cma->SetActorTransform(cmaTransform);
 		}		
-	}
-}
-
-void AMOIFaceHosted::SetupAdjustmentHandles(AEditModelPlayerController* Controller)
-{
-	AModumateObjectInstance* parent = GetParentObject();
-	auto parentOT = parent->GetObjectType();
-	bool parentCompatible = UModumateObjectStatics::IsValidParentObjectType(parentOT);
-	if (!parent || !parentCompatible)
-	{
-		return;
-	}
-
-	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
-	int32 numCorners = parent->GetNumCorners();
-	for (int32 i = 0; i < numCorners; ++i)
-	{
-		// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
-		if (GetObjectType() != EObjectType::OTWallSegment)
-		{
-			auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-			cornerHandle->SetTargetIndex(i);
-			cornerHandle->SetTargetMOI(parent);
-		}
-
-		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetTargetMOI(parent);
 	}
 }
 
