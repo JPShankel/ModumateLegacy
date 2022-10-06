@@ -122,6 +122,7 @@ struct MODUMATE_API FSnappedCursor
 
 	// Set in the controller on a per-frame basis
 	bool ShiftLocked = false;
+	bool ShiftUnsnapped = false;
 
 	// defines the line for a shift-constrained projection
 	FVector ShiftLockOrigin = FVector::ZeroVector;
