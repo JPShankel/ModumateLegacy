@@ -150,6 +150,11 @@ bool UGroupTool::Activate()
 		}
 
 		metaItemsToMove = metaItemsToMove.Difference(itemsToIgnore);
+		if (metaItemsToMove.Num() == 0)
+		{
+			Controller->ToolAbortUse();
+			return true;
+		}
 
 		TArray<FGraph3DDelta> deleteGraphDeltas;
 		// Regular delete has bGatherEdgesFromFaces = false, bAttemptJoin = true. This can change
