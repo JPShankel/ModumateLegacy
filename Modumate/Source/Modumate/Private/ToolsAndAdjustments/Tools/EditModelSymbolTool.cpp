@@ -71,23 +71,9 @@ void USymbolTool::OnAssemblyChanged()
 	if (symbolPreset)
 	{
 		FBIMSymbolPresetData symbolData;
-		// Similar to UPasteTool, find a minimal anchor point.
 		if (ensure(symbolPreset->TryGetCustomData(symbolData)))
 		{
-			FVector anchor(ForceInit);
-			for (const auto& vert : symbolData.Graph3d.Vertices)
-			{
-				FVector position = FVector(vert.Value.Position);
-				if (anchor.IsZero())
-				{
-					anchor = position;
-				}
-				if ((position.X < anchor.X) ? true : (position.Y > anchor.Y) ? true : position.Z < anchor.Z)
-				{
-					anchor = position;
-				}
-			}
-			SymbolAnchor = anchor;
+			SymbolAnchor = symbolData.Anchor;
 		}
 	}
 }
@@ -120,9 +106,9 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 
 		if (bPresetDelta)
 		{
-			FBIMPresetInstance newSymbolPrest(*symbolPreset);
-			newSymbolPrest.SetCustomData(symbolData);
-			OutDeltas.Add(doc->GetPresetCollection().MakeUpdateDelta(newSymbolPrest));
+			FBIMPresetInstance newSymbolPreset(*symbolPreset);
+			newSymbolPreset.SetCustomData(symbolData);
+			OutDeltas.Add(doc->GetPresetCollection().MakeUpdateDelta(newSymbolPreset));
 		}
 	}
 	return true;

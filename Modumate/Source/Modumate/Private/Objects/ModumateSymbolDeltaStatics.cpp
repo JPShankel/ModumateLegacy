@@ -431,6 +431,8 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 			return false;
 		}
 
+		symbolData.Anchor = SymbolAnchor(symbolData);
+
 		newSymbolPreset.SetCustomData(symbolData);
 		FDeltaPtr presetDelta(presets.MakeCreateNewDelta(newSymbolPreset));
 
@@ -698,6 +700,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 	}
 
 	FBIMPresetInstance newSymbolPreset(*symbolPreset);
+	newSymbolData.Anchor = symbolData.Anchor;
 
 	for (int32 otherGroup : allGroupIDs)
 	{
@@ -803,4 +806,24 @@ bool FModumateSymbolDeltaStatics::RemoveGroupMembersFromSymbol(const TSet<int32>
 	}
 
 	return bReturn;
+}
+
+// Similar to UPasteTool, find a minimal anchor point.
+FVector FModumateSymbolDeltaStatics::SymbolAnchor(const FBIMSymbolPresetData& PresetData)
+{
+	FVec3d anchor;
+	if (PresetData.Graph3d.Vertices.Num() > 0)
+	{
+		anchor = PresetData.Graph3d.Vertices.CreateConstIterator()->Value.Position;
+	}
+	for (const auto& vert : PresetData.Graph3d.Vertices)
+	{
+		const auto& position = vert.Value.Position;
+		if ((position.X < anchor.X) ? true : (position.Y > anchor.Y) ? true : position.Z < anchor.Z)
+		{
+			anchor = position;
+		}
+	}
+
+	return FVector(anchor);
 }

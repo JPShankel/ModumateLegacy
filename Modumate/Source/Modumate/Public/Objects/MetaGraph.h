@@ -46,4 +46,7 @@ public:
 private:
 	FBox CachedBounds { ForceInitToZero };
 	TArray<FVector> CachedCorners;
+	FGuid CachedSymbolGuid;
+
+	void SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas);
 };

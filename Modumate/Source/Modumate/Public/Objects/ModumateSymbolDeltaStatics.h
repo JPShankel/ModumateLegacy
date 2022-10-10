@@ -26,9 +26,10 @@ public:
 		TArray<FDeltaPtr>& OutDeltas);
 	static void PropagateChangedSymbolInstances(UModumateDocument* Doc, int32& NextID, const TSet<int32>& GroupIDs, TArray<FDeltaPtr>& OutDeltas);
 	static void PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID, TArray<FDeltaPtr>& OutDeltas);
+
 	static bool CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
 	static bool DetachSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
 
-private:
 	static bool RemoveGroupMembersFromSymbol(const TSet<int32> GroupMembers, FBIMSymbolPresetData& SymbolData);
+	static FVector SymbolAnchor(const FBIMSymbolPresetData& PresetData);
 };

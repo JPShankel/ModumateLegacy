@@ -32,4 +32,7 @@ struct MODUMATE_API FBIMSymbolPresetData
 
 	UPROPERTY()
 	TMap<int32, FBIMSymbolPresetIDSet> EquivalentIDs;
+
+	UPROPERTY()
+	FVector Anchor { ForceInit };
 };

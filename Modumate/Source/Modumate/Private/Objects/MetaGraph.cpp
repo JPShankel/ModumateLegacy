@@ -6,7 +6,10 @@
 #include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateSymbolDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
+#include "Algo/ForEach.h"
 
 AMOIMetaGraph::AMOIMetaGraph()
 {
@@ -151,6 +154,13 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 	Super::CleanObject(DirtyFlag, OutSideEffectDeltas);
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
+		if (OutSideEffectDeltas && CachedSymbolGuid != StateData.AssemblyGUID && CachedSymbolGuid.IsValid()
+			&& StateData.AssemblyGUID.IsValid())
+		{
+			SwapSymbol(OutSideEffectDeltas);
+		}
+		CachedSymbolGuid = StateData.AssemblyGUID;
+
 		CachedAssembly.PresetGUID = StateData.AssemblyGUID;  // For CS tool
 		if (!SetupBoundingBox())
 		{
@@ -215,4 +225,59 @@ bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 FVector AMOIMetaGraph::GetCorner(int32 Index) const
 {
 	return CachedCorners[Index];
+}
+
+void AMOIMetaGraph::SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas)
+{
+	const FBIMPresetCollection& presets = Document->GetPresetCollection();
+	const FBIMPresetInstance* oldSymbolPreset = presets.PresetFromGUID(CachedSymbolGuid);
+	const FBIMPresetInstance* newSymbolPreset = presets.PresetFromGUID(StateData.AssemblyGUID);
+
+	if (!ensure(oldSymbolPreset && newSymbolPreset))
+	{
+		return;
+	}
+
+	FBIMSymbolPresetData oldSymbolData;
+	FBIMSymbolPresetData newSymbolData;
+	if (!ensure(oldSymbolPreset->TryGetCustomData(oldSymbolData) && newSymbolPreset->TryGetCustomData(newSymbolData)) )
+	{
+		return;
+	}
+
+	const FVector oldAnchor = oldSymbolData.Anchor;
+	const FVector newAnchor = newSymbolData.Anchor;
+	const FVector deltaAnchor(oldAnchor - newAnchor);
+
+	// Gut the group:
+	FModumateObjectDeltaStatics::GetDeltasForGraphDelete(Document, ID, *OutSideEffectDeltas, false);
+
+	TSet<AModumateObjectInstance*> groupMembers;
+	UModumateObjectStatics::GetObjectsInGroups(Document, { ID }, groupMembers, true);
+	TSet<int32> groupMemberIDs;
+	Algo::ForEach(groupMembers, [&groupMemberIDs](const AModumateObjectInstance* o) { groupMemberIDs.Add(o->ID); });
+	FModumateSymbolDeltaStatics::RemoveGroupMembersFromSymbol(groupMemberIDs, oldSymbolData);
+
+	// Add new Symbol contents:
+	FTransform transform(InstanceData.Rotation, InstanceData.Rotation.RotateVector(deltaAnchor) + InstanceData.Location);
+	int32 nextID = Document->GetNextAvailableID();
+	FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(Document, ID, nextID, newSymbolData, transform, *OutSideEffectDeltas);
+
+	// New transform for the group
+	auto groupDelta = MakeShared<FMOIDelta>();
+	FMOIStateData& newGroupState = groupDelta->AddMutationState(this);
+	FMOIMetaGraphData newGroupData(InstanceData);
+	newGroupData.Location = transform.GetLocation();
+	newGroupData.Rotation = transform.GetRotation();
+	newGroupState.CustomData.SaveStructData(newGroupData);
+	OutSideEffectDeltas->Add(groupDelta);
+
+	// Update equivalence lists of old & new Symbol Presets:
+	auto oldPresetDelta = presets.MakeUpdateDelta(CachedSymbolGuid);
+	oldPresetDelta->NewState.SetCustomData(oldSymbolData);
+	OutSideEffectDeltas->Add(oldPresetDelta);
+
+	auto newPresetDelta = presets.MakeUpdateDelta(StateData.AssemblyGUID);
+	newPresetDelta->NewState.SetCustomData(newSymbolData);
+	OutSideEffectDeltas->Add(newPresetDelta);
 }
