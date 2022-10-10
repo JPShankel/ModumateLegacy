@@ -15,6 +15,7 @@
 #include "Online/ModumateTextChat.h"
 #include "UI/Custom/WebKeyboardCapture.h"
 #include "UnrealClasses/ModumateCapability.h"
+#include "Objects/CameraView.h"
 
 #include "EditModelPlayerController.generated.h"
 
@@ -69,7 +70,6 @@ public:
 
 	UWebKeyboardCapture* WebKeyboardCaptureWidget;
 private:
-
 	UPROPERTY()
 	UModumateDocument* Document;
 
@@ -535,9 +535,6 @@ public:
 
 	void UploadWebThumbnail();
 
-	UFUNCTION(BlueprintCallable)
-	bool TakeScreenshot();
-
 	UFUNCTION()
 	void DeleteActionDefault();
 
@@ -551,7 +548,7 @@ public:
 	bool CaptureProjectThumbnail(bool bUseSavedView);
 
 	UFUNCTION(BlueprintCallable)
-	bool GetScreenshotFileNameWithDialog(FString& Filepath, FString &Filename);
+	bool GetFolderPathWithDialog(FString& Filepath);
 
 	UPROPERTY()
 	class ASceneCapture2D* ThumbnailCapturer;
@@ -648,7 +645,27 @@ public:
 	UFUNCTION(Server, Reliable)
 	void PostServerLog(const FString& Message);
 	
+	void ShowAxes(bool bShowAxes);
+
+	
+	void CaptureCameraViewsRayTracing(TArray<AMOICameraView*> CameraViews, FString Filepath);
+	void CaptureCameraViewsRayTracingTick(float DeltaTime);
+	void CaptureCameraView(FString Filepath, const AMOICameraView* CameraView);
+	void CaptureScreen(FString Filepath, FString Filename, float FOV);
+	void DirtyLightMOIs();
+
 private:
+	//screemshotting variables
+	TArray<AMOICameraView*> RTSSCameraViews;
+	AMOICameraView* CurrentCameraView;
+	float WaitSSInterval = 0.75f; //seconds
+	float CurrentSSInterval = 0.0f;
+	bool bScreenshotInProgress = false;
+	FString SSFilepath;
+	FTransform OriginalPlayerTransform;
+	FDateTime OriginalDateTime;
+	bool bOriginalRTEnabled, bOriginalShowLights;
+	int32 OriginalRTQuality, OriginalRTExposure;
 	FVoiceEvent VoiceConnectedEvent;
 	FTextChatClientEvent TextChatConnectedEvent;
 

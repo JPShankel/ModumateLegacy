@@ -37,6 +37,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
+#include "ModumateCore/ModumateRayTracingSettings.h"
 
 const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
 const FString AEditModelPlayerState::DefaultEnvDateTime(TEXT("2020-09-21T13:30:00.000Z"));
@@ -1768,7 +1769,10 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.camera.FOV = CachedInputCameraState.FOV;
 		OutState.camera.bOrthoView = CachedInputCameraState.bOrthoView;
 		OutState.camera.bCutPlanesColorVisibility = CachedInputCameraState.bCutPlanesColorVisibility;
-    
+		OutState.camera.bRTEnabled = CachedInputCameraState.bRTEnabled;
+		OutState.camera.rayTracingExposure = CachedInputCameraState.rayTracingExposure;
+		OutState.camera.rayTracingQuality = CachedInputCameraState.rayTracingQuality;
+		OutState.camera.bShowLights = CachedInputCameraState.bShowLights;
 		OutState.terrainHeight = GetDefaultTerrainHeight();
 	}
 
@@ -1869,7 +1873,10 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].type == EObjectType::OTCameraView && newSelected.Contains(InState.selectedObjects[0].id))
 	{
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].id));
-		cameraView->UpdateCameraPosition();
+		if (cameraView != nullptr)
+		{
+			cameraView->UpdateCameraPosition();
+		}
 	}
 	else if (EMPlayerController)
 	{
@@ -1882,7 +1889,31 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		{
 			FDateTime::ParseIso8601(*InState.camera.SavedTime, dateTime);
 		}
-		
+		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+		if (ppv != nullptr && RTSettings != nullptr)
+		{
+			RTSettings->Init();
+			RTSettings->SetRayTracingEnabled(ppv, InState.camera.bRTEnabled);
+			RTSettings->ApplyRayTraceQualitySettings(ppv, InState.camera.rayTracingQuality);
+			RTSettings->SetExposure(ppv, InState.camera.rayTracingExposure);
+			EMPlayerController->GetPlayerState<AEditModelPlayerState>()->RayTracingExposure = InState.camera.rayTracingExposure;
+			EMPlayerController->GetPlayerState<AEditModelPlayerState>()->RayTracingQuality = InState.camera.rayTracingQuality;
+			EMPlayerController->GetPlayerState<AEditModelPlayerState>()->bShowLights = InState.camera.bShowLights;
+			//dirty all light mois to toggle lights
+			TArray<AModumateObjectInstance*> mois = doc->GetObjectsOfType(EObjectType::OTFurniture);
+			for (AModumateObjectInstance* moi : mois)
+			{
+				if (moi != nullptr)
+				{
+					const FBIMPresetInstance* preset = doc->GetPresetCollection().PresetFromGUID(moi->GetStateData().AssemblyGUID);
+					if (preset && preset->HasCustomData<FLightConfiguration>())
+					{
+						moi->MarkDirty(EObjectDirtyFlags::Structure);
+					}
+				}
+			}
+		}
 		EMPlayerController->SetFieldOfViewCommand(InState.camera.FOV);
 		EMPlayerController->ToggleAllCutPlanesColor(InState.camera.bCutPlanesColorVisibility);
 

@@ -19,6 +19,7 @@
 #include "UnrealClasses/AxesActor.h"
 #include "UI/ViewCubeWidget.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateRayTracingSettings.h"
 
 
 UComponentSavedViewListItem::UComponentSavedViewListItem(const FObjectInitializer& ObjectInitializer)
@@ -120,6 +121,24 @@ void UComponentSavedViewListItem::ActivateCameraView()
 			cameraComp->SetOrthoWidth(CameraView.OrthoWidth);
 		}
 
+		//Ray Tracing Enabled
+		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+		AEditModelPlayerState* playerState = Controller->GetPlayerState<AEditModelPlayerState>();
+		if (playerState == nullptr)
+		{
+			return;
+		}
+		if (ppv != nullptr && RTSettings != nullptr)
+		{
+			RTSettings->Init();
+			RTSettings->SetRayTracingEnabled(ppv, CameraView.bRTEnabled);
+			RTSettings->ApplyRayTraceQualitySettings(ppv, CameraView.rayTracingQuality);
+			RTSettings->SetExposure(ppv, CameraView.rayTracingExposure);
+			playerState->RayTracingExposure = CameraView.rayTracingExposure;
+			playerState->RayTracingQuality = CameraView.rayTracingQuality;
+		}
+		playerState->bShowLights = CameraView.bShowLights;
 		// Time
 		FDateTime newDateTime;
 		if (FDateTime::ParseIso8601(*CameraView.SavedTime, newDateTime))
@@ -161,7 +180,6 @@ void UComponentSavedViewListItem::ActivateCameraView()
 			}
 		}
 
-		auto* playerState = Controller->GetPlayerState<AEditModelPlayerState>();
 		playerState->AddHideObjectsById(hiddenCPs);
 		playerState->UnhideObjectsById(visibleCPs);
 		Controller->GetDocument()->OnCameraViewSelected(CameraView.MoiId);

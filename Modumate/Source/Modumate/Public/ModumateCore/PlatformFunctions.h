@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "string"
 
 
 struct MODUMATE_API FModumatePlatform
@@ -17,6 +18,7 @@ struct MODUMATE_API FModumatePlatform
 	
 	static bool GetOpenFilename(FString& filename, TFunction<bool()> userCallback, bool bUseDefaultFilters = true);
 	static bool GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType);
+	static void PickContainer(FString& Filepath);
 
 	enum EMessageBoxResponse
 	{

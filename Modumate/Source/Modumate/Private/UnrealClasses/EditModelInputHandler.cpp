@@ -246,10 +246,6 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		Controller->HandleRedo();
 		return true;
 	}
-	case EInputCommand::TakeScreenshot:
-	{
-		return Controller->TakeScreenshot();
-	}
 	case EInputCommand::EscapeKey:
 	{
 		Controller->HandleEscapeKey();

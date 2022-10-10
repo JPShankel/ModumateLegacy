@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/CompoundMeshActor.h"
-
+#include "Objects/ModumateObjectStatics.h"
 UModumateRayTracingSettings::UModumateRayTracingSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -162,7 +162,7 @@ void UModumateRayTracingSettings::SetRayTracingEnabled(APostProcessVolume* ppv, 
 		}
 	}
 	TArray<ACompoundMeshActor*> outActors;
-	FindAllActorsOfClass(ppv->GetWorld(), outActors);
+	UModumateObjectStatics::FindAllActorsOfClass(ppv->GetWorld(), outActors);
 	
 	for (ACompoundMeshActor* actor : outActors)
 	{

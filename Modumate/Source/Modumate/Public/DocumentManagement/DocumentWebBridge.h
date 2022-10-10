@@ -126,4 +126,7 @@ public:
 
 	UFUNCTION()
 	void request_alignment_presets(const FString& GenericRequestJson);
+
+	UFUNCTION()
+	void export_views(TArray<int32> CameraViewIDs);
 };

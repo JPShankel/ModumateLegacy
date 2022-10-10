@@ -1448,7 +1448,7 @@ bool AEditModelPlayerController::CaptureThumbnailFromView()
 	return false;
 }
 
-bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString& Filepath, FString& Filename)
+bool AEditModelPlayerController::GetFolderPathWithDialog(FString& Filepath)
 {
 	if (!CanShowFileDialog())
 	{
@@ -1469,26 +1469,19 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString& Filepa
 	auto cloudConnection = gameInstance->GetCloudConnection();
 	UWorld* world = GetWorld();
 	TFunction<bool()>  networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
-
 	// Open the file dialog
 	bool bChoseFile = false;
 	FString fullFilePath;
 	EMPlayerState->ShowingFileDialog = true;
-	if (FModumatePlatform::GetSaveFilename(fullFilePath, networkTickCall, FModumatePlatform::INDEX_PNGFILE))
-	{
-		bChoseFile = true;
-	}
+	FString filepath;
+	//need callback??
+	FModumatePlatform::PickContainer(filepath);
 
-	// Parse file path
-	FString nameString, extensionString;
-	FPaths::Split(fullFilePath, Filepath, nameString, extensionString);
-	Filename = FPaths::SetExtension(nameString, extensionString);
-
+	Filepath = filepath;
 	EMPlayerState->ShowingFileDialog = false;
 
-	return bChoseFile;
+	return true;
 }
-
 void AEditModelPlayerController::LaunchCloudWorkspacePlanURL()
 {
 	auto gameInstance = GetGameInstance<UModumateGameInstance>();
@@ -1642,53 +1635,6 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 	}
 
 	return retValue;
-}
-
-bool AEditModelPlayerController::TakeScreenshot()
-{
-	// Get path from dialog
-	FString filePath, fileName;
-	if (!GetScreenshotFileNameWithDialog(filePath, fileName))
-	{
-		return false;
-	}
-
-	// Set screenshot taker to the same condition as the current camera
-	APlayerCameraManager* cameraManager = this->PlayerCameraManager;
-	if (ensureAlways(cameraManager && EMPlayerPawn && EMPlayerPawn->ScreenshotTaker))
-	{
-		EMPlayerPawn->ScreenshotTaker->SetWorldTransform(cameraManager->GetActorTransform());
-		EMPlayerPawn->ScreenshotTaker->FOVAngle = cameraManager->GetFOVAngle();
-	}
-	else
-	{
-		return false;
-	}
-
-	// Create render target
-	// Support customize screenshot res?
-	int32 screenshotWidth = 1920;
-	int32 screenshotHeight = 1080;
-	UTextureRenderTarget2D* screenshotRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, screenshotWidth, screenshotHeight, ETextureRenderTargetFormat::RTF_RGBA8_SRGB);
-	EMPlayerPawn->ScreenshotTaker->TextureTarget = screenshotRT;
-
-	// Hide axes
-	if (ensureAlways(AxesActor))
-	{
-		AxesActor->SetActorHiddenInGame(true);
-	}
-
-	// Capture and export
-	EMPlayerPawn->ScreenshotTaker->CaptureScene();
-	UKismetRenderingLibrary::ExportRenderTarget(this, screenshotRT, filePath, fileName);
-
-	// Unhide axes
-	if (AxesActor)
-	{
-		AxesActor->SetActorHiddenInGame(false);
-	}
-
-	return true;
 }
 
 void AEditModelPlayerController::DeleteActionDefault()
@@ -2015,6 +1961,11 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	if (EMPlayerState->bShowSpanDebug)
 	{
 		Document->DrawDebugSpan(GetWorld());
+	}
+
+	if (bScreenshotInProgress)
+	{
+		CaptureCameraViewsRayTracingTick(DeltaTime);
 	}
 #endif
 
@@ -4391,5 +4342,223 @@ void AEditModelPlayerController::HandleRedo()
 		EditModelUserWidget->BIMDesigner->RefreshNodes();
 	}
 }
+void AEditModelPlayerController::ShowAxes(bool bShowAxes)
+{
+	AxesActor->SetActorHiddenInGame(!bShowAxes);
+}
+void AEditModelPlayerController::CaptureCameraViewsRayTracing(TArray<AMOICameraView*> CameraViews, FString Filepath)
+{
+	if (CameraViews.Num() == 0)
+	{
+		return;
+	}
+	bScreenshotInProgress = true;
+	CurrentSSInterval = 0.0f;
+	RTSSCameraViews = CameraViews;
+	//reverse array
+	Algo::Reverse(RTSSCameraViews);
+	SSFilepath = Filepath;
+	//capture original player state information
+	OriginalPlayerTransform = EMPlayerPawn->GetTransform();
+	OriginalDateTime = SkyActor->GetCurrentDateTime();
+	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	if (bRTEnabledCVAR != nullptr && bRTEnabledCVAR->GetInt() == 1)
+	{
+		bOriginalRTEnabled = true;
+	}
+	else {
+		bOriginalRTEnabled = false;
+	}
+	bOriginalShowLights = GetPlayerState<AEditModelPlayerState>()->bShowLights;
+	OriginalRTExposure = GetPlayerState<AEditModelPlayerState>()->RayTracingExposure;
+	OriginalRTQuality = GetPlayerState<AEditModelPlayerState>()->RayTracingQuality;
+	//pop camera view
+	CurrentCameraView = RTSSCameraViews.Pop();
+	//update player camera and skylight to camera view settings for first screen shot
+	EMPlayerPawn->SetActorLocationAndRotation(CurrentCameraView->InstanceData.Position, CurrentCameraView->InstanceData.Rotation);
+	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	if (ppv != nullptr && RTSettings != nullptr)
+	{
+		RTSettings->Init();
+		RTSettings->SetRayTracingEnabled(ppv, CurrentCameraView->InstanceData.bRTEnabled);
+		RTSettings->ApplyRayTraceQualitySettings(ppv, CurrentCameraView->InstanceData.rayTracingQuality);
+		RTSettings->SetExposure(ppv, CurrentCameraView->InstanceData.rayTracingExposure);
+	}
+	GetPlayerState<AEditModelPlayerState>()->bShowLights = CurrentCameraView->InstanceData.bShowLights;
+	DirtyLightMOIs();
+	FDateTime newDateTime;
+	if (FDateTime::ParseIso8601(*CurrentCameraView->InstanceData.SavedTime, newDateTime))
+	{
+		SkyActor->SetCurrentDateTime(newDateTime);
+	}
+	EMPlayerPawn->ScreenshotTaker->SetWorldTransform(EMPlayerPawn->GetActorTransform());
+	EMPlayerPawn->ScreenshotTaker->FOVAngle = CurrentCameraView->InstanceData.FOV;
+	//set these variables to enable the screen shotter to take raytracing pictures
+	EMPlayerPawn->ScreenshotTaker->bUseRayTracingIfEnabled = true;
+	EMPlayerPawn->ScreenshotTaker->bAlwaysPersistRenderingState = true;
+	EMPlayerPawn->ScreenshotTaker->bCaptureEveryFrame = true;
+	//TODO: disable user input
+	return;
+}
+void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTime)
+{
+	CurrentSSInterval += DeltaTime;
 
+	if (CurrentSSInterval > WaitSSInterval)
+	{
+		//take screenshot
+		FString currentFilename = CurrentCameraView->InstanceData.Name;
+		currentFilename.Append(TEXT(".png"));
+		CaptureScreen(SSFilepath, currentFilename, CurrentCameraView->InstanceData.FOV);
+		if (RTSSCameraViews.Num() == 0)
+		{
+			bScreenshotInProgress = false;
+			//restore player camera and skylight
+			UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+			APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+			if (ppv != nullptr && RTSettings != nullptr)
+			{
+				RTSettings->Init();
+				RTSettings->SetRayTracingEnabled(ppv, bOriginalRTEnabled);
+				RTSettings->SetExposure(ppv, OriginalRTExposure);
+				RTSettings->ApplyRayTraceQualitySettings(ppv, OriginalRTQuality);
+			}
+			GetPlayerState<AEditModelPlayerState>()->bShowLights = bOriginalShowLights;
+			DirtyLightMOIs();
+			EMPlayerPawn->SetActorLocationAndRotation(OriginalPlayerTransform.GetLocation(), OriginalPlayerTransform.GetRotation());
+			SkyActor->SetCurrentDateTime(OriginalDateTime);
+			EMPlayerPawn->ScreenshotTaker->bCaptureEveryFrame = false;
+			
+			//TODO: re-enable user input
+			return;
+		}
+		//pop camera view
+		CurrentCameraView = RTSSCameraViews.Pop();
+		//update player camera and skylight to camera view settings
+		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+		if (ppv != nullptr && RTSettings != nullptr)
+		{
+			RTSettings->Init();
+			RTSettings->SetRayTracingEnabled(ppv, CurrentCameraView->InstanceData.bRTEnabled);
+			RTSettings->ApplyRayTraceQualitySettings(ppv, CurrentCameraView->InstanceData.rayTracingQuality);
+			RTSettings->SetExposure(ppv, CurrentCameraView->InstanceData.rayTracingExposure);
+		}
+		GetPlayerState<AEditModelPlayerState>()->bShowLights = CurrentCameraView->InstanceData.bShowLights;
+		DirtyLightMOIs();
+		EMPlayerPawn->SetActorLocationAndRotation(CurrentCameraView->InstanceData.Position, CurrentCameraView->InstanceData.Rotation);
+		FDateTime newDateTime;
+		if (FDateTime::ParseIso8601(*CurrentCameraView->InstanceData.SavedTime, newDateTime))
+		{
+			SkyActor->SetCurrentDateTime(newDateTime);
+		}
+		EMPlayerPawn->ScreenshotTaker->SetWorldTransform(EMPlayerPawn->GetActorTransform());
+		EMPlayerPawn->ScreenshotTaker->FOVAngle = CurrentCameraView->InstanceData.FOV;
+		//reset variables
+		CurrentSSInterval = 0.0f;
+	}
+	return;
+}
+void AEditModelPlayerController::CaptureScreen(FString Filepath, FString Filename, float FOV)
+{
+	int32 screenshotWidth = 1920;
+	int32 screenshotHeight = 1080;
+	if (!ensureAlways(EMPlayerPawn && EMPlayerPawn->ScreenshotTaker))
+	{
+		return;
+	}
+	//EMPlayerPawn->ScreenshotTaker->SetWorldTransform(EMPlayerPawn->GetActorTransform());
+	//EMPlayerPawn->ScreenshotTaker->FOVAngle = FOV;
+	// Create render target
+	UTextureRenderTarget2D* screenshotRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, screenshotWidth, screenshotHeight, ETextureRenderTargetFormat::RTF_RGBA8_SRGB);
+	EMPlayerPawn->ScreenshotTaker->TextureTarget = screenshotRT;
+
+	// Hide axes
+	ShowAxes(false);
+
+	// Capture and export
+	EMPlayerPawn->ScreenshotTaker->CaptureScene();
+	
+	UKismetRenderingLibrary::ExportRenderTarget(this, screenshotRT, Filepath, Filename);
+
+	// Unhide axes
+	ShowAxes(true);
+}
+void AEditModelPlayerController::CaptureCameraView(FString Filepath, const AMOICameraView* CameraView)
+{
+	//important disclaimer: screenshotter transform and FOV need to be properly set before calling this method
+	//save current sky light settings
+	FDateTime origDateTime = SkyActor->GetCurrentDateTime();
+	//save current Camera position
+	FTransform originalTransform = EMPlayerPawn->GetTransform();
+	bOriginalShowLights = GetPlayerState<AEditModelPlayerState>()->bShowLights;
+	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	if (bRTEnabledCVAR != nullptr && bRTEnabledCVAR->GetInt() == 1)
+	{
+		bOriginalRTEnabled = true;
+	}
+	else {
+		bOriginalRTEnabled = false;
+	}
+	OriginalRTExposure = GetPlayerState<AEditModelPlayerState>()->RayTracingExposure;
+	OriginalRTQuality = GetPlayerState<AEditModelPlayerState>()->RayTracingQuality;
+	//This method should not be used to capture ray tracing views. Turn off ray tracing for the capture
+	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	if (ppv != nullptr && RTSettings != nullptr)
+	{
+		RTSettings->Init();
+		RTSettings->SetRayTracingEnabled(ppv, false);
+	}
+	//update camera and skylight to camera view settings
+	EMPlayerPawn->SetActorLocationAndRotation(CameraView->InstanceData.Position, CameraView->InstanceData.Rotation);
+	FDateTime newDateTime;
+	if (FDateTime::ParseIso8601(*CameraView->InstanceData.SavedTime, newDateTime))
+	{
+		SkyActor->SetCurrentDateTime(newDateTime);
+	}
+	GetPlayerState<AEditModelPlayerState>()->bShowLights = CameraView->InstanceData.bShowLights;
+	DirtyLightMOIs();
+	//need to call clean objects so that the change happens to the mois immediately
+	FString currentFilename = CameraView->InstanceData.Name;
+	currentFilename.Append(TEXT(".png"));
+	CaptureScreen(Filepath, currentFilename, CameraView->InstanceData.FOV);
+	
+	//restore original settings
+	EMPlayerPawn->SetActorLocationAndRotation(originalTransform.GetLocation(), originalTransform.GetRotation());
+	
+	if (ppv != nullptr && RTSettings != nullptr && bOriginalRTEnabled)
+	{
+		RTSettings->Init();
+		RTSettings->SetRayTracingEnabled(ppv, bOriginalRTEnabled);
+		RTSettings->SetExposure(ppv, OriginalRTExposure);
+		RTSettings->ApplyRayTraceQualitySettings(ppv, OriginalRTQuality);
+	}
+	SkyActor->SetCurrentDateTime(origDateTime);
+	GetPlayerState<AEditModelPlayerState>()->bShowLights = bOriginalShowLights;
+	DirtyLightMOIs();
+}
+void AEditModelPlayerController::DirtyLightMOIs()
+{
+	AEditModelGameState* gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState == nullptr)
+	{
+		return;
+	}
+	UModumateDocument* doc = gameState->Document;
+	TArray<AModumateObjectInstance*> mois = doc->GetObjectsOfType(EObjectType::OTFurniture);
+	for (AModumateObjectInstance* moi : mois)
+	{
+		if (moi != nullptr)
+		{
+			const FBIMPresetInstance* preset = doc->GetPresetCollection().PresetFromGUID(moi->GetStateData().AssemblyGUID);
+			if (preset && preset->HasCustomData<FLightConfiguration>())
+			{
+				moi->MarkDirty(EObjectDirtyFlags::Structure);
+				moi->CleanObject(EObjectDirtyFlags::Structure, nullptr);
+			}
+		}
+	}
+}
 #undef LOCTEXT_NAMESPACE

@@ -151,6 +151,19 @@ public:
 	static int32 GetGraphIDForSpanObject(const AModumateObjectInstance* Object);
 
 	static bool IsValidParentObjectType(EObjectType ParentObjectType);
+	//utility function to find all actors of a class and return an array of them
+	template<typename T> static void FindAllActorsOfClass(UWorld* World, TArray<T*>& Out)
+	{
+		if (World == nullptr)
+		{
+			return;
+		}
+		for (TActorIterator<T> It(World); It; ++It)
+		{
+			Out.Add(*It);
+		}
+	}
+
 	static TArray<EObjectType> CompatibleObjectTypes;
 	static bool bCompatibleObjectsInitialized;
 private:

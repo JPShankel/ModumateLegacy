@@ -329,6 +329,37 @@ HRESULT CDialogEventHandler_CreateInstance(REFIID riid, void **ppv)
 	return hr;
 }
 
+void FModumatePlatform::PickContainer(FString& Filepath)
+{
+	IFileDialog* pfd;
+	if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd))))
+	{
+		DWORD dwOptions;
+		if (SUCCEEDED(pfd->GetOptions(&dwOptions)))
+		{
+			pfd->SetOptions(dwOptions | FOS_PICKFOLDERS);
+		}
+		if (SUCCEEDED(pfd->Show(NULL)))
+		{
+			IShellItem* psi;
+			if (SUCCEEDED(pfd->GetResult(&psi)))
+			{
+				LPWSTR path;
+				if (!SUCCEEDED(psi->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &path)))
+				{
+					MessageBox(NULL, L"Failed to open folder", L"Failed", MB_OK);
+				}
+				else {
+					Filepath = path;
+				}
+				psi->Release();
+			}
+		}
+		
+		pfd->Release();
+	}
+}
+
 bool FModumatePlatform::GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType)
 {
 	if (CDialogEventHandler::DialogVisible)
@@ -730,6 +761,59 @@ FModumatePlatform::EMessageBoxResponse FModumatePlatform::ShowMessageBox(const F
 bool FModumatePlatform::ConsumeTempMessage(FString& OutMessage)
 {
 	return false;
+}
+
+void FModumatePlatform::PickContainer(FString& Filepath)
+{
+    // Mostly copy of FDesktopPlatformMac::OpenDirectoryDialog()
+    MacApplication->SetCapture( NULL );
+
+    bool bSuccess = false;
+    {
+        MacApplication->SystemModalMode(true);
+        bSuccess = MainThreadReturn(^{
+            SCOPED_AUTORELEASE_POOL;
+
+            NSOpenPanel* Panel = [NSOpenPanel openPanel];
+            [Panel setCanChooseFiles: false];
+            [Panel setCanChooseDirectories: true];
+            [Panel setAllowsMultipleSelection: false];
+            [Panel setCanCreateDirectories: true];
+
+            FString DialogTitle(TEXT("Select Folder"));
+            CFStringRef Title = FPlatformString::TCHARToCFString(*DialogTitle);
+            [Panel setTitle: (NSString*)Title];
+            CFRelease(Title);
+            
+            // FDesktopPlatformMac::OpenDirectoryDialog() has DefaultPath but we don't
+            FString DefaultPath;
+            CFStringRef DefaultPathCFString = FPlatformString::TCHARToCFString(*DefaultPath);
+            NSURL* DefaultPathURL = [NSURL fileURLWithPath: (NSString*)DefaultPathCFString];
+            [Panel setDirectoryURL: DefaultPathURL];
+            CFRelease(DefaultPathCFString);
+
+            bool bResult = false;
+
+            NSInteger Result = [Panel runModal];
+
+            if (Result == NSModalResponseOK)
+            {
+                NSURL *FolderURL = [[Panel URLs] objectAtIndex: 0];
+                TCHAR FolderPath[MAC_MAX_PATH];
+                FPlatformString::CFStringToTCHAR((CFStringRef)[FolderURL path], FolderPath);
+                Filepath = FolderPath;
+                FPaths::NormalizeFilename(Filepath);
+
+                bResult = true;
+            }
+
+            [Panel close];
+            
+            return bResult;
+        });
+    }
+    MacApplication->ResetModifierKeys();
+    MacApplication->SystemModalMode(false);
 }
 
 

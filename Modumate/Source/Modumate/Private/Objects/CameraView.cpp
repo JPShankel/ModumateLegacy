@@ -71,6 +71,34 @@ AMOICameraView::AMOICameraView()
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.name, prop);
+
+	prop.name = TEXT("bRTEnabled");
+	prop.type = EWebMOIPropertyType::boolean;
+	prop.displayName = TEXT("Ray Tracing Enabled");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.name, prop);
+
+	prop.name = TEXT("rayTracingExposure");
+	prop.type = EWebMOIPropertyType::number;
+	prop.displayName = TEXT("Ray Tracing Exposure");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.name, prop);
+
+	prop.name = TEXT("rayTracingQuality");
+	prop.type = EWebMOIPropertyType::number;
+	prop.displayName = TEXT("Ray Tracing Quality");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.name, prop);
+
+	prop.name = TEXT("bShowLights");
+	prop.type = EWebMOIPropertyType::number;
+	prop.displayName = TEXT("Show Lights");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.name, prop);
 }
 
 AActor* AMOICameraView::CreateActor(const FVector& loc, const FQuat& rot)

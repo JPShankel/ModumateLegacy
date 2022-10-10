@@ -61,6 +61,18 @@ struct MODUMATE_API FMOICameraViewData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	bool bGraphDirectionVisibility = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	bool bRTEnabled = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	int32 rayTracingExposure = 4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	int32 rayTracingQuality = 2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	bool bShowLights = false;
 };
 
 UCLASS()

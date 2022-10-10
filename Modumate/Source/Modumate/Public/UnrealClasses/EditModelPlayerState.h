@@ -380,6 +380,10 @@ public:
 	DECLARE_EVENT(AEditModelPlayerState, FProjectPermissionsEvent)
 	FProjectPermissionsEvent& OnProjectPermissionsChanged() { return ProjectPermChangedEvent; }
 
+	int32 RayTracingQuality = 0;
+	int32 RayTracingExposure = 0;
+	bool bShowLights = false;
+
 protected:
 	FProjectPermissionsEvent ProjectPermChangedEvent;
 

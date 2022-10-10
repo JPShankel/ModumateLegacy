@@ -11,6 +11,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UI/ViewCubeWidget.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32& NextID, int32 CameraViewIndex /*= INDEX_NONE*/)
 {
@@ -171,8 +172,23 @@ bool UModumateBrowserStatics::UpdateCameraViewData(UObject* WorldContextObject, 
 		CameraViewData.SavedCutPlaneVisibilities.Add(curCp->ID, curCp->IsVisible());
 	}
 
+	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	if (bRTEnabledCVAR != nullptr && bRTEnabledCVAR->GetInt() == 1)
+	{
+		CameraViewData.bRTEnabled = true;
+	}
+	else {
+		CameraViewData.bRTEnabled = false;
+	}
+	AEditModelPlayerState* playerState = controller->GetPlayerState<AEditModelPlayerState>();
+	if (playerState == nullptr)
+	{
+		return false;
+	}
+	CameraViewData.rayTracingQuality = playerState->RayTracingQuality;
+	CameraViewData.rayTracingExposure = playerState->RayTracingExposure;
+	CameraViewData.bShowLights = playerState->bShowLights;
+
 	UModumateObjectStatics::UpdateDesignOptionVisibility(controller->GetDocument());
-
-
 	return true;
 }

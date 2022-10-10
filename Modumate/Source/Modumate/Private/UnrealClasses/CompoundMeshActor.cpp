@@ -22,6 +22,7 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "DrawingDesigner/DrawingDesignerLine.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 #define DEBUG_NINE_SLICING 0
 
@@ -691,10 +692,16 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 	OriginalLightIntensity = lightConfig.LightIntensity;
 	FLinearColor lightColor = lightConfig.LightColor;
 	FString lightName = TEXT("Light");
-	if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->UserSettings.GraphicsSettings.bPointLightsEnabled)
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	if (controller != nullptr)
 	{
-		makePointLight = false;
+		AEditModelPlayerState* playerState = controller->GetPlayerState<AEditModelPlayerState>();
+		if (playerState != nullptr && !playerState->bShowLights)
+		{
+			makePointLight = false;
+		}
 	}
+	
 	if (makePointLight)
 	{
 		lightName.Append(TEXT("Point"));

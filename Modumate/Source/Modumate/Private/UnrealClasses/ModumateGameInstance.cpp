@@ -53,6 +53,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/ModumateMacSettings.h"
+#include "Kismet/KismetRenderingLibrary.h"
 
 
 using namespace ModumateCommands;
@@ -1377,21 +1378,7 @@ void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
 	curGameUserSettings->SetShadowQuality(UserSettings.GraphicsSettings.Shadows);
 	curGameUserSettings->SetAntiAliasingQuality(UserSettings.GraphicsSettings.AntiAliasing);
 	curGameUserSettings->ApplySettings(true);
-	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
 	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
-	if (ppv != nullptr && RTSettings != nullptr)
-	{
-		RTSettings->Init();
-		RTSettings->SetRayTracingEnabled(ppv, UserSettings.GraphicsSettings.bRayTracingEnabled);
-		RTSettings->ApplyRayTraceQualitySettings(ppv, UserSettings.GraphicsSettings.RayTracingQuality);
-		RTSettings->SetExposure(ppv, UserSettings.GraphicsSettings.ExposureValue);
-	}
-	
-	ASkyActor* skyActor = Cast<ASkyActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASkyActor::StaticClass()));
-	if (skyActor != nullptr)
-	{
-		skyActor->UpdateComponentsWithDateTime(skyActor->GetCurrentDateTime());
-	}
 
 	//apply mac blownout setting
 	UModumateMacSettings* macSettings = NewObject<UModumateMacSettings>();

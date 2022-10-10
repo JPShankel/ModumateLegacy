@@ -890,4 +890,50 @@ void UModumateDocumentWebBridge::create_alignment_preset(int32 SubjectMOI, int32
 	Document->ApplyDeltas({ newPresetDelta }, GetWorld());
 }
 
+void UModumateDocumentWebBridge::export_views(TArray<int32> CameraViewIDs)
+{
+	auto world = GetWorld();
+	if (!world)
+		return;
+	TArray<AMOICameraView*> outActors, rayTracingEnabledViews, nonRTViews;
+	UModumateObjectStatics::FindAllActorsOfClass(world, outActors);
+	if (outActors.Num() == 0)
+	{
+		//no camera views found
+		return;
+	}
+	
+	for (AMOICameraView* cv : outActors)
+	{
+		if (cv != nullptr && CameraViewIDs.Contains(cv->ID))
+		{
+			if (cv->InstanceData.bRTEnabled)
+			{
+				rayTracingEnabledViews.Add(cv);
+			}
+			else 
+			{
+				nonRTViews.Add(cv);
+			}
+		}
+	}
+	if (rayTracingEnabledViews.Num() == 0 && nonRTViews.Num() == 0)
+	{
+		//selected camera views not found
+		return;
+	}
+	// Get path from dialog
+	FString filePath;
+	AEditModelPlayerController* controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+	if (!controller->GetFolderPathWithDialog(filePath))
+	{
+		return;
+	}
+
+	for (AMOICameraView* cv : nonRTViews)
+	{
+		controller->CaptureCameraView(filePath, cv);
+	}
+	controller->CaptureCameraViewsRayTracing(rayTracingEnabledViews, filePath);
+}
 #undef LOCTEXT_NAMESPACE

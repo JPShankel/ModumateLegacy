@@ -91,16 +91,5 @@ public:
 	void SetRayTracingEnabled(APostProcessVolume* ppv, bool bIsRayTracingEnabled);
 	void SetExposure(APostProcessVolume* ppv, uint8 ExposureIndex);
 	void Init();
-	//utility function to find all actors of a class and return an array of them
-	template<typename T> void FindAllActorsOfClass(UWorld* World, TArray<T*>& Out)
-	{
-		if (World == nullptr)
-		{
-			return;
-		}
-		for (TActorIterator<T> It(World); It; ++It)
-		{
-			Out.Add(*It);
-		}
-	}
+	
 };
