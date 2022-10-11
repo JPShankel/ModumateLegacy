@@ -108,7 +108,7 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 		DateTime.GetSecond(),
 		sunPositionData);
 
-	DirectionalLight->SetWorldRotation(FRotator(sunPositionData.CorrectedElevation, (sunPositionData.Azimuth - 90.f), 0.f));
+	DirectionalLight->SetWorldRotation(FRotator(sunPositionData.CorrectedElevation, (sunPositionData.Azimuth - 90.f) + TrueNorth, 0.f));
 
 	float correctedDayLightBrightness;
 
@@ -243,15 +243,10 @@ void ASkyActor::ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPos
 	}
 }
 
-void ASkyActor::UpdateCoordinate(float InLatitude, float InLongitude, float TrueNorth)
+void ASkyActor::UpdateCoordinate(float InLatitude, float InLongitude, float InTrueNorth)
 {
 	Latitude = InLatitude;
 	Longitude = InLongitude;
-
-	// Rotation must be reset to correctly update sky material's sun position
-	this->SetActorRotation(FRotator::ZeroRotator);
+	TrueNorth = InTrueNorth;
 	UpdateComponentsWithDateTime(GetCurrentDateTime());
-
-	// Set sky rotation to match new north
-	this->SetActorRotation(FRotator(0.f, TrueNorth, 0.f));
 }

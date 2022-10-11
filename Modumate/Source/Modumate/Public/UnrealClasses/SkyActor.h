@@ -92,6 +92,9 @@ public:
 	float Longitude = -73.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float TrueNorth = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsDayLightSaving = false;
 
 	FDateTime GetCurrentDateTime() const { return CurrentDateTime; }
@@ -106,5 +109,5 @@ public:
 	void SetSkyDomePositionScale(const FVector& Position, const FVector& Scale);
 	void SetSkyDomePositionScaleByCameraProjection(bool bIsPerspective);
 	void ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPosition = FVector::ZeroVector, const FRotator& CameraRotation = FRotator::ZeroRotator);
-	void UpdateCoordinate(float InLatitude, float InLongitude, float TrueNorth);
+	void UpdateCoordinate(float InLatitude, float InLongitude, float InTrueNorth);
 };
