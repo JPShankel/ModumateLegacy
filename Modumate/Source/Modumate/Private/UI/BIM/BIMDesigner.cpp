@@ -303,11 +303,17 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID, bool bCenterOn
 	InstancePool.PresetCollectionProxy = FBIMPresetCollectionProxy(Controller->GetDocument()->GetPresetCollection());
 
 	FBIMPresetEditorNodeSharedPtr rootNode;
-	EBIMResult getPresetResult = InstancePool.InitFromPreset(PresetID,rootNode);
+	EBIMResult getPresetResult = InstancePool.InitFromPreset(PresetID, rootNode);
 	if (getPresetResult != EBIMResult::Success)
 	{
 		return false;
 	}
+
+	if (rootNode->Preset.NodeScope == EBIMValueScope::Symbol)
+	{   // BIM Designer not currently relevant for Symbol Presets.
+		return false;
+	}
+
 	// Since this is a new pool, root node should be the new selected
 	SelectedNodeID = rootNode->GetInstanceID();
 	UpdateBIMDesigner(bCenterOnRootNode);

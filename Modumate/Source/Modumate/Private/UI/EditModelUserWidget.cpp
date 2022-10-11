@@ -316,7 +316,10 @@ void UEditModelUserWidget::EditExistingAssembly(const FGuid& AssemblyGUID)
 {
 	SwitchLeftMenu(ELeftMenuState::None);
 	ToggleBIMDesigner(true);
-	BIMDesigner->EditPresetInBIMDesigner(AssemblyGUID,true);
+	if (!BIMDesigner->EditPresetInBIMDesigner(AssemblyGUID, true))
+	{
+		ToggleBIMDesigner(false);
+	}
 }
 
 void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
