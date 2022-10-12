@@ -166,9 +166,6 @@ struct FCustomAssemblyRecordV3
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FBIMKey DatabaseKey;
-
-	UPROPERTY()
 	FString CodeName;
 
 	UPROPERTY()
@@ -191,9 +188,6 @@ struct FCustomAssemblyRecordV4
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FBIMKey DatabaseKey;
-
-	UPROPERTY()
 	FString DisplayName;
 
 	UPROPERTY()
@@ -204,9 +198,6 @@ struct FCustomAssemblyRecordV4
 
 	UPROPERTY()
 	TArray<FCustomAssemblyProperty> PropertySheet;
-
-	UPROPERTY()
-	FBIMKey RootPreset;
 };
 typedef FCustomAssemblyRecordV4 FCustomAssemblyRecord;
 
@@ -241,9 +232,6 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	TArray<FMOIStateData> ObjectData;
 
 	UPROPERTY()
-	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap_DEPRECATED;
-
-	UPROPERTY()
 	TMap<EToolMode, FGuid> CurrentToolAssemblyGUIDMap;
 
 	UPROPERTY()
@@ -254,9 +242,6 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	TMap<int32, FGraph2DRecord> SurfaceGraphs;
-
-	UPROPERTY()
-	TMap<FBIMKey, FGuid> UsedPresetGUIDs;
 
 	UPROPERTY()
 	TArray<FDeltasRecord> AppliedDeltas;
@@ -282,9 +267,6 @@ struct FMOIDocumentRecordV5 : public FMOIDocumentRecordBASE
 	TArray<FMOIStateData> ObjectData;
 
 	UPROPERTY()
-	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap_DEPRECATED;
-
-	UPROPERTY()
 	TMap<EToolMode, FGuid> CurrentToolAssemblyGUIDMap;
 
 	UPROPERTY()
@@ -295,9 +277,6 @@ struct FMOIDocumentRecordV5 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	TMap<int32, FGraph2DRecord> SurfaceGraphs;
-
-	UPROPERTY()
-	TMap<FBIMKey, FGuid> UsedPresetGUIDs;
 
 	UPROPERTY()
 	TArray<FDeltasRecord> AppliedDeltas;
@@ -371,7 +350,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 21: Edge and plane hosted objects have spans for parents
 // Version 22: Portals use MetaPlaneSpan
 // Version 23: Truncated Preset Marketplace
-static constexpr int32 DocVersion = 23;
+// Version 24: Canonical Presets and their derivations. Cloud based importing.
+static constexpr int32 DocVersion = 24;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

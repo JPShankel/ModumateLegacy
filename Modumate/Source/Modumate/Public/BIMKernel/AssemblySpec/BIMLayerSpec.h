@@ -6,7 +6,6 @@
 
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"

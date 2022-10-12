@@ -58,11 +58,11 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		using FRequestCustomizer = TFunction<void(FHttpRequestRef& RefRequest)>;
 		using FSuccessCallback = TFunction<void(bool,const TSharedPtr<FJsonObject>&)>;
 		using FErrorCallback = TFunction<void(int32, const FString&)>;
-		using FProjectCallback = TFunction<void(const FModumateDocumentHeader&, const FMOIDocumentRecord&, bool)>;
+		using FProjectCallback = TFunction<void(const FModumateDocumentHeader&, FMOIDocumentRecord&, bool)>;
 
 		enum ERequestType { Get, Delete, Put, Post };
 		bool RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
-			bool bRefreshTokenOnAuthFailure = true);
+			bool bRefreshTokenOnAuthFailure = true, bool bSynchronous = false);
 
 		bool CreateReplay(const FString& SessionID, const FString& Version, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);

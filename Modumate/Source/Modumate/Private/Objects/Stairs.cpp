@@ -120,7 +120,7 @@ bool AMOIStaircase::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) 
 
 void AMOIStaircase::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	const FGuid& assemblyKey = assembly.UniqueKey();
 	const int32 numTreads = CachedTreadPolys.Num();
 	const int32 numRisers = assembly.RiserLayers.Num() > 0 ? CachedRiserPolys.Num() : 0;

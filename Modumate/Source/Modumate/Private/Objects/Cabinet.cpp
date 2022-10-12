@@ -500,7 +500,7 @@ FBox AMOICabinet::GetBoundingBox() const
 
 void AMOICabinet::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	auto assemblyGuid = assembly.UniqueKey();
 	float volume = FQuantitiesCollection::AreaOfPoly(CachedBasePoints) * CachedExtrusionDelta.Size();
 

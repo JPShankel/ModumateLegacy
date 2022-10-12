@@ -1083,37 +1083,32 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World)
 {
 	/*
-	* Invalid GUID->Valid GUID == Make new preset
-	* Valid GUID->Valid GUID == Update existing preset
+	* Valid GUID->Valid GUID == Add or Update existing preset
 	* Valid GUID->Invalid GUID == Delete existing preset
 	*/
-
-	UModumateGameInstance* gameInstance = World->GetGameInstance<UModumateGameInstance>();
-
-	// Add or update if we have a new GUID
+	
 	if (PresetDelta.NewState.GUID.IsValid())
 	{
-		bool bIsNewPreset = false;
-		if (!BIMPresetCollection.PresetsByGUID.Contains(PresetDelta.NewState.GUID))
-		{
-			bIsNewPreset = true;
-		}
-		
-		BIMPresetCollection.AddPreset(PresetDelta.NewState);
+		bool bIsNewPreset = !BIMPresetCollection.Contains(PresetDelta.NewState.GUID);
+
+
+		FBIMPresetInstance CollectionPreset;
+		BIMPresetCollection.AddPreset(PresetDelta.NewState, CollectionPreset);
+		BIMPresetCollection.ProcessPreset(CollectionPreset.GUID);
 
 		// Find all affected presets and update affected assemblies
-		TArray<FGuid> affectedPresets;
-		BIMPresetCollection.GetAllAncestorPresets(PresetDelta.NewState.GUID, affectedPresets);
-		if (PresetDelta.NewState.ObjectType != EObjectType::OTNone)
+		TSet<FGuid> affectedPresets;
+		BIMPresetCollection.GetAllAncestorPresets(CollectionPreset.GUID, affectedPresets);
+		if (CollectionPreset.ObjectType != EObjectType::OTNone)
 		{
-			affectedPresets.AddUnique(PresetDelta.NewState.GUID);
+			affectedPresets.Add(CollectionPreset.GUID);
 		}
 
-		TArray<FGuid> affectedAssemblies;
+		TSet<FGuid> affectedAssemblies;
 		for (auto& affectedPreset : affectedPresets)
 		{
 			// Skip presets that don't define assemblies
-			FBIMPresetInstance* preset = BIMPresetCollection.PresetsByGUID.Find(affectedPreset);
+			FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(affectedPreset);
 			if (!ensureAlways(preset != nullptr) || preset->ObjectType == EObjectType::OTNone)
 			{
 				continue;
@@ -1130,9 +1125,9 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 		if (controller && controller->DynamicIconGenerator)
 		{
-			controller->DynamicIconGenerator->UpdateCachedAssemblies(FBIMPresetCollectionProxy(GetPresetCollection()),affectedAssemblies);
+			controller->DynamicIconGenerator->UpdateCachedAssemblies(FBIMPresetCollectionProxy(GetPresetCollection()), affectedAssemblies.Array());
 		}
-
+		
 		for (auto& moi : ObjectInstanceArray)
 		{
 			if (affectedAssemblies.Contains(moi->GetAssembly().PresetGUID))
@@ -1143,17 +1138,11 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 		if (bTrackingDeltaObjects)
 		{
-			DeltaAffectedPresets.Add(PresetDelta.NewState.GUID);
+			DeltaAffectedPresets.Add(CollectionPreset.GUID);
 		}
-
-		TArray<FGuid> changedPresets;
-		changedPresets.Add(PresetDelta.NewState.GUID);
-		EWebPresetChangeVerb verb = EWebPresetChangeVerb::Update;
-		if (bIsNewPreset)
-		{
-			verb = EWebPresetChangeVerb::Add;
-		}
-		TriggerWebPresetChange(verb, changedPresets);
+		
+		EWebPresetChangeVerb verb = bIsNewPreset ? EWebPresetChangeVerb::Add : EWebPresetChangeVerb::Update;
+		TriggerWebPresetChange(verb, TArray<FGuid>({CollectionPreset.GUID}));
 
 		return true;
 	}
@@ -1177,10 +1166,8 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		{
 			DeltaAffectedPresets.Add(PresetDelta.OldState.GUID);
 		}
-
-		TArray<FGuid> deletedPresets;
-		deletedPresets.Add(PresetDelta.OldState.GUID);
-		TriggerWebPresetChange(EWebPresetChangeVerb::Remove, deletedPresets);
+		
+		TriggerWebPresetChange(EWebPresetChangeVerb::Remove, TArray<FGuid>({PresetDelta.OldState.GUID}));
 
 		return true;
 	}
@@ -2965,8 +2952,6 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 		kvp.Value.Reset();
 	}
 
-	BIMPresetCollection.ReadPresetData();
-
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 	if (controller && controller->DynamicIconGenerator)
 	{
@@ -3164,10 +3149,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 			}
 		}
 	}
-
-	// DDL 2.0
-	BIMPresetCollection.SavePresetsToDocRecord(OutDocumentRecord);
-
+	
 	// Capture object instances into doc struct
 	for (AModumateObjectInstance* obj : ObjectInstanceArray)
 	{
@@ -3182,6 +3164,9 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 			OutDocumentRecord.ObjectData.Add(stateData);
 		}
 	}
+
+	// Web Presets do not get saved, only presets used in the document or edited.
+	BIMPresetCollection.SavePresetsToDocRecord(OutDocumentRecord);
 
 	// For compatibility with older clients
 	GetVolumeGraph(RootVolumeGraph)->Save(&OutDocumentRecord.VolumeGraph);
@@ -3320,7 +3305,7 @@ const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 	return ObjectsByID.FindRef(id);
 }
 
-bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord, bool bClearName)
+bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, FMOIDocumentRecord& InDocumentRecord, bool bClearName)
 {
 #if !UE_SERVER
 	FDateTime loadStartTime = FDateTime::Now();
@@ -3349,10 +3334,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	VolumeGraphs.Reset();
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	BIMPresetCollection.ReadPresetsFromDocRecord(InHeader.Version, InDocumentRecord, gameInstance);
 
-	FBIMPresetCollection untruncatedCollection;
-	untruncatedCollection.ReadPresetData(false);
-	BIMPresetCollection.ReadPresetsFromDocRecord(InHeader.Version, InDocumentRecord, untruncatedCollection);
 
 	// Load the connectivity graphs now, which contain associations between object IDs,
 	// so that any objects whose geometry setup needs to know about connectivity can find it.
@@ -3725,8 +3708,6 @@ bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSet
 	}
 
 	MakeNew(world);
-
-	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
 
 	CachedHeader = FModumateDocumentHeader();
 	CachedRecord = FMOIDocumentRecord();
@@ -4454,7 +4435,7 @@ bool UModumateDocument::PresetIsInUse(const FGuid& InPreset) const
 		}
 	}
 
-	TArray<FGuid> ancestors;
+	TSet<FGuid> ancestors;
 	if (BIMPresetCollection.GetAllAncestorPresets(InPreset, ancestors) == EBIMResult::Success)
 	{
 		return ancestors.Num() > 0;
@@ -4477,7 +4458,7 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 	{
 		return;
 	}
-
+	
 	ClearPreviewDeltas(World);
 
 	if (preset->NodeScope != EBIMValueScope::Symbol)
@@ -4610,7 +4591,7 @@ void UModumateDocument::TriggerWebPresetChange(EWebPresetChangeVerb Verb, TArray
 		// if we are not deleting the preset, fill out the information
 		if (Verb != EWebPresetChangeVerb::Remove)
 		{
-			auto presetInstance = BIMPresetCollection.PresetsByGUID.Find(preset);
+			auto presetInstance = BIMPresetCollection.PresetFromGUID(preset);
 			if (presetInstance != nullptr) {
 				presetInstance->ToWebPreset(webPreset, GetWorld());
 			}

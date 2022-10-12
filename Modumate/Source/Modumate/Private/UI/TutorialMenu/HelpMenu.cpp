@@ -12,7 +12,6 @@
 #include "UI/TutorialMenu/HelpBlockTutorial.h"
 #include "UI/TutorialMenu/HelpBlockTutorialMoreLinks.h"
 #include "Serialization/Csv/CsvParser.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "HttpModule.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BIMKernel/Core/BIMKey.h"
 
 #include "ModumateSimpleMesh.generated.h"
 

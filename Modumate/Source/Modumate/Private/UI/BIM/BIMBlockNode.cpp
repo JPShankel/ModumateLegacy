@@ -210,13 +210,9 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
-
-	FText presetDisplayName;
-	if (Node->Preset.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
-	{
-		ComponentPresetListItem->MainText->ChangeText(presetDisplayName);
-		Preset_Name->ChangeText(presetDisplayName);
-	}
+	
+	ComponentPresetListItem->MainText->ChangeText(Node->Preset.DisplayName);
+	Preset_Name->ChangeText(Node->Preset.DisplayName);
 
 	// Can't swap in root node
 	ButtonSwapCollapsed->SetVisibility(IsRootNode ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);

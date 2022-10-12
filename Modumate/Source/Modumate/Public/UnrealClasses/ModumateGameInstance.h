@@ -160,6 +160,10 @@ public:
 	UFUNCTION()
 	void on_logout_from_ams();
 
+private:
+	void DumpPresetToFile(const FGuid& Key) const;
+	
+public:
 	void BringViewportWindowToFront();
 	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);
 	void ClearDownloadedDocument();
@@ -213,4 +217,5 @@ public:
 	FTimerHandle SlowTickHandle;
 
 	bool bExitRequested = false;
+	
 };

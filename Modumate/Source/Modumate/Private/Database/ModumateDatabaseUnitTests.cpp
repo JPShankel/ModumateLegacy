@@ -141,6 +141,7 @@ bool FModumateOnlineAssetsLoadBody::Update()
 	return true;
 }
 
+/*
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateOnlineAssetsLoad, "Modumate.Online.AssetsLoad", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 bool FModumateOnlineAssetsLoad::RunTest(const FString& Parameters)
 {
@@ -156,5 +157,6 @@ bool FModumateOnlineAssetsLoad::RunTest(const FString& Parameters)
 	ADD_LATENT_AUTOMATION_COMMAND(FWaitForMapToLoadCommand());
 	return true;
 }
+*/
 
 #endif

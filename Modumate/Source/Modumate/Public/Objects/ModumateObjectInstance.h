@@ -126,6 +126,11 @@ public:
 	virtual TArray<int32> GetFaceSpanMembers() const
 		{ return TArray<int32>(); }
 
+private:
+	// Carry a bespoke copy of your assembly
+	// TODO: this is motivated by object-level overrides and anticipated serialization needs
+	FBIMAssemblySpec CachedAssembly;
+
 protected:
 
 	friend struct FMOIDelta;
@@ -143,10 +148,6 @@ protected:
 	UModumateDocument* Document = nullptr;
 
 	FMOIStateData StateData;
-
-	// Carry a bespoke copy of your assembly
-	// TODO: this is motivated by object-level overrides and anticipated serialization needs
-	FBIMAssemblySpec CachedAssembly;
 
 	// TODO: this flag is helpful to keep the above ObjectAssembly layer orders correct, especially because the assembly
 	// itself isn't stored in the FMOIStateData. So if CurrentState / PreviewState get modified (or swapped), this flag lets us maintain the layer order.
@@ -239,6 +240,7 @@ public:
 		bool bForSnapping = false, bool bForSelection = false, const FPlane& CullingPlane = FPlane(ForceInitToZero));
 
 	const FBIMAssemblySpec &GetAssembly() const;
+	FBIMAssemblySpec &GetAssembly();
 	void SetAssemblyLayersReversed(bool bNewLayersReversed);
 
 	// TODO: generalize or delete these functions, especially if they are

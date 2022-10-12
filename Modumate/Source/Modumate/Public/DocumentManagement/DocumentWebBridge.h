@@ -109,6 +109,9 @@ public:
 	void create_or_update_preset(const FString& PresetData);
 
 	UFUNCTION()
+	void push_initial_presets_and_taxonomy(const FString& InitialPresets, const FString& Taxonomy);
+
+	UFUNCTION()
 	void duplicate_preset(const FString& InGUID);
 
 	UFUNCTION()
@@ -126,7 +129,10 @@ public:
 
 	UFUNCTION()
 	void request_alignment_presets(const FString& GenericRequestJson);
-
+	
 	UFUNCTION()
 	void export_views(TArray<int32> CameraViewIDs);
+
+private:
+	void UpdateOrAddPreset(FBIMPresetInstance& Preset);
 };

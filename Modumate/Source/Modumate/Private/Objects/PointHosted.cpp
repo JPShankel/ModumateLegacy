@@ -218,7 +218,7 @@ void AMOIPointHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArr
 	{
 		TArray<FDrawingDesignerLined> linesDouble;
 		FVector localViewDirection(GetWorldTransform().InverseTransformVector(ViewDirection));
-		gameInstance->GetMeshCache()->GetDesignerLines(CachedAssembly, FVector::OneVector, false, localViewDirection, linesDouble, MinLength);
+		gameInstance->GetMeshCache()->GetDesignerLines(GetAssembly(), FVector::OneVector, false, localViewDirection, linesDouble, MinLength);
 		const FMatrix xform(GetWorldTransform().ToMatrixWithScale());
 		for (const auto& l : linesDouble)
 		{
@@ -231,7 +231,7 @@ void AMOIPointHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArr
 
 bool AMOIPointHosted::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
 {
-	QuantitiesVisitor.AddQuantity(CachedAssembly.UniqueKey(), 1.0f);
+	QuantitiesVisitor.AddQuantity(GetAssembly().UniqueKey(), 1.0f);
 	return true;
 }
 
@@ -246,15 +246,15 @@ void AMOIPointHosted::InternalUpdateGeometry(bool bCreateCollision)
 		FQuat cmaRot = FQuat(InstanceData.Rotation);
 
 		// Offset
-		FVector cmaSize = CachedAssembly.GetCompoundAssemblyNativeSize();
+		FVector cmaSize = GetAssembly().GetCompoundAssemblyNativeSize();
 		float cmaOffsetX = InstanceData.OffsetX.GetOffsetDistance(InstanceData.FlipSigns.X, cmaSize.X);
 		float cmaOffsetY = InstanceData.OffsetY.GetOffsetDistance(InstanceData.FlipSigns.Y, cmaSize.Y);
 		float cmaOffsetZ = InstanceData.OffsetZ.GetOffsetDistance(InstanceData.FlipSigns.Z, cmaSize.Z);
 		FVector cmaLocation = parentLocation + FVector(cmaOffsetX, cmaOffsetY, cmaOffsetZ);
 
-		if (CachedAssembly.Parts.Num() > 0)
+		if (GetAssembly().Parts.Num() > 0)
 		{
-			cma->MakeFromAssemblyPartAsync(FAssetRequest(CachedAssembly, nullptr), 0, FVector::OneVector, false, bCreateCollision);
+			cma->MakeFromAssemblyPartAsync(FAssetRequest(GetAssembly(), nullptr), 0, FVector::OneVector, false, bCreateCollision);
 			FTransform cmaTransform;
 			cmaTransform.SetLocation(cmaLocation);
 			cmaTransform.SetRotation(cmaRot);

@@ -157,7 +157,7 @@ void AMOIFaceHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArra
 		const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 		TArray<FDrawingDesignerLined> linesDouble;
 		FVector localViewDirection(GetWorldTransform().InverseTransformVector(ViewDirection));
-		gameInstance->GetMeshCache()->GetDesignerLines(CachedAssembly, FVector::OneVector, false, localViewDirection, linesDouble, MinLength);
+		gameInstance->GetMeshCache()->GetDesignerLines(GetAssembly(), FVector::OneVector, false, localViewDirection, linesDouble, MinLength);
 		// Use actor transform to get scale.
 		const FMatrix xform(actor->GetTransform().ToMatrixWithScale());
 		for (const auto& l : linesDouble)
@@ -181,7 +181,7 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 	ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());
 	if (parentObj && cma)
 	{
-		FVector nativeSize = CachedAssembly.GetCompoundAssemblyNativeSize();
+		FVector nativeSize = GetAssembly().GetCompoundAssemblyNativeSize();
 		const FGraph3DFace* parentFace = nullptr;
 
 		FGraph3D* graph = nullptr;
@@ -282,7 +282,7 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		//apply instance data
 		cmaRot *= InstanceData.Rotation.Quaternion();
 		
-		FVector cmaSize = CachedAssembly.GetCompoundAssemblyNativeSize() * cmaScale;
+		FVector cmaSize = GetAssembly().GetCompoundAssemblyNativeSize() * cmaScale;
 		//cmaLocation.X += InstanceData.OffsetX.GetOffsetDistance(InstanceData.FlipSigns.X, cmaSize.X);
 		//cmaLocation.Y += InstanceData.OffsetY.GetOffsetDistance(InstanceData.FlipSigns.Y, cmaSize.Y);
 		cmaLocation += (InstanceData.OffsetZ.GetOffsetDistance(InstanceData.FlipSigns.Z, cmaSize.Y) * yAxis);
@@ -300,10 +300,10 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cmaLocation.Z += nativeSize.X * FMath::Abs(cmaScale.X);
 		}
 
-		if (CachedAssembly.Parts.Num() > 0)
+		if (GetAssembly().Parts.Num() > 0)
 		{
 			//make compound mesh actor from assembly
-			cma->MakeFromAssemblyPartAsync(FAssetRequest(CachedAssembly, nullptr), 0, cmaScale, false, bCreateCollision);
+			cma->MakeFromAssemblyPartAsync(FAssetRequest(GetAssembly(), nullptr), 0, cmaScale, false, bCreateCollision);
 
 			//set CMA transform based on values calculated above
 			FTransform cmaTransform;
@@ -387,7 +387,7 @@ void AMOIFaceHosted::OnInstPropUIChangedRotationZ(float NewValue)
 
 void AMOIFaceHosted::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	const int32 numLayers = assembly.Layers.Num();
 	auto assemblyGuid = assembly.UniqueKey();
 	auto* parentObject = GetParentObject();

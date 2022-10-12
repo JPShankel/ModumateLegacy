@@ -53,7 +53,8 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/ModumateMacSettings.h"
-#include "Kismet/KismetRenderingLibrary.h"
+#include "ModumateCore/PrettyJSONWriter.h"
+
 
 
 using namespace ModumateCommands;
@@ -175,6 +176,24 @@ const AEditModelGameMode* UModumateGameInstance::GetEditModelGameMode() const
 	return GetDefault<AEditModelGameMode>(gameModeClass);
 }
 
+void UModumateGameInstance::DumpPresetToFile(const FGuid& Key) const
+{
+	auto doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
+	auto preset = doc->GetPresetCollection().PresetFromGUID(Key);
+	FString outJson;
+	WriteJsonGeneric(outJson, preset);
+						
+	FString file = FPaths::ProjectConfigDir();
+	file.Append(Key.ToString() + TEXT(".json"));
+	if(FFileHelper::SaveStringToFile(outJson,*file))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sucsesfuly wrote: \"%s\" "),*file);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to write: \"%s\" "),*file);
+	}
+}
 void UModumateGameInstance::RegisterAllCommands()
 {
 	RegisterCommand(kBIMDebug, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
@@ -184,6 +203,45 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			bool newShow = !controller->EditModelUserWidget->IsBIMDebuggerOn();
 			controller->EditModelUserWidget->ShowBIMDebugger(newShow);
+			return true;
+		}
+		return false;
+	});
+	
+	RegisterCommand(kDumpPreset, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		auto doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
+		if(doc)
+		{
+			FString guidStr = params.GetValue(kPresetKey);
+
+			FGuid providedKey;
+			if(guidStr.Equals("all"))
+			{
+				auto collection = doc->GetPresetCollection();
+				TArray<FGuid> outListOfPresets;
+				collection.GetAllPresetKeys(outListOfPresets);
+				for(auto& key: outListOfPresets)
+				{
+					DumpPresetToFile(key);
+				}
+			}
+			else if(FGuid::Parse(guidStr, providedKey))
+			{
+				auto collection = doc->GetPresetCollection();
+				TSet<FGuid> outListOfPresets;
+
+				if(collection.GetAllDescendentPresets(providedKey, outListOfPresets) == EBIMResult::Success)
+				{
+					DumpPresetToFile(providedKey);
+					for(auto& key: outListOfPresets)
+					{
+						DumpPresetToFile(key);
+					}
+				}
+				
+			}
+			
 			return true;
 		}
 		return false;
@@ -657,13 +715,17 @@ void UModumateGameInstance::RegisterAllCommands()
 				AEditModelPlayerController* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 				if (playerController && playerController->DynamicIconGenerator)
 				{
-					const auto presets = GetDocument()->GetPresetCollection().PresetsByGUID;
-					for (auto kvp : presets)
+					auto collection = GetDocument()->GetPresetCollection();
+					TArray<FGuid> presetKeys;
+					if(ensure(collection.GetAllPresetKeys(presetKeys)))
 					{
-						FString response;
-						playerController->DynamicIconGenerator->GetIconMeshForAssemblyForWeb(kvp.Key, response, true);
+						for (auto key : presetKeys)
+						{
+							FString response;
+							playerController->DynamicIconGenerator->GetIconMeshForAssemblyForWeb(key, response, true);
+						}
+						return true;
 					}
-					return true;
 				}
 			}
 			return false;

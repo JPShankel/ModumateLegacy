@@ -28,7 +28,8 @@ void AMOIMetaGraph::PostCreateObject(bool bNewObject)
 	if (Document)
 	{
 		// Prevent assembly getting default Symbol GUID:
-		CachedAssembly.ObjectType = StateData.ObjectType;
+		GetAssembly().ObjectType = StateData.ObjectType;
+
 		Super::PostCreateObject(bNewObject);
 	}
 }
@@ -161,7 +162,8 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 		}
 		CachedSymbolGuid = StateData.AssemblyGUID;
 
-		CachedAssembly.PresetGUID = StateData.AssemblyGUID;  // For CS tool
+		GetAssembly().PresetGUID = StateData.AssemblyGUID;  // For CS tool
+
 		if (!SetupBoundingBox())
 		{
 			return false;
@@ -215,7 +217,7 @@ bool AMOIMetaGraph::FromWebMOI(const FString& InJson)
 		{
 			return false;
 		}
-
+		
 		return true;
 	}
 

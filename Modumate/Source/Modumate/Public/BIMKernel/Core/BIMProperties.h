@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/Core/BIMEnums.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Objects/ModumateObjectEnums.h"
 #include "BIMProperties.generated.h"
@@ -55,6 +54,10 @@ enum class EBIMValueScope : uint8
 	SurfaceTreatment,
 	Detail,
 	Symbol,
+	InputPins,
+	MeshRef,
+	ProfileRef,
+	PatternRef,
 
 	// These scopes are to be deprecated as we replace the BIM property sheets
 	Node,
@@ -108,7 +111,6 @@ namespace BIMPropertyNames
 	extern const FBIMNameType MaterialColor;
 	extern const FBIMNameType Mesh;
 	extern const FBIMNameType ModuleCount;
-	extern const FBIMNameType Name;
 	extern const FBIMNameType NamedDimensions;
 	extern const FBIMNameType Normal;
 	extern const FBIMNameType Number;
@@ -139,6 +141,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType UseGroupType;
 	extern const FBIMNameType Width;
 	extern const FBIMNameType Zalign;
+	extern const FBIMNameType DimensionKey;
 }
 
 struct MODUMATE_API FBIMPropertyKey
@@ -218,6 +221,15 @@ public:
 		}
 
 		return false;
+	}
+
+	template<class T>
+	void DeleteProperty(EBIMValueScope InScope, const FBIMNameType& InName)
+	{
+		TMap<FName, T>* propMap;
+		GetMap(propMap);
+
+		propMap->Remove(FBIMPropertyKey(InScope, InName).QN());
 	}
 
 	void ForEachProperty(const TFunction<void(const FBIMPropertyKey& Key, float Value)>& InFunc) const;

@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
-#include "ModumateCore/ModumateUnits.h"
-#include "BIMKernel/Core/BIMKey.h"
 
 #include "ModumateArchitecturalMesh.generated.h"
 

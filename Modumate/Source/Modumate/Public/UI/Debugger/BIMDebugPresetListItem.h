@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
-#include "BIMKernel/Core/BIMKey.h"
 
 #include "BIMDebugPresetListItem.generated.h"
 

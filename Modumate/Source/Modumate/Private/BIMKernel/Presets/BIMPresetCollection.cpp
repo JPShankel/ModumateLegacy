@@ -3,7 +3,6 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
-#include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 
@@ -14,7 +13,11 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "Objects/ModumateObjectStatics.h"
+
+#include "Online/ModumateCloudConnection.h"
 #include "Engine/AssetManager.h"
+#include "Objects/TerrainMaterial.h"
+#include "UnrealClasses/EditModelGameState.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetCollection"
 
@@ -29,11 +32,61 @@ TMap<EObjectType, FBIMAssemblySpec> FBIMPresetCollection::DefaultAssembliesByObj
 TMap<EObjectType, FAssemblyDataCollection> FBIMPresetCollection::AssembliesByObjectType;
 TSet<FGuid> FBIMPresetCollection::UsedGUIDs;
 
+//TODO: Merge this in to the GetAllDescendents method below. They are pretty much copy/paste -JN
+EBIMResult FBIMPresetCollection::GetDirectCanonicalDescendents(const FGuid& PresetID, TSet<FGuid>& OutCanonicals) const
+{
+	auto* preset = PresetFromGUID(PresetID);
+	
+	if(!ensure(preset != nullptr)) return EBIMResult::Error;
+	
+	for (auto &childNode : preset->ChildPresets)
+	{
+		OutCanonicals.Add(childNode.PresetGUID);
+	}
+
+	if (preset->SlotConfigPresetGUID.IsValid())
+	{
+		OutCanonicals.Add(preset->SlotConfigPresetGUID);
+	}
+
+	for (auto& part : preset->PartSlots)
+	{
+		if (part.PartPresetGUID.IsValid())
+		{
+			OutCanonicals.Add(part.PartPresetGUID);
+		}
+	}
+
+	preset->Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
+		FGuid guid;
+		if (!Value.IsEmpty() && FGuid::Parse(Value, guid) && guid.IsValid())
+		{
+			OutCanonicals.Add(guid);
+		}
+	});
+
+	FBIMPresetMaterialBindingSet materialBindingSet;
+	if (preset->TryGetCustomData(materialBindingSet))
+	{
+		for (auto& binding : materialBindingSet.MaterialBindings)
+		{
+			if (binding.SurfaceMaterialGUID.IsValid())
+			{
+				OutCanonicals.Add(binding.SurfaceMaterialGUID);
+			}
+			if (binding.InnerMaterialGUID.IsValid())
+			{
+				OutCanonicals.Add(binding.InnerMaterialGUID);
+			}
+		}
+	}
+	return EBIMResult::Success;
+}
 
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
 */
-EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, TArray<FGuid>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, TSet<FGuid>& OutPresets) const
 {
 	if (!PresetID.IsValid())
 	{
@@ -51,17 +104,19 @@ EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, 
 		}
 
 		processed.Add(presetID);
+
 		const FBIMPresetInstance* preset = PresetFromGUID(presetID);
+		
 		if (preset == nullptr)
 		{
 			continue;
 		}
-
+		
 		if (presetID != PresetID && presetID.IsValid())
 		{
-			OutPresets.AddUnique(presetID);
+			OutPresets.Add(VDPTable.TranslateToDerived(presetID));
 		}
-
+		
 		for (auto &childNode : preset->ChildPresets)
 		{
 			presetStack.Push(childNode.PresetGUID);
@@ -80,7 +135,7 @@ EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, 
 			}
 		}
 
-		preset->Properties.ForEachProperty([&presetStack](const FBIMPropertyKey& PropKey,const FString& Value) {
+		preset->Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
 			FGuid guid;
 			if (!Value.IsEmpty() && FGuid::Parse(Value, guid) && guid.IsValid())
 			{
@@ -111,11 +166,11 @@ EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, 
 /*
 * Given a PresetID, get all other presets that depend on it
 */
-EBIMResult FBIMPresetCollection::GetAllAncestorPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetAllAncestorPresets(const FGuid& PresetGUID, TSet<FGuid>& OutPresets) const
 {
 	for (auto& preset : PresetsByGUID)
 	{
-		TArray<FGuid> descendents;
+		TSet<FGuid> descendents;
 		GetAllDescendentPresets(preset.Key, descendents);
 		if (descendents.Contains(PresetGUID))
 		{
@@ -125,7 +180,7 @@ EBIMResult FBIMPresetCollection::GetAllAncestorPresets(const FGuid& PresetGUID, 
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetCollection::GetDescendentPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetDescendentPresets(const FGuid& InPresetGUID, TSet<FGuid>& OutPresets) const
 {
 	const FBIMPresetInstance* preset = PresetFromGUID(InPresetGUID);
 	if (!ensureAlways(preset != nullptr))
@@ -135,17 +190,17 @@ EBIMResult FBIMPresetCollection::GetDescendentPresets(const FGuid& InPresetGUID,
 
 	for (auto& childPreset : preset->ChildPresets)
 	{
-		OutPresets.AddUnique(childPreset.PresetGUID);
+		OutPresets.Add(childPreset.PresetGUID);
 	}
 	for (auto& partSlot : preset->PartSlots)
 	{
-		OutPresets.AddUnique(partSlot.PartPresetGUID);
+		OutPresets.Add(partSlot.PartPresetGUID);
 	}
 
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetCollection::GetAncestorPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetAncestorPresets(const FGuid& InPresetGUID, TSet<FGuid>& OutPresets) const
 {
 	for (auto& curPreset : PresetsByGUID)
 	{
@@ -153,14 +208,14 @@ EBIMResult FBIMPresetCollection::GetAncestorPresets(const FGuid& InPresetGUID, T
 		{
 			if (curChildPreset.PresetGUID == InPresetGUID)
 			{
-				OutPresets.AddUnique(curPreset.Value.GUID);
+				OutPresets.Add(curPreset.Value.GUID);
 			}
 		}
 		for (auto& curPartSlot : curPreset.Value.PartSlots)
 		{
 			if (curPartSlot.PartPresetGUID == InPresetGUID)
 			{
-				OutPresets.AddUnique(curPreset.Value.GUID);
+				OutPresets.Add(curPreset.Value.GUID);
 			}
 		}
 	}
@@ -217,109 +272,6 @@ EBIMResult FBIMPresetCollection::GetPresetsForSlot(const FGuid& SlotPresetGUID, 
 	return EBIMResult::Error;
 }
 
-
-// TODO: Loading data from a CSV manifest file is not going to be required long term. 
-// Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
-// Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability
-// Until then this is a prototypical development space used to prototype the relational database structure being authored in Excel
-EBIMResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages)
-{
-	FModumateCSVScriptProcessor processor;
-
-	static const FName kTypeName = TEXT("TYPENAME");
-	static const FName kProperty = TEXT("PROPERTY");
-	static const FName kTagPaths = TEXT("TAGPATHS");
-	static const FName kPreset = TEXT("PRESET");
-	static const FName kInputPin = TEXT("INPUTPIN");
-	static const FName kFormElement = TEXT("FORMELEMENT");
-	static const FName kString = TEXT("String");
-	static const FName kDimension = TEXT("Dimension");
-
-	FBIMCSVReader tableData;
-	tableData.KeyGuidMap.Empty();
-	tableData.GuidKeyMap.Empty();
-
-	processor.AddRule(kFormElement, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
-	{
-		ensureAlways(tableData.ProcessFormElementRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
-	});
-
-	processor.AddRule(kTypeName, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
-	{
-		ensureAlways(tableData.ProcessNodeTypeRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
-	});
-
-	processor.AddRule(kProperty, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
-	{
-		ensureAlways(tableData.ProcessPropertyDeclarationRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
-	});
-
-	processor.AddRule(kTagPaths, [&OutMessages, &tableData, this](const TArray<const TCHAR*> &Row, int32 RowNumber)
-	{
-		if (tableData.NodeType.TypeName.IsNone())
-		{
-			OutMessages.Add(FString::Printf(TEXT("No node definition")));
-		}
-
-		// tableData.NodeType may be updated by the tag path row, which contains matrices that can add to the form template
-		if (ensureAlways(tableData.ProcessTagPathRow(Row, RowNumber, OutMessages) == EBIMResult::Success))
-		{
-			NodeDescriptors.Add(tableData.NodeType.TypeName, tableData.NodeType);
-		}
-	});
-
-	processor.AddRule(kPreset, [&OutMessages, &OutStarters, &tableData, &ManifestFile, this](const TArray<const TCHAR*> &Row, int32 RowNumber)
-	{
-		ensureAlways(tableData.ProcessPresetRow(Row, RowNumber, *this, OutStarters, OutMessages) == EBIMResult::Success);
-	});
-
-	processor.AddRule(kInputPin, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
-	{
-		ensureAlways(tableData.ProcessInputPinRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
-	});
-
-	TArray<FString> fileList;
-	TMap<FBIMKey, FGuid> keyGUIDMap;
-	if (FFileHelper::LoadFileToStringArray(fileList, *(ManifestPath / ManifestFile)))
-	{
-		for (auto &file : fileList)
-		{
-			// add a blank line in manifest to halt processing
-			if (file.IsEmpty())
-			{
-				break;
-			}
-
-			if (file[0] == TCHAR(';'))
-			{
-				continue;
-			}
-
-			tableData = FBIMCSVReader();
-			tableData.CurrentFile = file;
-
-			if (!processor.ParseFile(*(ManifestPath / file)))
-			{
-				OutMessages.Add(FString::Printf(TEXT("Failed to load CSV file %s"), *file));
-				return EBIMResult::Error;
-			}
-
-			// Make sure the last preset we were reading ends up in the map
-			if (tableData.Preset.GUID.IsValid())
-			{
-				tableData.Preset.TryGetProperty(BIMPropertyNames::Name, tableData.Preset.DisplayName);
-				AddPreset(tableData.Preset);
-				FBIMCSVReader::KeyGuidMap.Add(tableData.Preset.PresetID, tableData.Preset.GUID);
-				FBIMCSVReader::GuidKeyMap.Add(tableData.Preset.GUID, tableData.Preset.PresetID);
-			}
-		}
-		PostLoad();
-		return EBIMResult::Success;
-	}
-	OutMessages.Add(FString::Printf(TEXT("Failed to load manifest file %s"), *ManifestFile));
-	return EBIMResult::Error;
-}
-
 EBIMResult FBIMPresetCollection::PostLoad()
 {
 	UsedGUIDs.Empty();
@@ -329,12 +281,6 @@ EBIMResult FBIMPresetCollection::PostLoad()
 	{
 		UsedGUIDs.Add(kvp.Value.GUID);
 		AllNCPs.Add(kvp.Value.MyTagPath);
-		
-		FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
-		if (ensureAlways(typeDef != nullptr))
-		{
-			kvp.Value.TypeDefinition = *typeDef;
-		}
 
 		// Set up unpopulated slots of rigged assemblies
 		if (kvp.Value.SlotConfigPresetGUID.IsValid())
@@ -375,45 +321,29 @@ EBIMResult FBIMPresetCollection::PostLoad()
 				kvp.Value.PartSlots.Append(EmptySlots);
 			}
 		}
+	}
 
-		TArray<FBIMPresetTaxonomyNode> taxonomyNodes;
-		// Get metadata from NCP taxonomy...partial matches are in order from specific to general
-		if (PresetTaxonomy.GetAllPartialMatches(kvp.Value.MyTagPath, taxonomyNodes) == EBIMResult::Success)
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::ProcessNamedDimensions(FBIMPresetInstance& Preset)
+{
+	EBIMResult rtn = EBIMResult::Success;
+	if(Preset.NodeScope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid())
+	{
+		for (auto& kvp : FBIMPartSlotSpec::NamedDimensionMap)
 		{
-			for (auto& node : taxonomyNodes)
+			FBIMPropertyKey propKey(EBIMValueScope::Dimension, *kvp.Key);
+			if (!Preset.Properties.HasProperty<float>(propKey.Scope, propKey.Name))
 			{
-				if (kvp.Value.CategoryTitle.IsEmpty())
-				{
-					kvp.Value.CategoryTitle = node.designerTitle;
-				}
-
-				if (kvp.Value.MeasurementMethod == EPresetMeasurementMethod::None)
-				{
-					kvp.Value.MeasurementMethod = node.measurementMethod;
-				}
-
-				if (kvp.Value.ObjectType == EObjectType::OTNone)
-				{
-					kvp.Value.ObjectType = node.objectType;
-				}
-
-				if (kvp.Value.DisplayName.IsEmpty())
-				{
-					kvp.Value.DisplayName = node.displayName;
-				}
-
-				if (kvp.Value.AssetType == EBIMAssetType::None)
-				{
-					kvp.Value.AssetType = node.assetType;
-				}
+				Preset.Properties.SetProperty(propKey.Scope, propKey.Name, kvp.Value.DefaultValue.AsWorldCentimeters());
 			}
 		}
 	}
-
-	return ProcessNamedDimensions();
+	return rtn;
 }
 
-EBIMResult FBIMPresetCollection::ProcessNamedDimensions()
+EBIMResult FBIMPresetCollection::ProcessAllNamedDimensions()
 {
 	TArray<FGuid> namedDimensionPresets;
 
@@ -429,45 +359,54 @@ EBIMResult FBIMPresetCollection::ProcessNamedDimensions()
 
 			if (ensureAlways(preset != nullptr))
 			{
-				FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(preset->PresetID.ToString());
-
-				float numProp;
-				if (preset->TryGetProperty(BIMPropertyNames::DefaultValue, numProp))
+				FString dimensionKey;
+				if(preset->TryGetProperty(BIMPropertyNames::DimensionKey, dimensionKey))
 				{
-					dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(numProp);
+					FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(dimensionKey);
+
+					float numProp;
+					if (preset->TryGetProperty(BIMPropertyNames::DefaultValue, numProp))
+					{
+						dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(numProp);
+					}
+					else
+					{
+						res = EBIMResult::Error;
+					}
+
+					FString stringProp;
+					if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::UIGroup, stringProp)))
+					{
+						dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(stringProp);
+					}
+					else
+					{
+						res = EBIMResult::Error;
+					}
+
+					if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::DisplayName, stringProp)))
+					{
+						dimension.DisplayName = FText::FromString(stringProp);
+					}
+					else
+					{
+						res = EBIMResult::Error;
+					}
+
+					if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::Description, stringProp)))
+					{
+						dimension.Description = FText::FromString(stringProp);
+					}
+					else
+					{
+						res = EBIMResult::Error;
+					}
 				}
 				else
 				{
 					res = EBIMResult::Error;
 				}
-
-				FString stringProp;
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::UIGroup, stringProp)))
-				{
-					dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(stringProp);
-				}
-				else
-				{
-					res = EBIMResult::Error;
-				}
-
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::DisplayName, stringProp)))
-				{
-					dimension.DisplayName = FText::FromString(stringProp);
-				}
-				else
-				{
-					res = EBIMResult::Error;
-				}
-
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::Description, stringProp)))
-				{
-					dimension.Description = FText::FromString(stringProp);
-				}
-				else
-				{
-					res = EBIMResult::Error;
-				}
+				
 			}
 			else
 			{
@@ -491,55 +430,96 @@ EBIMResult FBIMPresetCollection::ProcessNamedDimensions()
 		FBIMPresetInstance* preset = PresetFromGUID(dimPreset);
 		if (ensureAlways(preset != nullptr))
 		{
-			for (auto& kvp : FBIMPartSlotSpec::NamedDimensionMap)
-			{
-				FBIMPropertyKey propKey(EBIMValueScope::Dimension, *kvp.Key);
-				if (!preset->Properties.HasProperty<float>(propKey.Scope, propKey.Name))
+			ProcessNamedDimensions(*preset);
+		}
+	}
+
+	return res;
+}
+
+EBIMResult FBIMPresetCollection::ProcessMeshReferences(FBIMPresetInstance& Preset)
+{
+	EBIMResult rtn =  EBIMResult::Success;;
+	if(Preset.Properties.HasProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID))
+	{
+		FString meshGuidStr = Preset.Properties.GetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID);
+		FGuid meshGuid;
+		FGuid::Parse(meshGuidStr, meshGuid);
+			
+		const FBIMPresetInstance* meshPreset = PresetFromGUID(meshGuid);
+			
+		if (ensure(meshPreset != nullptr))
+		{
+			meshPreset->Properties.ForEachProperty([&](const FBIMPropertyKey& Key, float Value) {
+				if (Key.Scope == EBIMValueScope::Dimension && !Preset.Properties.HasProperty<float>(EBIMValueScope::Dimension,Key.Name))
 				{
-					preset->Properties.SetProperty(propKey.Scope, propKey.Name, kvp.Value.DefaultValue.AsWorldCentimeters());
+					Preset.Properties.SetProperty(Key.Scope, Key.Name, Value);
 				}
+			});
+		}
+		else
+		{
+			rtn = EBIMResult::Error;
+		}
+	}	
+	return rtn;
+}
+
+/*
+ *  After adding all of the presets and their dependants to the PresetCollection, we need to process the mesh references
+ *  and add all dimension properties of a mesh to its parent if it is not already defined.
+*/
+EBIMResult FBIMPresetCollection::ProcessAllMeshReferences()
+{
+	EBIMResult rtn = EBIMResult::Success;
+	
+	for(auto& presetKVP : PresetsByGUID)
+	{
+		ProcessMeshReferences(presetKVP.Value);
+	}
+
+	return rtn;
+}
+
+EBIMResult FBIMPresetCollection::ProcessAllAssembies()
+{
+	EBIMResult rtn = EBIMResult::Success;
+	for(auto& presetKVP : PresetsByGUID)
+	{
+		auto assemblyResult = ProcessAssemblyForPreset(presetKVP.Value);
+		if(!ensureAlways(assemblyResult == EBIMResult::Success))
+		{
+			rtn = assemblyResult;
+			UE_LOG(LogTemp, Error, TEXT("Preset assembly processing error: %d"), assemblyResult);
+		}
+	}
+
+	return rtn;
+}
+
+EBIMResult FBIMPresetCollection::ProcessAssemblyForPreset(FBIMPresetInstance& Preset)
+{
+	EBIMResult res = EBIMResult::Success;
+	if (Preset.ObjectType != EObjectType::OTNone)
+	{
+		FBIMAssemblySpec outSpec;
+		res = outSpec.FromPreset(FBIMPresetCollectionProxy(*this), Preset.GUID);
+		if(res == EBIMResult::Success)
+		{
+			outSpec.ObjectType = Preset.ObjectType;	
+			res = UpdateProjectAssembly(outSpec);
+			if(res == EBIMResult::Success)
+			{
+				if (!DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
+				{
+					DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
+				}		
 			}
 		}
 	}
-
+	
 	return res;
 }
-
-EBIMResult FBIMPresetCollection::ProcessStarterAssemblies(const TArray<FGuid>& StarterPresets)
-{
-	/*
-	Now build every preset that was returned in 'starters' by the manifest parse and add it to the project
-	*/
-	EBIMResult res = EBIMResult::Success;
-	for (auto& starter : StarterPresets)
-	{
-		const FBIMPresetInstance* preset = PresetFromGUID(starter);
-
-		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
-		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)
-		{
-			continue;
-		}
-
-		FBIMAssemblySpec outSpec;
-		
-		EBIMResult fromRes = outSpec.FromPreset(FBIMPresetCollectionProxy(*this), preset->GUID);
-		if (fromRes != EBIMResult::Success)
-		{
-			res = fromRes;
-		}
-		
-		outSpec.ObjectType = preset->ObjectType;
-		UpdateProjectAssembly(outSpec);
-
-		if (!DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
-		{
-			DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
-		}
-	}
-	return res;
-}
-
 
 EBIMResult FBIMPresetCollection::GetAvailableGUID(FGuid& OutGUID)
 {
@@ -558,76 +538,8 @@ EBIMResult FBIMPresetCollection::GetAvailableGUID(FGuid& OutGUID)
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetCollection::GenerateBIMKeyForPreset(const FGuid& PresetID, FBIMKey& OutKey) const
-{
-	OutKey = FBIMKey();
-
-	TArray<FGuid> idStack;
-	idStack.Push(PresetID);
-
-	FString returnKey;
-
-	while (idStack.Num() > 0)
-	{
-		FGuid id = idStack.Pop();
-		const FBIMPresetInstance* preset = PresetFromGUID(id);
-		if (!ensureAlways(preset != nullptr))
-		{
-			return EBIMResult::Error;
-		}
-
-		FString key;
-		preset->MyTagPath.ToString(key);
-		returnKey.Append(key);
-
-		FString name;
-		if (preset->TryGetProperty(BIMPropertyNames::Name, name))
-		{
-			returnKey.Append(name);
-		}
-
-		for (auto& childPreset : preset->ChildPresets)
-		{
-			idStack.Push(childPreset.PresetGUID);
-		}
-
-		for (auto& part : preset->PartSlots)
-		{
-			if (!part.PartPreset.IsNone())
-			{
-				idStack.Push(part.PartPresetGUID);
-			}
-		}
-	}
-
-	if (returnKey.IsEmpty())
-	{
-		return EBIMResult::Error;
-	}
-
-	returnKey.RemoveSpacesInline();
-
-	OutKey = FBIMKey(returnKey);
-
-	return EBIMResult::Success;
-}
-
 bool FBIMPresetCollection::operator==(const FBIMPresetCollection& RHS) const
 {
-	if (NodeDescriptors.Num() != RHS.NodeDescriptors.Num())
-	{
-		return false;
-	}
-
-	for (const auto& kvp : RHS.NodeDescriptors)
-	{
-		const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Key);
-		if (typeDef == nullptr || *typeDef != kvp.Value)
-		{
-			return false;
-		}
-	}
-
 	if (PresetsByGUID.Num() != RHS.PresetsByGUID.Num())
 	{
 		return false;
@@ -693,22 +605,119 @@ EBIMResult FBIMPresetCollection::GetNCPSubcategories(const FBIMTagPath& InNCP, T
 
 FBIMPresetInstance* FBIMPresetCollection::PresetFromGUID(const FGuid& InGUID)
 {
-	return PresetsByGUID.Find(InGUID);
+	return PresetsByGUID.Find(VDPTable.TranslateToDerived(InGUID));	
 }
 
 const FBIMPresetInstance* FBIMPresetCollection::PresetFromGUID(const FGuid& InGUID) const
 {
-	return PresetsByGUID.Find(InGUID);
+	return PresetsByGUID.Find(VDPTable.TranslateToDerived(InGUID));
 }
 
-EBIMResult FBIMPresetCollection::AddPreset(const FBIMPresetInstance& InPreset)
+EBIMResult FBIMPresetCollection::AddPreset(const FBIMPresetInstance& InPreset, FBIMPresetInstance& OutPreset)
 {
+	EBIMResult rtn = EBIMResult::Error;
 	if (ensureAlways(InPreset.GUID.IsValid()))
 	{
-		PresetsByGUID.Add(InPreset.GUID, InPreset);
-		return EBIMResult::Success;
+		if(InPreset.Origination == EPresetOrigination::Canonical)
+		{
+			//There are two possibilities when adding a canonical preset currently:
+			// 1) The preset is ALREADY in our VDP table (we already have a VDP/EDP for it). Return it.
+			// 2) The preset is NOT in our VDP table - create and add
+			if(VDPTable.HasCanonical(InPreset.GUID))
+			{
+				FBIMPresetInstance vdp;
+				FGuid vdpGuid;
+				if(ensure(VDPTable.GetAssociated(InPreset.GUID, vdpGuid)))
+				{
+					//There is an Derived preset already in the collection
+					// Use that one. This promotes user edits into canonical
+					// references. Note that this branch can be a VDP too. If,
+					// for instance, the user adds a marketplace item twice.
+					if(PresetsByGUID.Contains(vdpGuid))
+					{
+						OutPreset = PresetsByGUID[vdpGuid];
+						rtn = EBIMResult::Success;
+					}
+					//There is no preset w/ that Associated GUID existing. The assumption
+					// here is that it's a VDP -- NOT EDP.
+					// EDP's should already be added by this point through the
+					// ReadPresetsFromDocRecord() method.
+					else
+					{
+						vdp = InPreset.Derive(vdpGuid);
+						PresetsByGUID.Add(vdp.GUID, vdp);
+						OutPreset = PresetsByGUID[vdp.GUID];
+					}
+				}
+			}
+			else
+			{
+				FGuid NewGuid;
+				if(ensure(GetAvailableGUID(NewGuid) == EBIMResult::Success))
+				{
+					auto vdp = InPreset.Derive(NewGuid);
+					VDPTable.Add(InPreset.GUID, vdp.GUID);
+					PresetsByGUID.Add(vdp.GUID, vdp);
+					OutPreset = vdp;
+					rtn = EBIMResult::Success;
+				}		
+			}
+		}
+		else
+		{
+			PresetsByGUID.Add(InPreset.GUID, InPreset);
+			OutPreset = PresetsByGUID[InPreset.GUID];
+			rtn = EBIMResult::Success;
+		}
 	}
-	return EBIMResult::Error;
+
+	
+	return rtn;
+}
+
+EBIMResult FBIMPresetCollection::ProcessPreset(const FGuid& GUID)
+{
+	auto rtn = EBIMResult::Error;
+	if (ensureAlways(GUID.IsValid() && PresetsByGUID.Contains(GUID)))
+	{
+		FBIMPresetInstance& inMap = PresetsByGUID[GUID];
+		if(ensureAlways(inMap.Origination != EPresetOrigination::Canonical))
+		{
+			FString guidStr = GUID.ToString();
+			
+			if(!AddAssetsFromPreset(inMap))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed AddAssetsFromPreset: %s"), *guidStr);
+				rtn = EBIMResult::Error;
+			}
+			else if(ProcessMeshReferences(inMap) != EBIMResult::Success)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed ProcessMeshReferences: %s"), *guidStr);
+				rtn = EBIMResult::Error;
+			}
+			else if(ProcessNamedDimensions(inMap) != EBIMResult::Success)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed ProcessNamedDimensions: %s"), *guidStr);
+				rtn = EBIMResult::Error;
+			}
+			else if(SetPartSizesFromMeshes(inMap) != EBIMResult::Success)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed SetPartSizesFromMeshes: %s"), *guidStr);
+				rtn = EBIMResult::Error;
+			}
+			else if(ProcessAssemblyForPreset(inMap) != EBIMResult::Success)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed ProcessAssemblyForPreset: %s"), *guidStr);
+				rtn = EBIMResult::Error;
+			}
+			else
+			{
+				rtn = EBIMResult::Success;
+			}
+		}
+	}
+
+	return rtn;
 }
 
 EBIMResult FBIMPresetCollection::RemovePreset(const FGuid& InGUID)
@@ -716,19 +725,49 @@ EBIMResult FBIMPresetCollection::RemovePreset(const FGuid& InGUID)
 	FBIMPresetInstance* preset = PresetFromGUID(InGUID);
 	if (preset != nullptr)
 	{
+		//TODO: Figure out how the UX works around removing VDPs and EDPs -JN
+#if WITH_EDITOR
+		if(ensureAlways(preset->Origination != EPresetOrigination::Canonical))
+		{
+			if(preset->Origination != EPresetOrigination::Invented)
+			{
+				if(ensureAlways(VDPTable.Contains(preset->GUID)))
+				{
+					VDPTable.Remove(InGUID);
+					PresetsByGUID.Remove(preset->GUID);
+					return EBIMResult::Success;
+				}
+			}
+		}
+#else
+		
+		VDPTable.Remove(InGUID);
 		PresetsByGUID.Remove(preset->GUID);
 		return EBIMResult::Success;
+#endif
 	}
 	return EBIMResult::Error;
 }
 
+bool FBIMPresetCollection::GetAllPresetKeys(TArray<FGuid>& OutKeys) const
+{
+	PresetsByGUID.GetKeys(OutKeys);
+	return true;
+}
+
+bool FBIMPresetCollection::Contains(const FGuid& Guid) const
+{
+	return PresetsByGUID.Contains(Guid);
+}
+
 TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FBIMPresetInstance& UpdatedPreset, UObject* AnalyticsWorldContextObject) const
 {
+	
 	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
-
+	
 	presetDelta->NewState = UpdatedPreset;
-	presetDelta->NewState.bEdited = true;
-	const FBIMPresetInstance* oldPreset = PresetsByGUID.Find(UpdatedPreset.GUID);
+
+	const FBIMPresetInstance* oldPreset = PresetFromGUID(UpdatedPreset.GUID);
 	if (oldPreset != nullptr)
 	{
 		presetDelta->OldState = *oldPreset;
@@ -738,13 +777,12 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FBIMPres
 	{
 		UModumateAnalyticsStatics::RecordPresetUpdate(AnalyticsWorldContextObject, oldPreset);
 	}
-
 	return presetDelta;
 }
 
 TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FGuid& PresetID, UObject* AnalyticsWorldContextObject) const
 {
-	const FBIMPresetInstance* currentPreset = PresetsByGUID.Find(PresetID);
+	const FBIMPresetInstance* currentPreset = PresetFromGUID(PresetID);
 	if (currentPreset == nullptr)
 	{
 		return nullptr;
@@ -766,7 +804,6 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDuplicateDelta(const FGuid
 		NewPreset.ParentGUID = original->GUID;
 		NewPreset = *original;
 		NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Duplicate of {0}"), NewPreset.DisplayName);
-		NewPreset.Properties.SetProperty(NewPreset.NodeScope, BIMPropertyNames::Name, NewPreset.DisplayName.ToString());
 
 		GetAvailableGUID(NewPreset.GUID);
 
@@ -922,134 +959,333 @@ const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMo
 	}
 }
 
-bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord, const FBIMPresetCollection& UntruncatedCollection)
+bool FBIMPresetCollection::ReadInitialPresets(const UModumateGameInstance* GameInstance)
 {
-	*this = UntruncatedCollection;
-
-	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
-
-	// Presets in the doc were edited by definition
-	// If bEdited comes in false for a custom preset for any reason, it won't get saved
-	TArray<FGuid> starters;
-	for (auto& kvp : docPresets.PresetsByGUID)
+	auto world = GameInstance->GetWorld();
+	if(ensure(world))
 	{
-		kvp.Value.bEdited = true;
-		AddPreset(kvp.Value);
-		if (kvp.Value.ObjectType != EObjectType::OTNone)
+		auto state = world->GetGameState<AEditModelGameState>();
+		if(ensure(state))
 		{
-			starters.AddUnique(kvp.Key);
+			FMOIDocumentRecord& docRecord = state->Document->GetLastSerializedRecord();
+			return ReadPresetsFromDocRecord(DocVersion, docRecord, GameInstance);
 		}
 	}
+	return false;
+}
 
-	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
-	{
-		if (!NodeDescriptors.Contains(kvp.Key))
-		{
-			NodeDescriptors.Add(kvp.Key, kvp.Value);
-		}
-	}
-
-	FBIMPresetCollectionProxy proxyCollection(*this);
-
-	for (auto& kvp : docPresets.PresetsByGUID)
-	{
-		proxyCollection.OverridePreset(kvp.Value);
-	}
-
-	for (auto& kvp : docPresets.PresetsByGUID)
-	{
-		kvp.Value.UpgradeData(proxyCollection, DocRecordVersion);
-	}
-
-	PresetsByGUID.Append(docPresets.PresetsByGUID);
-
-	for (auto& kvp : PresetsByGUID)
-	{
-		if (kvp.Value.ObjectType != EObjectType::OTNone)
-		{
-			starters.AddUnique(kvp.Key);
-		}
-	}
-
-	ProcessStarterAssemblies(starters);
-
-	SetPartSizesFromMeshes();
+/**
+ * Read and process all presets.
+ * Steps:
+ * 1. Get the Taxonomy from the cloud
+ * 2. Get the document presets that were saved
+ * 3. Get the initial presets from the cloud
+ * 4. Merge both initial and document presets together, find what is missing
+ * 5. Retrieve the missing presets
+ * 6. Do post-processing on all presets
+*/
+bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord, const UModumateGameInstance* GameInstance)
+{
+	// Parse the default material GUID
+	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
+	PopulateTaxonomyFromCloudSync(*this, GameInstance);
 	
-	// If any presets fail to build their assembly, remove them
-	// They'll be replaced by the fallback system and will not be written out again
-	TSet<FGuid> incompletePresets;
-	for (auto& kvp : PresetsByGUID)
+	//Upgrade any presets in the document that need upgrading
+	// Because upgrading may change other presets in the collection
+	// and Adding presets is done by Value, we need to upgrade ALL
+	// before adding to the collection.
+	for (TTuple<FGuid, FBIMPresetInstance>& kvp : DocRecord.PresetCollection.PresetsByGUID)
 	{
-		if (kvp.Value.ObjectType != EObjectType::OTNone)
+		kvp.Value.UpgradeData(DocRecord.PresetCollection, DocRecordVersion);
+	}
+	UpgradeDocRecord(DocRecordVersion, DocRecord, GameInstance);
+	
+	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
+	
+	//Read in VDP table -- This needs to occur before any presets are added.
+	VDPTable = docPresets.VDPTable;
+
+	for (auto& kvp : docPresets.PresetsByGUID)
+	{
+		
+		if (kvp.Value.Origination == EPresetOrigination::EditedDerived ||
+		    kvp.Value.Origination == EPresetOrigination::Invented)
 		{
-			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
-			FBIMAssemblySpec newSpec;
-			if (newSpec.FromPreset(FBIMPresetCollectionProxy(*this), kvp.Value.GUID) == EBIMResult::Success)
+			FBIMPresetInstance CollectionPreset;
+			AddPreset(kvp.Value, CollectionPreset);	
+		}
+	}
+
+	PopulateInitialCanonicalPresetsFromCloudSync(*this, GameInstance);
+	
+	//Find out which presets are missing
+	TSet<FGuid> neededPresets;
+	for (auto& derived : VDPTable.GetDerivedGUIDs())
+	{
+		if(!PresetsByGUID.Contains(derived))
+		{
+			neededPresets.Add(VDPTable.TranslateToCanonical(derived));
+		}
+	}
+		
+	//Query the web for said presets
+	PopulateMissingCanonicalPresetsFromCloudSync(neededPresets, *this, GameInstance);
+	
+	//Populate sub-caches (AssemblyType based)
+	for(auto& myPreset: PresetsByGUID)
+	{
+		//This does more than just populate the Mesh cache
+		// so its order is important
+		ensure(AddAssetsFromPreset(myPreset.Value));
+	}
+
+	// Do processing steps for presets en masse
+	ProcessAllMeshReferences();
+	ProcessAllNamedDimensions();
+	SetAllPartSizesFromMeshes();
+	ProcessAllAssembies();
+	
+	return PostLoad() == EBIMResult::Success;
+}
+bool FBIMPresetCollection::UpgradeMoiStateData(FMOIStateData& InOutMoi, const FBIMPresetCollection& OldCollection, const TMap<FGuid, FBIMPresetInstance>& CustomGuidMap, TSet<FGuid>& OutMissingCanonicals) const
+{
+	int32 count = 0;
+	if(InOutMoi.AssemblyGUID.IsValid())
+	{
+		auto assemblyGuid = InOutMoi.AssemblyGUID;
+		//Invented
+		if(CustomGuidMap.Contains(assemblyGuid))
+		{
+			InOutMoi.AssemblyGUID = CustomGuidMap[assemblyGuid].GUID;
+		}
+		else if(!OldCollection.PresetsByGUID.Contains(assemblyGuid))
+		{
+			//Do we have it in our table/collection already?
+			if(OldCollection.VDPTable.HasCanonical(assemblyGuid))
 			{
-				db.AddData(newSpec);
+				//If so, go ahead and correct it.
+				auto vdp = OldCollection.VDPTable.TranslateToDerived(assemblyGuid);
+				InOutMoi.AssemblyGUID = vdp;
 			}
 			else
 			{
-				incompletePresets.Add(kvp.Value.GUID);
+				//no? we will fix it later
+				OutMissingCanonicals.Add(assemblyGuid);
+				count++;
 			}
 		}
 	}
 
-	for (auto& incompletePreset : incompletePresets)
+	//Loop through custom data and pull in any guid's you find.
+	switch (InOutMoi.ObjectType)
 	{
-		RemovePreset(incompletePreset);
+	case EObjectType::OTTerrainMaterial:
+		{
+			FMOITerrainMaterialData terrainMaterial;
+			InOutMoi.CustomData.LoadStructData(terrainMaterial);
+			auto canonical = terrainMaterial.Material;
+			if(CustomGuidMap.Contains(canonical))
+			{
+				terrainMaterial.Material = CustomGuidMap[canonical].GUID;
+				InOutMoi.CustomData.SaveStructData(terrainMaterial);
+			}
+			else if(OldCollection.VDPTable.HasCanonical(canonical))
+			{
+				auto vdp = OldCollection.VDPTable.TranslateToDerived(canonical);
+				ensure(OldCollection.PresetsByGUID.Contains(vdp));
+				terrainMaterial.Material = vdp;
+				InOutMoi.CustomData.SaveStructData(terrainMaterial);
+			}
+			else if(!canonical.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("OTTerrainMaterial has Invalid Material GUID"));
+			}
+			else
+			{
+				OutMissingCanonicals.Add(canonical);
+				count++;
+			}
+			
+			break;
+		}
+	default:
+		break;
 	}
 
-	return PostLoad() == EBIMResult::Success;
+	return count == 0;
 }
 
-bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const
+bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord,
+	const UModumateGameInstance* GameInstance)
 {
-	for (auto& kvp : PresetsByGUID)
+	// With version 24, all presets carry around what market (canonical) preset they were based on (if any)
+	//  all previous bEdited presets become Invented presets. bEdited is deprecated, but we make
+	//  the assumption that anything in the document is bEdited already.
+	if(DocRecordVersion < 24)
 	{
-		// Only save presets that have been edited, the rest are in the shared db
-		if (kvp.Value.bEdited)
+		FBIMPresetCollection& oldCollection = DocRecord.PresetCollection;
+		PopulateTaxonomyFromCloudSync(oldCollection, GameInstance);
+		
+		//Replace GUIDs in the doc record
+		TMap<FGuid, FBIMPresetInstance> oldToInvented;
+		for(auto& kvp: oldCollection.PresetsByGUID)
 		{
-			auto serializedPreset = kvp.Value;
+			auto& preset = kvp.Value;
+			
+			preset.Origination = EPresetOrigination::Invented;
+			preset.CanonicalBase.Invalidate();
+			FGuid oldGuid = preset.GUID;
+			ensure(oldCollection.GetAvailableGUID(preset.GUID) == EBIMResult::Success);
+			oldToInvented.Add(oldGuid, preset);
+		}
 
-			for (auto& customData : serializedPreset.CustomDataByClassName)
+		//Remove and re-add to fix key
+		for(auto& kvp : oldToInvented)
+		{
+			oldCollection.RemovePreset(kvp.Key);
+			oldCollection.AddPreset(kvp.Value, kvp.Value);
+		}
+
+		//Get all the initial presets that are typical in post-24
+		PopulateInitialCanonicalPresetsFromCloudSync(oldCollection, GameInstance);
+
+		//Walk the object list, if an assembly is missing, we need to grab it as well.
+		//Also, update any canonical references with vdps (if we have them from the inital
+		// pull) or with Invented presets (if we changed them earlier).
+		TSet<FGuid> missingCanonicalPresets;
+		TArray<FMOIStateData*> fixMeAfterMissingPresetsArePopulated;
+		for(FMOIStateData& objectData : DocRecord.ObjectData)
+		{
+			auto count = missingCanonicalPresets.Num();
+			if(!UpgradeMoiStateData(objectData, oldCollection, oldToInvented, missingCanonicalPresets))
 			{
-				customData.Value.SaveJsonFromCbor();
+				fixMeAfterMissingPresetsArePopulated.Add(&objectData);
 			}
-
-			DocRecord.PresetCollection.AddPreset(serializedPreset);
-			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
+		}
+		
+		//Find any missing descendent presets, such as those that are downloaded
+		// from the marketplace in 3.3 and assigned to a initial preset as a layer
+		// or material or what-not.
+		for(auto& oti: oldToInvented)
+		{
+			TSet<FGuid> descendants;
+			oldCollection.GetDirectCanonicalDescendents(oti.Value.GUID, descendants);
+			for(auto& canonical : descendants)
 			{
-				const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
-				if (ensureAlways(typeDef != nullptr))
+				if(!oldCollection.VDPTable.HasCanonical(canonical) && !missingCanonicalPresets.Contains(canonical))
 				{
-					DocRecord.PresetCollection.NodeDescriptors.Add(kvp.Value.NodeType, *typeDef);
+					missingCanonicalPresets.Add(canonical);
 				}
-			};
+			}
+		}
+
+		//We should have a complete list of what is missing. Go get it.
+		PopulateMissingCanonicalPresetsFromCloudSync(missingCanonicalPresets, oldCollection, GameInstance);
+
+		//Walk all the previous objects that we didn't have assembly presets for
+		// and fix them to point to the vdps we just got.
+		for(auto dataPtr : fixMeAfterMissingPresetsArePopulated)
+		{
+			missingCanonicalPresets.Empty();
+			if(ensure(UpgradeMoiStateData(*dataPtr, oldCollection, oldToInvented, missingCanonicalPresets)))
+			{
+				if(dataPtr->AssemblyGUID.IsValid())
+				{
+					ensure(oldCollection.Contains(dataPtr->AssemblyGUID));	
+				}
+			}
+		}
+
+		for(auto& preset : oldCollection.PresetsByGUID)
+		{
+			for(auto& oti : oldToInvented)
+			{
+				if(preset.Value.ReplaceImmediateChildGuid(oti.Key, oti.Value.GUID))
+				{
+					ensure(oldCollection.PresetsByGUID.Contains(oti.Value.GUID));
+					
+					ensure(preset.Value.Origination != EPresetOrigination::Unknown);
+					ensure(preset.Value.Origination != EPresetOrigination::Canonical);
+					if(preset.Value.Origination == EPresetOrigination::VanillaDerived)
+					{
+						preset.Value.Origination = EPresetOrigination::EditedDerived;
+					}
+				}
+			}
 		}
 	}
 
 	return true;
 }
 
-EBIMResult FBIMPresetCollection::GetBlankPresetForObjectType(EObjectType ObjectType, FBIMPresetInstance& OutPreset) const
+bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const
 {
-	TArray<FGuid> guids;
-	GetPresetsByPredicate([ObjectType](const FBIMPresetInstance& Preset) {return Preset.ObjectType == ObjectType; },guids);
-
-	// TODO: ensure the first preset is a reasonable blank
-	if (guids.Num() > 0)
+	DocRecord.PresetCollection.VDPTable = VDPTable;
+	
+	for (auto& kvp : PresetsByGUID)
 	{
-		const FBIMPresetInstance* preset = PresetFromGUID(guids[0]);
-		if (preset != nullptr)
+		//Save all presets in our Document that are Edited (Vanilla Edited) or Invented
+		if (kvp.Value.Origination == EPresetOrigination::Invented ||
+			kvp.Value.Origination == EPresetOrigination::EditedDerived)
 		{
-			OutPreset = *preset;
-			OutPreset.GUID.Invalidate();
-			OutPreset.bEdited = true;
-			return EBIMResult::Success;
+
+			//The document should never duplicate keys. This is an error condition -JN
+			if(ensure(!DocRecord.PresetCollection.PresetsByGUID.Contains(kvp.Key)))
+			{
+				auto serializedPreset = kvp.Value;
+
+				for (auto& customData : serializedPreset.CustomDataByClassName)
+				{
+					customData.Value.SaveJsonFromCbor();
+				}
+
+				FBIMPresetInstance CollectionPreset;
+				DocRecord.PresetCollection.AddPreset(serializedPreset, CollectionPreset);
+			}
 		}
 	}
-	return EBIMResult::Error;
+	return true;
+}
+
+EBIMResult FBIMPresetCollection::GetBlankPresetForNCP(FBIMTagPath TagPath, FBIMPresetInstance& OutPreset) const
+{
+	OutPreset.MyTagPath = TagPath;
+	OutPreset.Origination = EPresetOrigination::Invented;
+	OutPreset.GUID.Invalidate();
+	
+	// get ncp node and if it does not exist we need to exit. Can't create preset without a valid ncp
+	FBIMPresetTaxonomyNode ncpNode;
+	if (PresetTaxonomy.GetExactMatch(TagPath, ncpNode) == EBIMResult::Error)
+	{
+		return EBIMResult::Error;
+	}
+	
+	// Populate default values, such as assetType, ObjectType
+	if (PresetTaxonomy.PopulateDefaults(OutPreset) == EBIMResult::Error)
+	{
+		return EBIMResult::Error;
+	}
+
+	// TODO: we need a way to set custom data based on the NCP, maybe a factory?
+	// Populate the default properties
+	TMap<FString, FBIMWebPresetPropertyDef> propertiesByKey;
+	PresetTaxonomy.GetPropertiesForTaxonomyNode(TagPath, propertiesByKey);
+	
+	for (auto prop : propertiesByKey)
+	{
+		FBIMPropertyKey key(FName(prop.Key));
+		if (prop.Value.type == EBIMWebPresetPropertyType::number)
+		{
+			float val = 0.0f;
+			OutPreset.Properties.SetProperty<float>(key.Scope, key.Name, val);
+		} else if (prop.Value.type == EBIMWebPresetPropertyType::string)
+		{
+			FString val = TEXT("");
+			OutPreset.Properties.SetProperty<FString>(key.Scope, key.Name, val);
+		}
+	}
+	
+	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetCollection::MakeDeleteDeltas(const FGuid& DeleteGUID, const FGuid& ReplacementGUID, TArray<FDeltaPtr>& OutDeltas, UObject* AnalyticsWorldContextObject)
@@ -1061,16 +1297,9 @@ EBIMResult FBIMPresetCollection::MakeDeleteDeltas(const FGuid& DeleteGUID, const
 		return EBIMResult::Error;
 	}
 
-	TArray<FGuid> ancestors;
+	TSet<FGuid> ancestors;
 	if (ReplacementGUID.IsValid() && GetAncestorPresets(DeleteGUID,ancestors) == EBIMResult::Success)
 	{
-		FBIMKey replacementBIMKey;
-		const FBIMPresetInstance* replacementInst = PresetFromGUID(ReplacementGUID);
-		if (ensureAlways(replacementInst != nullptr))
-		{
-			replacementBIMKey = replacementInst->PresetID;
-		}
-
 		for (auto& ancestor : ancestors)
 		{
 			const FBIMPresetInstance* presetInstance = PresetFromGUID(ancestor);
@@ -1092,7 +1321,6 @@ EBIMResult FBIMPresetCollection::MakeDeleteDeltas(const FGuid& DeleteGUID, const
 					if (part.PartPresetGUID == DeleteGUID)
 					{
 						part.PartPresetGUID = ReplacementGUID;
-						part.PartPreset = replacementBIMKey;
 					}
 				}
 			}
@@ -1117,8 +1345,7 @@ EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FString& NewPr
 
 	FBIMPresetInstance NewPreset = *original;
 	NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Datasmith from {0}"), FText::FromString(NewPresetName));
-	NewPreset.Properties.SetProperty(NewPreset.NodeScope, BIMPropertyNames::Name, NewPreset.DisplayName.ToString());
-	NewPreset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, ArchitecturalMeshID.ToString());
+	NewPreset.Properties.SetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, ArchitecturalMeshID.ToString());
 
 	if (OutPresetID.IsValid())
 	{
@@ -1129,7 +1356,7 @@ EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FString& NewPr
 		GetAvailableGUID(NewPreset.GUID);
 		OutPresetID = NewPreset.GUID;
 	}
-	AddPreset(NewPreset);
+	AddPreset(NewPreset, NewPreset);
 
 	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(EObjectType::OTFurniture);
 	FBIMAssemblySpec newSpec;
@@ -1151,16 +1378,19 @@ FBIMPresetCollectionProxy::FBIMPresetCollectionProxy()
 
 const FBIMPresetInstance* FBIMPresetCollectionProxy::PresetFromGUID(const FGuid& InGUID) const
 {
-	const FBIMPresetInstance* preset = OverriddenPresets.Find(InGUID);
+	FGuid presetGUID = BaseCollection->VDPTable.TranslateToDerived(InGUID);
+	const FBIMPresetInstance* preset = OverriddenPresets.Find(presetGUID);
+	
 	if (preset == nullptr && BaseCollection != nullptr)
 	{
-		preset = BaseCollection->PresetFromGUID(InGUID);
+		preset = BaseCollection->PresetFromGUID(presetGUID);
 	}
 	return preset;
 }
 
 EBIMResult FBIMPresetCollectionProxy::OverridePreset(const FBIMPresetInstance& PresetInstance)
 {
+	ensure(PresetInstance.Origination != EPresetOrigination::Canonical);
 	OverriddenPresets.Add(PresetInstance.GUID, PresetInstance);
 	return EBIMResult::Success;
 }
@@ -1183,7 +1413,6 @@ EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FGuid&
 
 	// Build a temporary top-level assembly preset to host the single layer
 	FBIMPresetInstance assemblyPreset;
-	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
 	assemblyPreset.GUID = FGuid::NewGuid();
 	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
 
@@ -1200,7 +1429,44 @@ EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FGuid&
 	return OutAssemblySpec.FromPreset(*this, assemblyPreset.GUID);
 }
 
-EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes()
+
+EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes(FBIMPresetInstance& Preset)
+{
+	auto checkPartSize = [](FBIMPresetInstance& Preset, const FBIMPresetInstance& MeshPreset, const FBIMNameType& PartField, const FBIMNameType& MeshField, const FText& DisplayName)
+	{
+		float v = 0.0f;
+		Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, PartField, v);
+
+		// The property will always be present but will be 0 if it hasn't been set
+		if (v == 0.0f)
+		{
+			MeshPreset.Properties.TryGetProperty(EBIMValueScope::Mesh, MeshField, v);
+			Preset.Properties.SetProperty(EBIMValueScope::Dimension, PartField, v);
+			FBIMPropertyKey propKey(EBIMValueScope::Dimension, PartField);
+			// If size dimensions are specified in the part table, the form will already be built, otherwise build it here
+			if (!Preset.PresetForm.HasField(propKey.QN()))
+			{
+				Preset.PresetForm.AddPropertyElement(DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
+			}
+		}
+	};
+	
+	FGuid assetGUID;
+	if (Preset.Properties.TryGetProperty(EBIMValueScope::MeshRef, TEXT("AssetID"), assetGUID))
+	{
+		auto* meshPreset = PresetFromGUID(assetGUID);
+		if (meshPreset)
+		{
+			checkPartSize(Preset, *meshPreset, FBIMNameType(FBIMPartLayout::PartSizeX), FBIMNameType(FBIMPartLayout::NativeSizeX), FText::FromString(TEXT("Part Size X")));
+			checkPartSize(Preset, *meshPreset, FBIMNameType(FBIMPartLayout::PartSizeY), FBIMNameType(FBIMPartLayout::NativeSizeY), FText::FromString(TEXT("Part Size Y")));
+			checkPartSize(Preset, *meshPreset, FBIMNameType(FBIMPartLayout::PartSizeZ), FBIMNameType(FBIMPartLayout::NativeSizeZ), FText::FromString(TEXT("Part Size Z")));
+		}
+	}
+
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::SetAllPartSizesFromMeshes()
 {
 	/*
 	* Each Part preset has PartSize(X,Y,Z) properties, set in the data tables
@@ -1210,42 +1476,10 @@ EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes()
 	TArray<FGuid> partPresets;
 	if (ensureAlways(GetPresetsForNCP(FBIMTagPath(TEXT("Part")), partPresets) == EBIMResult::Success))
 	{
-		auto checkPartSize = [](FBIMPresetInstance* Preset, const FBIMPresetInstance* MeshPreset, const FBIMNameType& PartField, const FBIMNameType& MeshField, const FText& DisplayName)
-		{
-			float v = 0.0f;
-			Preset->Properties.TryGetProperty(EBIMValueScope::Dimension, PartField, v);
-
-			// The property will always be present but will be 0 if it hasn't been set
-			if (v == 0.0f)
-			{
-				MeshPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, MeshField, v);
-				Preset->Properties.SetProperty(EBIMValueScope::Dimension, PartField, v);
-				FBIMPropertyKey propKey(EBIMValueScope::Dimension, PartField);
-				// If size dimensions are specified in the part table, the form will already be built, otherwise build it here
-				if (!Preset->PresetForm.HasField(propKey.QN()))
-				{
-					Preset->PresetForm.AddPropertyElement(DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
-				}
-			}
-		};
-
 		for (auto guid : partPresets)
 		{
 			auto* preset = PresetFromGUID(guid);
-			FGuid assetGUID;
-			if (!preset || !preset->Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("AssetID"), assetGUID))
-			{
-				continue;
-			}
-			auto* meshPreset = PresetFromGUID(assetGUID);
-			if (!meshPreset)
-			{
-				continue;
-			}
-
-			checkPartSize(preset, meshPreset, FBIMNameType(FBIMPartLayout::PartSizeX), FBIMNameType(FBIMPartLayout::NativeSizeX), FText::FromString(TEXT("Part Size X")));
-			checkPartSize(preset, meshPreset, FBIMNameType(FBIMPartLayout::PartSizeY), FBIMNameType(FBIMPartLayout::NativeSizeY), FText::FromString(TEXT("Part Size Y")));
-			checkPartSize(preset, meshPreset, FBIMNameType(FBIMPartLayout::PartSizeZ), FBIMNameType(FBIMPartLayout::NativeSizeZ), FText::FromString(TEXT("Part Size Z")));
+			SetPartSizesFromMeshes(*preset);
 		}
 	}	
 	return EBIMResult::Success;
@@ -1293,16 +1527,14 @@ bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset) c
 				presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
 				presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
 		}
-
-		FString name;
-		Preset.TryGetProperty(BIMPropertyNames::Name, name);
+		
 		if (assetPath.StartsWith(TEXT("http")))
 		{
 			AddArchitecturalMeshFromDatasmith(assetPath, Preset.GUID);
 		}
 		else
 		{
-			AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
+			AddArchitecturalMesh(Preset.GUID, Preset.DisplayName.ToString(), meshNativeSize, meshNineSlice, assetPath);
 		}
 	}
 	return true;
@@ -1312,14 +1544,10 @@ bool FBIMPresetCollection::AddRawMaterialFromPreset(const FBIMPresetInstance& Pr
 {
 	FString assetPath;
 	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
-	if (assetPath.Len() != 0)
+	if (ensure(assetPath.Len() != 0))
 	{
-		FString matName;
-		if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
-		{
-			AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
-			return true;
-		}
+		AddArchitecturalMaterial(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
+		return true;
 	}
 	return false;
 }
@@ -1340,16 +1568,16 @@ bool FBIMPresetCollection::AddMaterialFromPreset(const FBIMPresetInstance& Prese
 		}
 	}
 
-	if (rawMaterial.IsValid())
+	if (ensure(rawMaterial.IsValid()))
 	{
 		const FBIMPresetInstance* preset = PresetFromGUID(rawMaterial);
 		if (preset != nullptr)
 		{
-			FString assetPath, matName;
+			FString assetPath;
 			if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath)
-				&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+				&& !Preset.DisplayName.IsEmpty()))
 			{
-				AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
+				AddArchitecturalMaterial(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
 				return true;
 			}
 		}
@@ -1361,8 +1589,8 @@ bool FBIMPresetCollection::AddLightFromPreset(const FBIMPresetInstance& Preset) 
 {
 	FArchitecturalLight light;
 	light.Key = Preset.GUID;
-
-	Preset.TryGetProperty(BIMPropertyNames::Name, light.DisplayName);
+	light.DisplayName = Preset.DisplayName;
+	
 	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, light.IconPath);
 	Preset.TryGetProperty(BIMPropertyNames::AssetPath, light.ProfilePath);
 	//fetch IES resource from profile path
@@ -1378,10 +1606,9 @@ bool FBIMPresetCollection::AddProfileFromPreset(const FBIMPresetInstance& Preset
 	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
 	if (assetPath.Len() != 0)
 	{
-		FString name;
-		if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, name)))
+		if (ensureAlways(!Preset.DisplayName.IsEmpty()))
 		{
-			AddSimpleMesh(Preset.GUID, name, assetPath);
+			AddSimpleMesh(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
 			return true;
 		}
 	}
@@ -1398,12 +1625,8 @@ bool FBIMPresetCollection::AddPatternFromPreset(const FBIMPresetInstance& Preset
 	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, assetPath);
 	if (assetPath.Len() > 0)
 	{
-		FString iconName;
-		if (Preset.TryGetProperty(BIMPropertyNames::Name, iconName))
-		{
-			AddStaticIconTexture(Preset.GUID, iconName, assetPath);
-			return true;
-		}
+		AddStaticIconTexture(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
+		return true;
 	}
 	return false;
 }
@@ -1506,10 +1729,6 @@ void FBIMPresetCollection::AddArchitecturalMeshFromDatasmith(const FString& Asse
 	AMeshes.AddData(mesh);
 }
 
-static constexpr TCHAR BIMCacheRecordField[] = TEXT("BIMCacheRecord");
-static constexpr TCHAR BIMManifestFileName[] = TEXT("BIMManifest.txt");
-static constexpr TCHAR BIMNCPFileName[] = TEXT("NCPTable.csv");
-
 bool FBIMPresetCollection::AddAssetsFromPreset(const FBIMPresetInstance& Preset) const
 {
 	switch (Preset.AssetType)
@@ -1532,127 +1751,37 @@ bool FBIMPresetCollection::AddAssetsFromPreset(const FBIMPresetInstance& Preset)
 	case EBIMAssetType::Pattern:
 		AddPatternFromPreset(Preset);
 		break;
+	default:
+		break;
 	};
 
 	return true;
 }
 
-void FBIMPresetCollection::ReadPresetData(bool bTruncate)
-{
-	*this = FBIMPresetCollection();
-	// Make sure abstract material is in for default use
-	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
-
-	TArray<FGuid> starters;
-	TArray<FString> errors;
-
-	ManifestDirectoryPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
-
-	if (!ensure(LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
-	{
-		return;
-	}
-
-	if (!ensure(errors.Num() == 0))
-	{
-		return;
-	}
-
-	FString NCPString;
-	FString NCPPath = FPaths::Combine(*ManifestDirectoryPath, BIMNCPFileName);
-	if (!ensure(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
-	{
-		return;
-	}
-
-	FCsvParser NCPParsed(NCPString);
-	const FCsvParser::FRows& NCPRows = NCPParsed.GetRows();
-
-	if (ensure(PresetTaxonomy.LoadCSVRows(NCPRows) == EBIMResult::Success))
-	{
-		ensure(PostLoad() == EBIMResult::Success);
-	}
-
-	// If this preset implies an asset type, load it
-	for (auto& preset : PresetsByGUID)
-	{
-		if (preset.Value.ObjectType != EObjectType::OTNone)
-		{
-			starters.AddUnique(preset.Key);
-		}
-
-		FLightConfiguration lightConfig;
-		if (preset.Value.TryGetCustomData(lightConfig))
-		{
-			const FBIMPresetInstance* bimPresetInstance = PresetsByGUID.Find(lightConfig.IESProfileGUID);
-			if (bimPresetInstance != nullptr)
-			{
-				FString assetPath = bimPresetInstance->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
-				FSoftObjectPath referencePath = FString(TEXT("TextureLightProfile'")).Append(assetPath).Append(TEXT("'"));
-				TSharedPtr<FStreamableHandle> SyncStreamableHandle = UAssetManager::GetStreamableManager().RequestSyncLoad(referencePath);
-				if (SyncStreamableHandle)
-				{
-					UTextureLightProfile* IESProfile = Cast<UTextureLightProfile>(SyncStreamableHandle->GetLoadedAsset());
-					if (IESProfile)
-					{
-						lightConfig.LightProfile = IESProfile;
-					}
-				}
-				preset.Value.SetCustomData(lightConfig);
-			}
-		}
-		switch (preset.Value.AssetType)
-		{
-		case EBIMAssetType::IESProfile:
-			AddLightFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Mesh:
-			AddMeshFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Profile:
-			AddProfileFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::RawMaterial:
-			AddRawMaterialFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Material:
-			AddMaterialFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Pattern:
-			AddPatternFromPreset(preset.Value);
-			break;
-		};
-	}
-
-	SetPartSizesFromMeshes();
-
-	ensure(ProcessStarterAssemblies(starters) == EBIMResult::Success);
-}
-
 // Data Access
 const FArchitecturalMesh* FBIMPresetCollection::GetArchitecturalMeshByGUID(const FGuid& Key) const
 {
-	return AMeshes.GetData(Key);
+	return AMeshes.GetData(VDPTable.TranslateToDerived(Key));
 }
 
 const FArchitecturalMaterial* FBIMPresetCollection::GetArchitecturalMaterialByGUID(const FGuid& Key) const
 {
-	return AMaterials.GetData(Key);
+	return AMaterials.GetData(VDPTable.TranslateToDerived(Key));
 }
 
 const FSimpleMeshRef* FBIMPresetCollection::GetSimpleMeshByGUID(const FGuid& Key) const
 {
-	return SimpleMeshes.GetData(Key);
+	return SimpleMeshes.GetData(VDPTable.TranslateToDerived(Key));
 }
 
 const FStaticIconTexture* FBIMPresetCollection::GetStaticIconTextureByGUID(const FGuid& Key) const
 {
-	return StaticIconTextures.GetData(Key);
+	return StaticIconTextures.GetData(VDPTable.TranslateToDerived(Key));
 }
 
 const FLayerPattern* FBIMPresetCollection::GetPatternByGUID(const FGuid& Key) const
 {
-	return Patterns.GetData(Key);
+	return Patterns.GetData(VDPTable.TranslateToDerived(Key));
 }
 
 const FArchitecturalMesh* FBIMPresetCollectionProxy::GetArchitecturalMeshByGUID(const FGuid& InGUID) const
@@ -1700,6 +1829,121 @@ FGuid FBIMPresetCollectionProxy::GetDefaultMaterialGUID() const
 	return FGuid();
 }
 
+void FBIMPresetCollection::PopulateTaxonomyFromCloudSync(FBIMPresetCollection& Collection,
+	const UModumateGameInstance* GameInstance)
+{
+	auto cloud = GameInstance->GetCloudConnection();
+	FString endpoint = TEXT("/assets/ncps");
+	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
+		//Customizer
+		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{ },
+		//Success
+		[&](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (bSuccessful && Response.IsValid())
+			{ 
+				Collection.PresetTaxonomy.FromWebTaxonomy(Response);
+			}
+		},
+		//Error
+		[](int32 ErrorCode, const FString& ErrorString) 
+		{
+			UE_LOG(LogTemp, Error, TEXT("Preset Request Status Error: %s"), *ErrorString);		
+		}
+	, true, true);
+}
 
+void FBIMPresetCollection::PopulateInitialCanonicalPresetsFromCloudSync(FBIMPresetCollection& Collection,
+	const UModumateGameInstance* GameInstance)
+{
+	auto cloud = GameInstance->GetCloudConnection();
+
+	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+	FString currentVersion = projectSettings->ProjectVersion;
+	FString endpoint = TEXT("/assets/presets?StartsInProject=1&version=") + currentVersion;
+	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
+		//Customizer
+		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{ },
+		//Success
+		[&](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (bSuccessful && Response.IsValid())
+			{ 
+				ProcessCloudCanonicalPreset(Response, Collection, GameInstance);
+			}
+		},
+		//Error
+		[](int32 ErrorCode, const FString& ErrorString) 
+		{
+			UE_LOG(LogTemp, Error, TEXT("Preset Request Status Error: %s"), *ErrorString);		
+		}
+	, true, true);
+
+	UE_LOG(LogTemp, Log, TEXT("Initial Preset Request Completed"));
+}
+
+bool FBIMPresetCollection::PopulateMissingCanonicalPresetsFromCloudSync(const TSet<FGuid> Presets,
+	FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance)
+{
+	if(Presets.Num() == 0) return true;
+	
+	FString endpoint = TEXT("/assets/presets?guid=");
+	for (auto& preset :Presets)
+	{
+		endpoint.Append(preset.ToString() + TEXT(","));
+	}
+	endpoint = endpoint.TrimChar(',');
+
+	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+	FString currentVersion = projectSettings->ProjectVersion;
+	endpoint.Append(TEXT("&version=") + currentVersion);
+	
+	UE_LOG(LogTemp, Log, TEXT("Presets: %s"), *endpoint);
+	
+	auto cloud = GameInstance->GetCloudConnection();
+	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
+		//Customizer
+		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{ },
+		//Success
+		[&](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (bSuccessful && Response.IsValid())
+			{
+				ProcessCloudCanonicalPreset(Response, Collection, GameInstance);
+			}
+		},
+		//Error
+		[&](int32 ErrorCode, const FString& ErrorString) 
+		{
+			UE_LOG(LogTemp, Error, TEXT("Preset Request Status Error: %s"), *ErrorString);
+		}
+	, true, true);
+	
+	UE_LOG(LogTemp, Log, TEXT("Preset Request Completed"));
+	return true;
+}
+
+void FBIMPresetCollection::ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> JsonObject, FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance)
+{
+	TMap<FString, TSharedPtr<FJsonValue>> topLevelEntries = JsonObject->Values;
+	for(const auto& entry: topLevelEntries)
+	{
+		FBIMPresetInstance newPreset;
+		FBIMWebPreset webPreset;
+		TSharedPtr<FJsonObject> objPreset = entry.Value->AsObject();
+		FJsonObjectConverter::JsonObjectToUStruct<FBIMWebPreset>(objPreset.ToSharedRef(), &webPreset);
+		webPreset.origination = EPresetOrigination::Canonical;
+		webPreset.canonicalBase.Invalidate();
+		ensure(newPreset.FromWebPreset(webPreset, GameInstance->GetWorld()) != EBIMResult::Error);
+		if(ensureAlways(newPreset.GUID.IsValid() && newPreset.Origination == EPresetOrigination::Canonical))
+		{
+			FBIMPresetInstance vdp;
+			Collection.AddPreset(newPreset, vdp);
+		}
+	}
+}
 
 #undef LOCTEXT_NAMESPACE

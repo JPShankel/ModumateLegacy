@@ -77,9 +77,9 @@ bool FBIMPresetEditorNode::CanRemoveChild(const FBIMPresetEditorNodeSharedPtrCon
 		return false;
 	}
 
-	if (ensureAlways(Child->MyParentPinSetIndex != INDEX_NONE && Child->MyParentPinSetIndex < Preset.TypeDefinition.PinSets.Num()))
+	if (ensureAlways(Child->MyParentPinSetIndex != INDEX_NONE && Child->MyParentPinSetIndex < Preset.PinSets.Num()))
 	{
-		return GetNumChildrenOnPin(Child->MyParentPinSetIndex) > Preset.TypeDefinition.PinSets[Child->MyParentPinSetIndex].MinCount;
+		return GetNumChildrenOnPin(Child->MyParentPinSetIndex) > Preset.PinSets[Child->MyParentPinSetIndex].MinCount;
 	}
 
 	return false;

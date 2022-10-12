@@ -68,6 +68,7 @@ void AEditModelDatasmithRuntimeActor::OnImportEnd()
 		{
 			StaticMeshRefs.Add(mesh);
 			StaticMeshTransforms.Add(curStaticMeshComp->GetComponentTransform());
+
 			// Save original Datasmith Material, but replace with PbrOpaque if null
 			TArray<UMaterialInterface*> originalMeshMaterials;
 			for (const auto& originalMat : curStaticMeshComp->GetMaterials())
@@ -118,6 +119,7 @@ bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
 	// Meta file path
 	FString datasmithPath = ImportFilePath;
 	int32 urlLastSlashIdx;
+
 	datasmithPath.FindLastChar(TEXT('/'), urlLastSlashIdx);
 	FString metaFilePath = datasmithPath.Left(urlLastSlashIdx + 1) + TEXT("Meta.json");
 
@@ -132,6 +134,7 @@ bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
 
 	// Since engine runtime import does not track material name, MetaData needs to track via material ID
 	int32 matIdx = 0;
+
 	TMap<UMaterialInterface*, UMaterialInstanceDynamic*> originalToDynamicMap;
 	for (const auto& meshMatPair : StaticMeshMaterialsMap)
 	{
@@ -275,6 +278,7 @@ bool AEditModelDatasmithRuntimeActor::GetValuesFromMetaData()
 		{
 			dynMats.Add(originalToDynamicMap.FindRef(staticMeshMaterial));
 		}
+	
 		RuntimeDatasmithMaterialsMap.Add(meshMatPair.Key, dynMats);
 	}
 	return true;

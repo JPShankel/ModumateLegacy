@@ -333,14 +333,14 @@ public:
 	static bool SaveRecords(const FString& FilePath, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
 	bool SaveFile(UWorld* World, const FString& FilePath, bool bUserFile, bool bAsync = false, const TFunction<void (bool)>& OnSaveFunction = nullptr);
 	bool SaveAsBinary(UWorld* World, TArray<uint8>& OutBuffer);
-	bool LoadRecord(UWorld* World, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord, bool bClearName = true);
+	bool LoadRecord(UWorld* World, const FModumateDocumentHeader& InHeader, FMOIDocumentRecord& InDocumentRecord, bool bClearName = true);
 	bool LoadFile(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
 	bool LoadDeltas(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
 	void SetCurrentProjectName(const FString& NewProjectName = FString(), bool bAsPath = true);
 
 	// Expose the serialized structs that were most recently used to either load or save the document
-	const FModumateDocumentHeader& GetLastSerializedHeader() const { return CachedHeader; }
-	const FMOIDocumentRecord& GetLastSerializedRecord() const { return CachedRecord; }
+	FModumateDocumentHeader& GetLastSerializedHeader() { return CachedHeader; }
+	FMOIDocumentRecord& GetLastSerializedRecord() { return CachedRecord; }
 
 	TArray<int32> CloneObjects(UWorld *world, const TArray<int32> &obs, const FTransform& offsetTransform = FTransform::Identity);
 	TArray<AModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<AModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "Algo/Transform.h"
 
 template<class T>

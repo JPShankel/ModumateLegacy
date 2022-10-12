@@ -28,7 +28,7 @@ bool UGraph2DTool::Activate()
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
 
 #if 0 //TODO: deprecate or refactor 
-	FPlane graphPlane;
+	/*FPlane graphPlane;
 	if (volumeGraph.Create2DGraph(graphObjIDs, connectedGraphIDs, SelectedGraph, graphPlane, true, true))
 	{
 		FGraph2DRecord graphRecord;
@@ -38,7 +38,7 @@ bool UGraph2DTool::Activate()
 		{
 			UE_LOG(LogTemp, Log, TEXT("Added graph record \"%s\""), *graphKey.ToString());
 		}
-	}
+	}*/
 #endif
 
 	Deactivate();

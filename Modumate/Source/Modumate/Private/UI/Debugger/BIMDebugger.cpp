@@ -145,9 +145,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 			preset->MyTagPath.ToString(tagPathString);
 
 			FString otherDebugString =
-				TEXT("SourceFile: ") + preset->DEBUG_SourceFile + LINE_TERMINATOR
-				+ TEXT("SourceRow: ") + FString::FromInt(preset->DEBUG_SourceRow) + LINE_TERMINATOR
-				+ TEXT("SlotConfigPresetID: ") + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
+				TEXT("SlotConfigPresetID: ") + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
 				+ TEXT("CategoryTitle: ") + preset->CategoryTitle.ToString() + LINE_TERMINATOR
 				+ TEXT("MyTagPath: ") + tagPathString + LINE_TERMINATOR;
 
@@ -194,11 +192,6 @@ bool UBIMDebugger::IsPresetAvailableForSearch(const FBIMPresetInstance& SearchPr
 	}
 
 	if (UKismetStringLibrary::Contains(SearchPreset.GUID.ToString(), searchSubString))
-	{
-		return true;
-	}
-
-	if (UKismetStringLibrary::Contains(SearchPreset.PresetID.ToString(), searchSubString))
 	{
 		return true;
 	}

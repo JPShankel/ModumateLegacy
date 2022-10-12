@@ -41,6 +41,12 @@ void AEditModelGameState::InitDocument(const FString& LocalUserID, int32 LocalUs
 
 		DocumentWebBridge = NewObject<UModumateDocumentWebBridge>(this);
 		DocumentWebBridge->Document = Document;
+
+		auto gameInstance = GetGameInstance<UModumateGameInstance>();
+		if(ensure(gameInstance))
+		{
+			Document->GetPresetCollection().ReadInitialPresets(gameInstance);
+		}
 	}
 }
 
@@ -97,7 +103,7 @@ bool AEditModelGameState::DownloadDocument(const FString& ProjectID)
 
 	auto weakThis = MakeWeakObjectPtr<AEditModelGameState>(this);
 	bDownloadingDocument = cloudConnection->DownloadProject(CurProjectID,
-		[weakThis](const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty) {
+		[weakThis](const FModumateDocumentHeader& DocHeader, FMOIDocumentRecord& DocRecord, bool bEmpty) {
 			if (ensure(weakThis.IsValid()))
 			{
 				weakThis->OnDownloadDocumentSuccess(DocHeader, DocRecord, bEmpty);
@@ -271,7 +277,7 @@ void AEditModelGameState::OnAutoUploadTimer()
 #endif
 }
 
-void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty)
+void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeader& DocHeader, FMOIDocumentRecord& DocRecord, bool bEmpty)
 {
 	UWorld* world = GetWorld();
 	if (!ensure(world && Document && !CurProjectID.IsEmpty()))

@@ -262,7 +262,7 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage
 {
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	TArray<FVector> perimeter;
-	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimNormal, TrimUp,
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(GetAssembly(), TrimNormal, TrimUp,
 		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
 	{
 		return;
@@ -375,7 +375,7 @@ void AMOITrim::PreDestroy()
 
 bool AMOITrim::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	auto assemblyGuid = assembly.UniqueKey();
 
 	float trimLength = (TrimEndPos - TrimStartPos).Size();
@@ -506,7 +506,7 @@ bool AMOITrim::UpdateCachedStructure()
 
 	Document->DirtyAllCutPlanes();
 
-	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
+	return UModumateObjectStatics::GetExtrusionProfilePoints(GetAssembly(), InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
 }
 
 bool AMOITrim::UpdateMitering()
@@ -518,7 +518,7 @@ bool AMOITrim::UpdateMitering()
 
 bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
-	return DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, TrimStartPos, TrimEndPos,
+	return DynamicMeshActor->SetupExtrudedPolyGeometry(GetAssembly(), TrimStartPos, TrimEndPos,
 		TrimNormal, TrimUp, InstanceData.OffsetNormal, InstanceData.OffsetUp, InstanceData.Extensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
 }
 
@@ -530,7 +530,7 @@ void AMOITrim::UpdateQuantities()
 void AMOITrim::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
 {
 	TArray<FVector> perimeter;
-	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimNormal, TrimUp,
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(GetAssembly(), TrimNormal, TrimUp,
 		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
 	{
 		return;

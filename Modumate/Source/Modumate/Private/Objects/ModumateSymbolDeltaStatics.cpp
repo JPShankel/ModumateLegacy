@@ -1,7 +1,5 @@
 // Copyright 2022 Modumate, Inc. All Rights Reserved.
 
-#pragma once
-
 #include "Objects/ModumateSymbolDeltaStatics.h"
 
 #include "Objects/ModumateObjectStatics.h"
@@ -19,7 +17,6 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Algo/ForEach.h"
 #include "TransformTypes.h"
-
 
 void FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas)
 {
@@ -188,8 +185,9 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 
 	// Return quickly if no movements or not in Symbol group.
 	int32 graphId = GraphDelta->GraphID;
-
+	
 	AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(graphId));
+
 	if (!groupObj || !groupObj->GetStateData().AssemblyGUID.IsValid())
 	{
 		return;
@@ -231,6 +229,7 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 
 	auto graphDelta = MakeShared<FGraph3DDelta>();
 	TMap<int32, TSharedPtr<FGraph3DDelta>> newDeltas;  // Per other-group
+
 	const FTransform thisTransformInverse(groupObj->GetWorldTransform().Inverse());
 
 	for (const auto& moveDelta : GraphDelta->VertexMovements)
@@ -265,7 +264,6 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 							newDeltas[otherGroupId]->VertexMovements.Add(otherVertId,
 								{ vertTransform.TransformPosition(fromPosition), vertTransform.TransformPosition(toPosition) });
 						}
-
 					}
 				}
 
@@ -273,7 +271,6 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 			}
 		}
 	}
-
 	for (auto& delta : newDeltas)
 	{
 		OutDeltas.Add(delta.Value);
@@ -402,9 +399,9 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 
 	if (ensure(!group->GetStateData().AssemblyGUID.IsValid()) && group->ID != Doc->GetRootVolumeGraphID())
 	{
-		static const FName symbolNodeType(TEXT("0Symbol"));
 		static const FString symbolNcp(TEXT("Symbol"));
 
+		FBIMTagPath tagPath(symbolNcp);
 		FBIMPresetCollection& presets = Doc->GetPresetCollection();
 		TArray<FGuid> symbols;
 		presets.GetPresetsForNCP(FBIMTagPath(symbolNcp), symbols, true);
@@ -412,10 +409,9 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		Algo::Transform(symbols, symbolNames, [&presets](const FGuid& id) { return &presets.PresetFromGUID(id)->DisplayName; });
 		
 		FBIMPresetInstance newSymbolPreset;
-		newSymbolPreset.NodeType = symbolNodeType;
-		newSymbolPreset.NodeScope = EBIMValueScope::Symbol;
-		newSymbolPreset.MyTagPath.FromString(symbolNcp);
-		newSymbolPreset.ObjectType = EObjectType::OTMetaGraph;
+
+		presets.GetBlankPresetForNCP(tagPath, newSymbolPreset);
+		newSymbolPreset.DisplayName = FText::FromString(TEXT("New Symbol"));
 
 		int32 idNumber = 1;
 		FText displayName;
@@ -690,7 +686,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 	{
 		allGroupIDs.Add(UModumateObjectStatics::GetGroupIdForObject(Doc, itemId));
 	}
-
+	
 	FTransform masterTransform(groupMoi->GetWorldTransform().Inverse());
 
 	FBIMSymbolPresetData newSymbolData;
@@ -713,7 +709,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		if (otherGroupMoi)
 		{
 			FModumateObjectDeltaStatics::GetDeltasForGraphDelete(Doc, otherGroup, OutDeltas, false);
-			FTransform transform(otherGroupMoi->GetWorldTransform());
+			FTransform transform(masterTransform * otherGroupMoi->GetWorldTransform());
 			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, newSymbolData, transform, OutDeltas));
 		}
 	}

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "Objects/ModumateObjectEnums.h"
 #include "Objects/MOIState.h"
 

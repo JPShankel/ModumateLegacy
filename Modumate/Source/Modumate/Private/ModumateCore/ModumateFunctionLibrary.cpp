@@ -3,7 +3,6 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 
 #include "Algo/Accumulate.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
 

@@ -128,7 +128,7 @@ bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Out
 
 void AMOIPortal::UpdateCachedThickness()
 {
-	CachedThickness = CachedAssembly.GetCompoundAssemblyNativeSize().Y;
+	CachedThickness = GetAssembly().GetCompoundAssemblyNativeSize().Y;
 
 	FBIMLayerSpec& proxyLayer = (CachedProxyLayers.Num() == 0) ? CachedProxyLayers.AddDefaulted_GetRef() : CachedProxyLayers[0];
 	proxyLayer.ThicknessCentimeters = CachedThickness;
@@ -703,7 +703,7 @@ void AMOIPortal::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FD
 	{
 		TArray<FDrawingDesignerLined> linesDouble;
 		FVector localViewDirection(GetWorldTransform().InverseTransformVector(ViewDirection));
-		gameInstance->GetMeshCache()->GetDesignerLines(CachedAssembly, CachedScale, false, localViewDirection, linesDouble, MinLength);
+		gameInstance->GetMeshCache()->GetDesignerLines(GetAssembly(), CachedScale, false, localViewDirection, linesDouble, MinLength);
 		const FMatrix xform(GetWorldTransform().ToMatrixWithScale());
 		for (const auto& l: linesDouble)
 		{
@@ -716,7 +716,7 @@ void AMOIPortal::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FD
 
 void AMOIPortal::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	auto assemblyGuid = assembly.UniqueKey();
 
 	const int32 parentID = GetParentID();

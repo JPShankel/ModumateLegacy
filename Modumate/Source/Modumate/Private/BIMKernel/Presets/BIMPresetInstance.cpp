@@ -1,15 +1,13 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/Presets/BIMPresetInstance.h"
+
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 
-#include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateCommands.h"
 #include "Quantities/QuantitiesDimensions.h"
-#include "Quantities/QuantitiesManager.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -27,10 +25,6 @@ bool FBIMPresetPinAttachment::operator==(const FBIMPresetPinAttachment &OtherAtt
 
 bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 {
-	if (NodeType != RHS.NodeType)
-	{
-		return false;
-	}
 
 	if (GUID != RHS.GUID)
 	{
@@ -43,11 +37,6 @@ bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 	}
 
 	if (ChildPresets.Num() != RHS.ChildPresets.Num())
-	{
-		return false;
-	}
-
-	if (ParentTagPaths.Num() != RHS.ParentTagPaths.Num())
 	{
 		return false;
 	}
@@ -78,14 +67,6 @@ bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 	for (auto& cp : ChildPresets)
 	{
 		if (!RHS.ChildPresets.Contains(cp))
-		{
-			return false;
-		}
-	}
-
-	for (auto &ptp : ParentTagPaths)
-	{
-		if (!RHS.ParentTagPaths.Contains(ptp))
 		{
 			return false;
 		}
@@ -147,12 +128,12 @@ bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
 bool FBIMPresetInstance::HasOpenPin() const
 {
 	// By convention, only the last pin will have additions
-	return (TypeDefinition.PinSets.Num() > 0 && TypeDefinition.PinSets.Last().MaxCount == INDEX_NONE);
+	return (PinSets.Num() > 0 && PinSets.Last().MaxCount == INDEX_NONE);
 }
 
 EBIMResult FBIMPresetInstance::AddChildPreset(const FGuid& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
 {
-	EBIMPinTarget target = EBIMPinTarget::Default;
+	EBIMPinTarget target = PinSets[PinSetIndex].PinTarget;
 	for (auto& child : ChildPresets)
 	{
 		if (child.ParentPinSetIndex == PinSetIndex && child.ParentPinSetPosition >= PinSetPosition)
@@ -208,6 +189,94 @@ EBIMResult FBIMPresetInstance::SetPartPreset(const FGuid& SlotPreset, const FGui
 		}
 	}
 	return EBIMResult::Error;
+}
+
+/*
+ * Replace a Child Guid reference with a different one. 
+ * Note: this function can only be called before major processing steps occur, such as Materials, Meshes, etc..
+ */
+bool FBIMPresetInstance::ReplaceImmediateChildGuid(FGuid& OldGuid, FGuid& NewGuid)
+{
+	bool rtn = false;
+	if (!ensure(OldGuid.IsValid())|| !ensure(NewGuid.IsValid()))
+	{
+		return rtn;
+	}
+	
+	for (auto &childNode : ChildPresets)
+	{
+		if (childNode.PresetGUID == OldGuid)
+		{
+			childNode.PresetGUID = NewGuid;
+			rtn = true;
+		}
+	}
+
+	if (SlotConfigPresetGUID == OldGuid)
+	{
+		SlotConfigPresetGUID = NewGuid;
+		rtn = true;
+	}
+
+	for (auto& part : PartSlots)
+	{
+		if (part.PartPresetGUID == OldGuid)
+		{
+			part.PartPresetGUID = NewGuid;
+			rtn = true;
+		}
+
+		if (part.SlotPresetGUID == OldGuid)
+		{
+			part.SlotPresetGUID = NewGuid;
+			rtn = true;
+		}
+	}
+	
+	//Cannot modify collection while iterating
+	FBIMPropertySheet newProps = Properties;
+	Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
+		FGuid guid;
+		if (FGuid::Parse(Value, guid) && guid.IsValid() && guid == OldGuid)
+		{
+			rtn = true;
+			newProps.SetProperty(PropKey.Scope, PropKey.Name, NewGuid.ToString());
+		}
+	});
+	Properties = newProps;
+
+	FBIMPresetMaterialBindingSet materialBindingSet;
+	if (TryGetCustomData(materialBindingSet))
+	{
+		for (auto& binding : materialBindingSet.MaterialBindings)
+		{
+			if (binding.SurfaceMaterialGUID == OldGuid)
+			{
+				binding.SurfaceMaterialGUID = NewGuid;
+				SetCustomData(materialBindingSet);
+				rtn = true;
+			}
+			if (binding.InnerMaterialGUID == OldGuid)
+			{
+				binding.InnerMaterialGUID = NewGuid;
+				SetCustomData(materialBindingSet);
+				rtn = true;
+			}
+		}
+	}
+
+	FLightConfiguration lightConfig;
+	if (TryGetCustomData(lightConfig))
+	{
+		if (lightConfig.IESProfileGUID == OldGuid)
+		{
+			lightConfig.IESProfileGUID = NewGuid;
+			SetCustomData(lightConfig);
+			rtn = true;
+		}
+	}
+	
+	return rtn;
 }
 
 bool FBIMPresetInstance::ValidatePreset() const
@@ -460,6 +529,12 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 			return HandleLightIsSpotDelta(Delta);
 		}
 
+		case EBIMPresetEditorField::NameProperty:
+		{
+			DisplayName = FText::FromString(Delta.NewStringRepresentation);
+			return EBIMResult::Success;
+		}
+
 		case EBIMPresetEditorField::AssetProperty:
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
@@ -476,7 +551,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 					{
 						break;
 					}
-					const FBIMPresetInstance* profilePreset = InDocument->GetPresetCollection().PresetsByGUID.Find(lightConfig.IESProfileGUID);
+					const FBIMPresetInstance* profilePreset = InDocument->GetPresetCollection().PresetFromGUID(lightConfig.IESProfileGUID);
 					FString assetPath = profilePreset->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
 					if (assetPath.IsEmpty())
 					{
@@ -696,7 +771,7 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 		case EBIMPresetEditorField::LightRadius:
 		{
 			FLightConfiguration lightConfig;
-			if (TryGetCustomData(lightConfig))
+			if (TryGetCustomData(lightConfig)) 
 			{
 				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), lightConfig.SourceRadius);
 				return EBIMResult::Success;
@@ -723,6 +798,11 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			}
 		}
 		break;
+		case EBIMPresetEditorField::NameProperty:
+		{
+			OutDelta.OldStringRepresentation = DisplayName.ToString();
+			return EBIMResult::Success;
+		}
 		default: ensureAlways(false); return EBIMResult::Error;
 	};
 
@@ -816,6 +896,11 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 			}
 		}
 		break;
+		case EBIMPresetEditorField::NameProperty:
+		{
+			element.StringRepresentation = DisplayName.ToString();
+		}
+		break;
 		case EBIMPresetEditorField::ConstructionCostMaterial:
 		{
 			FBIMConstructionCost constructionCost;
@@ -890,10 +975,35 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetInstance::GetForm(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const
+EBIMResult FBIMPresetInstance::GetForm(const UModumateDocument* InDocument, FBIMPresetForm& OutForm) const
 {
-	OutForm = TypeDefinition.FormTemplate;
+	// TODO: remove FormTemplate, given we get all the required information from the ncp taxonomy,
+	// should be able to just get elements from PresetForm, which should be dynamically genereated from
+	// web presets.
+	auto World = InDocument->GetWorld();
+	AEditModelGameState* gameState = World ? Cast<AEditModelGameState>(World->GetGameState()) : nullptr;
+	
+	if (gameState == nullptr)
+	{
+		return EBIMResult::Error;
+	}
+	
+	FBIMPresetCollection collection = gameState->Document->GetPresetCollection();
+
+	// Add a default DisplayName field, it should always be added first
+	FBIMPresetFormElement& nameElem = OutForm.Elements.AddDefaulted_GetRef();
+    nameElem.DisplayName = LOCTEXT("BIMPresetInstance","Name");
+    nameElem.FieldType = EBIMPresetEditorField::NameProperty;
+    nameElem.FieldName = TEXT("DisplayName");
+    nameElem.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+
+	// Add the elements from the NCP,
+	// TODO: deprecate in favor of everything being custom data
+	OutForm.Elements.Append(collection.PresetTaxonomy.GetFormTemplate(MyTagPath).Elements);
+
+	// Add the PresetForm items from the preset itself
 	OutForm.Elements.Append(PresetForm.Elements);
+	
 	return UpdateFormElements(InDocument,OutForm);
 }
 
@@ -1049,7 +1159,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::UpgradeData(const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion)
+EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollection, int32 InDocVersion)
 {
 	// Prior to version 12, some NCPs had spaces
 	if (InDocVersion < 12)
@@ -1120,98 +1230,131 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FBIMPresetCollectionProxy& Pres
 		Properties.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
 		PresetForm.AddPropertyElement(LOCTEXT("BIMComments", "Comments"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
 	}
+	
+	// With version 24, Pattern->PatternRef etc. DisplayName is also a field, not a property
+	if (InDocVersion < 24)
+	{
+		FString patternVal;
+		if (Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternVal))
+		{
+			Properties.SetProperty<FString>(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternVal);
+			Properties.DeleteProperty<FString>(EBIMValueScope::Pattern, BIMPropertyNames::AssetID);
+		}
+
+		FString profileRef;
+		if (Properties.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, profileRef))
+		{
+			Properties.SetProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef);
+			Properties.DeleteProperty<FString>(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
+		}
+
+		FString meshVal;
+		if (Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshVal))
+		{
+			Properties.SetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshVal);
+			Properties.DeleteProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
+		}
+
+		// We have deprecated the name property in the bim editor
+		for (auto& formElement : PresetForm.Elements)
+		{
+			if (formElement.FieldName == TEXT("Mesh.AssetID"))
+			{
+				formElement.FieldName = TEXT("MeshRef.AssetID");
+			}
+			else if (formElement.FieldName == TEXT("Profile.AssetID"))
+			{
+				formElement.FieldName = TEXT("ProfileRef.AssetID");
+			}
+			else if (formElement.FieldName == TEXT("Pattern.AssetID"))
+			{
+				formElement.FieldName = TEXT("PatternRef.AssetID");
+			}
+		}
+
+		// name property deprecated in the bim editor
+		PresetForm.Elements = PresetForm.Elements.FilterByPredicate([this](const FBIMPresetFormElement& elem)
+		{
+			return elem.FieldName == FBIMPropertyKey(NodeScope, FName(TEXT("Name"))).QN().ToString();
+		});
+
+		FString presetName;
+		if (Properties.TryGetProperty(NodeScope, FName(TEXT("Name")), presetName))
+		{
+			DisplayName = FText::FromString(presetName);
+			Properties.DeleteProperty<FString>(NodeScope, FName(TEXT("Name")));
+		}
+
+		// in the older csvs, two material bindings with same channels were added for some presets.
+		// this removes these unused material bindings
+		FBIMPresetMaterialBindingSet bindings;
+		if (TryGetCustomData(bindings))
+		{
+			TSet<FName> usedChannels;
+			bindings.MaterialBindings = bindings.MaterialBindings.FilterByPredicate([&usedChannels](const FBIMPresetMaterialBinding& binding)
+			{
+				if (!usedChannels.Contains(binding.Channel))
+				{
+					usedChannels.Add(binding.Channel);
+					return true;
+				}
+				
+				return false;
+			});
+
+			SetCustomData(bindings);
+		}
+	}
 
 	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World)
 {
+	
 	MyTagPath = InPreset.tagPath;
-	DisplayName = FText::FromString(InPreset.name);
 	GUID = InPreset.guid;
-	UModumateGameInstance* gameInstance = nullptr;
+	DisplayName = FText::FromString(InPreset.name);
+
+	ensureMsgf(InPreset.origination != EPresetOrigination::Unknown, TEXT("Web preset lacks origination: %s"), *InPreset.guid.ToString());
+	Origination = InPreset.origination;
+	CanonicalBase = InPreset.canonicalBase;
+	
 	AEditModelGameState* gameState = World ? Cast<AEditModelGameState>(World->GetGameState()) : nullptr;
-
-	if (gameState) {
-		TArray<FGuid> presets;
-		gameState->Document->GetPresetCollection().GetPresetsForNCP(MyTagPath, presets);
-		if (presets.Num() > 0) {
-			FBIMPresetInstance* rootPreset = gameState->Document->GetPresetCollection().PresetFromGUID(presets[0]);
-			if (rootPreset != nullptr) {
-				TypeDefinition = rootPreset->TypeDefinition;
-				NodeType = rootPreset->NodeType;
-				PresetForm = rootPreset->PresetForm;
-				NodeScope = rootPreset->NodeScope;
-				ParentTagPaths = rootPreset->ParentTagPaths;
-				ObjectType = rootPreset->ObjectType;
-
-				gameInstance = Cast<UModumateGameInstance>(gameState->GetGameInstance());
-				if (gameInstance != nullptr)
-				{
-					gameState->Document->GetPresetCollection().AddAssetsFromPreset(*rootPreset);
-				}
-			}
-		}
-	}
-
-	FPresetCustomDataWrapper presetCustomData;
-
-	if (ReadJsonGeneric<FPresetCustomDataWrapper>(InPreset.customDataJSON, &presetCustomData)) {
-		CustomDataByClassName = presetCustomData.CustomDataWrapper;
-		for (auto& kvp : CustomDataByClassName) {
-			kvp.Value.LoadFromJson();
-		}
-	}
-
-	int32 setPosition = 0;
-	for (auto& child : InPreset.childPresets)
-	{
-		FBIMPresetInstance* preset = gameState->Document->GetPresetCollection().PresetFromGUID(child);
-		if (preset) {
-			AddChildPreset(child, 0, setPosition++);
-			if (gameInstance != nullptr)
-			{
-				gameState->Document->GetPresetCollection().AddAssetsFromPreset(*preset);
-			}
-		}
-	}
-
-	PartSlots.Empty();
 	
-	// Get slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
-	FString SlotConfigPropertyName = TEXT("Slot.SlotConfig");
-	FString PartPresetPropertyName = TEXT("Slot.PartPreset");
-	FString SlotNamePropertyName = TEXT("Slot.SlotName");
+	if (gameState == nullptr)
+	{
+		return EBIMResult::Error;
+	}
+
+	FBIMPresetCollection collection = gameState->Document->GetPresetCollection();
+
+	// get ncp node and if it does not exist we need to exit. Can't create preset without a valid ncp
+	FBIMPresetTaxonomyNode ncpNode;
+	if (collection.PresetTaxonomy.GetExactMatch(MyTagPath, ncpNode) == EBIMResult::Error)
+	{
+		return EBIMResult::Error;
+	}
 	
-	if (InPreset.properties.Contains(SlotConfigPropertyName))
-	{
-		FBIMWebPresetProperty slotConfigProperty = InPreset.properties[SlotConfigPropertyName];
-		FGuid slotConfigGuid;
-		FGuid::Parse(slotConfigProperty.value[0], slotConfigGuid);
-		SlotConfigPresetGUID = slotConfigGuid;
-	}
-
-	if (InPreset.properties.Contains(PartPresetPropertyName) && InPreset.properties.Contains(SlotNamePropertyName))
-	{
-		FBIMWebPresetProperty slotNamesProperty = InPreset.properties[SlotNamePropertyName];
-		FBIMWebPresetProperty partPresetsProperty = InPreset.properties[PartPresetPropertyName];
-		
-		for (int i = 0; i < partPresetsProperty.value.Num(); i++)
-		{
-			FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
-
-			FGuid slotPresetGuid;
-			FGuid partPresetGuid;
-			if (FGuid::Parse(partPresetsProperty.value[i], partPresetGuid) && FGuid::Parse(slotNamesProperty.value[i], slotPresetGuid))
-			{
-				partSlot.PartPresetGUID = partPresetGuid;
-				partSlot.SlotPresetGUID = slotPresetGuid;
-			}
-		}
-	}
-
+	// get the object type and node scope from ncp
+	collection.PresetTaxonomy.PopulateDefaults(*this);
+	
+	// get the property definitions
+	TMap<FString, FBIMWebPresetPropertyDef> propTypes;
+	collection.PresetTaxonomy.GetPropertiesForTaxonomyNode(ncpNode.tagPath, propTypes);
+	
+	ConvertWebPropertiesToCustomData(InPreset, World);
+	
 	for (auto& property : InPreset.properties)
 	{
+		// we require a type definition for a property in order to understand it's type and other meta data
+		// if it does not exist, just skip it
+		FBIMWebPresetPropertyDef* typeDef = propTypes.Find(property.Key);
+		if (!typeDef)
+		{
+			continue;
+		}
+		
 		TArray<FString> splitKey;
 		property.Key.ParseIntoArray(splitKey, TEXT("."));
 		if (ensure(splitKey.Num() == 2))
@@ -1219,7 +1362,7 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 			EBIMValueScope scope;
 			if (FindEnumValueByString(splitKey[0],scope))
 			{
-				if (property.Value.type == EBIMWebPresetPropertyType::number)
+				if (typeDef->type == EBIMWebPresetPropertyType::number)
 				{
 					SetScopedProperty(scope, *splitKey[1], FCString::Atof(*property.Value.value[0]));
 				}
@@ -1228,45 +1371,25 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 					SetScopedProperty(scope, *splitKey[1], property.Value.value[0]);
 				}
 			}
-			else
-			{
-				auto* customData = CustomDataByClassName.Find(*splitKey[0]);
-				if (ensure(customData))
-				{
-					// TODO: pre-populate local map
-					TSharedPtr<FJsonObject> jsonOb;
-					if (!ensure(customData->GetJsonObject(jsonOb)))
-					{
-						continue;
-					}
-
-					auto jsonVal = jsonOb->GetField<EJson::None>(splitKey[1]);
-
-					if (!ensure(jsonVal))
-					{
-						continue;
-					}
-
-					switch (jsonVal->Type)
-					{
-					case EJson::Number:
-						jsonOb->SetNumberField(splitKey[1], FCString::Atof(*property.Value.value[0]));
-						break;
-					case EJson::Boolean:
-						jsonOb->SetBoolField(splitKey[1], property.Value.value[0].Equals(TEXT("true")) ? true : false);
-						break;
-					case EJson::String:
-						jsonOb->SetStringField(splitKey[1], property.Value.value[0]);
-						break;
-					};
-
-					customData->SetJsonObject(jsonOb);
-				}
-			}
 		}
 	}
 
 	return EBIMResult::Success;
+}
+
+FBIMPresetInstance FBIMPresetInstance::Derive(const FGuid& NewGUID) const
+{
+	if(ensureAlways(Origination == EPresetOrigination::Canonical))
+	{
+		FBIMPresetInstance copy = *this;
+		copy.CanonicalBase = GUID;
+		copy.GUID = NewGUID;
+		copy.Origination = EPresetOrigination::VanillaDerived;
+		return copy;
+	}
+
+	//On Failure, return a direct copy
+	return *this;
 }
 
 EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const
@@ -1274,6 +1397,8 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.name = DisplayName.ToString();
 	OutPreset.guid = GUID;
 	OutPreset.tagPath = MyTagPath;
+	OutPreset.origination = Origination;
+	OutPreset.canonicalBase = CanonicalBase;
 	
 	TMap<FString, FBIMWebPresetProperty> properties;
 
@@ -1296,9 +1421,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 			{
 				FBIMWebPresetProperty webProperty;
 				webProperty.key = kvp.Key.ToString() + TEXT(".") + val.Key;
-				webProperty.name = val.Key;
 				webProperty.value.Add(val.Value->AsString());
-				webProperty.type = (type != nullptr) ? *type : EBIMWebPresetPropertyType::none;
 				properties.Add(webProperty.key, webProperty);
 			}
 		}
@@ -1308,8 +1431,6 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		{
 			FBIMWebPresetProperty property;
 			property.key = Key.QN().ToString();
-			property.name = Key.Name.ToString();
-			property.type = EBIMWebPresetPropertyType::string;
 			property.value.Add(Value);
 			properties.Add(property.key, property);
 		}
@@ -1319,8 +1440,6 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		{
 			FBIMWebPresetProperty property;
 			property.key = Key.QN().ToString();
-			property.name = Key.Name.ToString();
-			property.type = EBIMWebPresetPropertyType::number;
 			property.value.Add(FString::Printf(TEXT("%f"),Value));
 			properties.Add(property.key, property);
 		}
@@ -1331,18 +1450,12 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		// Add slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
 		FBIMWebPresetProperty slotNameProperty;
 		slotNameProperty.key = TEXT("Slot.SlotName");
-		slotNameProperty.name = TEXT("SlotName");
-		slotNameProperty.type = EBIMWebPresetPropertyType::string;
 	
 		FBIMWebPresetProperty partPresetsProperty;
 		partPresetsProperty.key = TEXT("Slot.PartPreset");
-		partPresetsProperty.name = TEXT("PartPreset");
-		partPresetsProperty.type = EBIMWebPresetPropertyType::string;
 
 		FBIMWebPresetProperty slotConfigProperty;
 		slotConfigProperty.key = TEXT("Slot.SlotConfig");
-		slotConfigProperty.name = TEXT("SlotConfig");
-		slotConfigProperty.type = EBIMWebPresetPropertyType::string;
 		slotConfigProperty.value.Add(SlotConfigPresetGUID.ToString());
 	
 		for (auto& partSlot : PartSlots)
@@ -1358,27 +1471,438 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	
 	OutPreset.properties = properties;
 
-	//get custom data
-	FString customDataJSONString;
-	FPresetCustomDataWrapper presetCustomData;
-	presetCustomData.CustomDataWrapper = CustomDataByClassName;
-	WriteJsonGeneric<FPresetCustomDataWrapper>(customDataJSONString, &presetCustomData);
-	OutPreset.customDataJSON = customDataJSONString;
+	ConvertCustomDataToWebProperties(OutPreset, World);
+	ConvertWebPropertiesFromChildPresets(OutPreset);
 
 	// typeMark is deprecated
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
 	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;
-		
-	// childPresets
-	TArray<FString> childPresets;
-	for (auto item : ChildPresets)
-	{
-		childPresets.Add(item.PresetGUID.ToString());
-	}
-	Algo::Transform(childPresets, OutPreset.childPresets, [](const FString& InGUID) {FGuid guid; FGuid::Parse(InGUID, guid); return guid; });
 
 	return EBIMResult::Success;
+}
+
+void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World)
+{
+	TMap<EPresetPropertyMatrixNames, TMap<FString, TArray<FString>>> propertyMap;
+	
+	for (auto& presetProp : InPreset.properties)
+	{
+		FString StructName = TEXT("");
+		FString PropertyName = TEXT("");
+		EPresetPropertyMatrixNames matrixName = EPresetPropertyMatrixNames::Error;
+		presetProp.Key.Split(TEXT("."), &StructName, &PropertyName);
+
+		if (FindEnumValueByName(FName(StructName), matrixName))
+		{
+			if (propertyMap.Contains(matrixName))
+			{
+				propertyMap[matrixName].Add(PropertyName, presetProp.Value.value);
+			}
+			else
+			{
+				TMap<FString, TArray<FString>> properties;
+				properties.Add(PropertyName, presetProp.Value.value);
+				propertyMap.Add(matrixName, properties);
+			}
+		}
+	}
+
+	for (auto& presetProp : propertyMap)
+	{
+		switch (presetProp.Key)
+		{
+		case EPresetPropertyMatrixNames::IESLight:
+			{
+				FLightConfiguration lightConfig;
+
+				FGuid profileGuid;
+				FGuid::Parse(presetProp.Value[TEXT("IESProfile")][0], profileGuid);
+			
+				lightConfig.IESProfileGUID = profileGuid;
+				lightConfig.LightIntensity = FCString::Atof(*presetProp.Value[TEXT("Intensity")][0]);
+				lightConfig.LightColor = FColor::FromHex(presetProp.Value[TEXT("ColorTint")][0]);
+				lightConfig.Location.X = FCString::Atof(*presetProp.Value[TEXT("LocationX")][0]);
+				lightConfig.Location.Y = FCString::Atof(*presetProp.Value[TEXT("LocationY")][0]);
+				lightConfig.Location.Z = FCString::Atof(*presetProp.Value[TEXT("LocationZ")][0]);
+				lightConfig.Scale.X = FCString::Atof(*presetProp.Value[TEXT("ScaleX")][0]);
+				lightConfig.Scale.Y = FCString::Atof(*presetProp.Value[TEXT("ScaleY")][0]);
+				lightConfig.Scale.Z = FCString::Atof(*presetProp.Value[TEXT("ScaleZ")][0]);
+				lightConfig.Rotation.Roll = FCString::Atof(*presetProp.Value[TEXT("RotationX")][0]);
+				lightConfig.Rotation.Pitch = FCString::Atof(*presetProp.Value[TEXT("RotationY")][0]);
+				lightConfig.Rotation.Yaw = FCString::Atof(*presetProp.Value[TEXT("RotationZ")][0]);
+				lightConfig.SourceRadius = FCString::Atof(*presetProp.Value[TEXT("SourceRadius")][0]);
+
+				SetScopedProperty(EBIMValueScope::IESProfile, BIMPropertyNames::AssetID, profileGuid.ToString());
+				PresetForm.AddLightConfigElements();
+				SetCustomData(lightConfig);
+			}
+			break;
+		case EPresetPropertyMatrixNames::ConstructionCost:
+			{
+				FBIMConstructionCost constructionCost;
+				constructionCost.LaborCostRate = FCString::Atof(*presetProp.Value[TEXT("LaborCostRate")][0]);
+				constructionCost.MaterialCostRate = FCString::Atof(*presetProp.Value[TEXT("MaterialCostRate")][0]);
+				PresetForm.AddConstructionCostElements();
+				SetCustomData(constructionCost);
+			}
+			break;
+		case EPresetPropertyMatrixNames::MiterPriority:
+			{
+				FBIMPresetLayerPriority miterPriority;
+				FString group = presetProp.Value[TEXT("Function")][0];
+				FString priority = presetProp.Value[TEXT("Priority")][0];
+
+				if (FindEnumValueByString(group, miterPriority.PriorityGroup) && LexTryParseString(miterPriority.PriorityValue, *priority))
+				{
+					miterPriority.SetFormElements(PresetForm);
+					SetCustomData(miterPriority);
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::PatternRef:
+			{
+				FString guid = presetProp.Value[TEXT("Source")][0];
+				if (!guid.IsEmpty())
+				{
+					Properties.SetProperty(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, guid);
+					PresetForm.AddPropertyElement(LOCTEXT("BIMPattern","Pattern"), FBIMPropertyKey(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::ProfileRef:
+			{
+				FString guid = presetProp.Value[TEXT("Source")][0];
+
+				if (!guid.IsEmpty())
+				{
+					Properties.SetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, guid);
+					PresetForm.AddPropertyElement(LOCTEXT("BIMProfile","Profile"), FBIMPropertyKey(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::MeshRef:
+			{
+				FGuid guid;
+				
+				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
+				{
+					Properties.SetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, guid.ToString());
+					PresetForm.AddPropertyElement(FText::FromString(TEXT("Mesh")), FBIMPropertyKey(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::Material:
+			{
+				TArray<FString> channels;
+				// Check how many channels, to see how many materials we need to add
+				if (presetProp.Value.Contains(TEXT("AppliesToChannel")))
+				{
+					channels.Append(presetProp.Value[TEXT("AppliesToChannel")]);	
+				}
+				
+				// loop through the channels and add the material binding for each
+				for (int32 i = 0; i < channels.Num(); ++i)
+				{
+					FBIMPresetMaterialBinding materialBinding;
+					for (auto prop : presetProp.Value)
+					{
+						EMaterialChannelFields fieldEnum = GetEnumValueByString<EMaterialChannelFields>(prop.Key);
+						switch (fieldEnum)
+						{
+						case EMaterialChannelFields::AppliesToChannel:
+							materialBinding.Channel = FName(prop.Value[i]);
+							break;
+						case EMaterialChannelFields::InnerMaterial:
+							{
+								if (prop.Value.Num() > i)
+								{
+									FGuid guid;
+                                	if (FGuid::Parse(prop.Value[i], guid))
+                                	{
+                                		materialBinding.InnerMaterialGUID = guid;
+                                	}	
+								}
+							}
+							break;
+						case EMaterialChannelFields::SurfaceMaterial:
+							{
+								if (prop.Value.Num() > i)
+								{
+									FGuid guid;
+									if (FGuid::Parse(prop.Value[i], guid))
+									{
+										materialBinding.SurfaceMaterialGUID = guid;
+									}
+								}
+							}
+							break;
+						case EMaterialChannelFields::ColorTint:
+							{
+								if (prop.Value.Num() > i)
+								{
+									FString hexValue = prop.Value[i];
+									if (!hexValue.IsEmpty())
+									{
+										Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
+										materialBinding.ColorHexValue = hexValue;
+									}
+								}
+							}
+							break;
+						case EMaterialChannelFields::ColorTintVariation:
+							if (prop.Value.Num() > i)
+							{
+								LexTryParseString(materialBinding.ColorTintVariationPercent, *prop.Value[i]);
+							}
+							break;
+						default:
+							ensure(false);
+						}
+					}
+
+					if (!materialBinding.Channel.IsNone())
+					{
+						FBIMPresetMaterialBindingSet bindingSet;
+						TryGetCustomData(bindingSet);
+						bindingSet.MaterialBindings.Add(materialBinding);
+						SetCustomData(bindingSet);
+
+						FGuid material = materialBinding.SurfaceMaterialGUID.IsValid() ? materialBinding.SurfaceMaterialGUID : materialBinding.InnerMaterialGUID;
+
+						// The RawMaterial.AssetID is used in the DynamicIconGenerator, otherwise it should be deprecated
+						if (ensure(material.IsValid()))
+						{
+							Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, material.ToString());
+						}
+						
+						Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, materialBinding.ColorHexValue.IsEmpty() ? FColor::White.ToHex() : materialBinding.ColorHexValue);
+						bindingSet.SetFormElements(PresetForm);
+					}
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::Dimensions:
+			{
+				TArray<FString> dimensions = presetProp.Value["Dimension"];
+				TArray<FString> values = presetProp.Value["Value"];
+
+				// Dimensions and values are a key-to-value pair and need to be the same size
+				if (ensure(dimensions.Num() == values.Num())) {
+					for (int i = 0; i < dimensions.Num(); i++)
+					{
+						if (!dimensions[i].IsEmpty())
+						{
+							float value = FCString::Atof(*values[i]);
+							Properties.SetProperty(EBIMValueScope::Dimension, *dimensions[i], value);
+							PresetForm.AddPropertyElement(FText::FromString(dimensions[i]), FBIMPropertyKey(EBIMValueScope::Dimension, *dimensions[i]).QN(), EBIMPresetEditorField::DimensionProperty);		
+						}
+					}
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::Slots:
+			{
+				// Get slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
+				FString SlotConfigPropertyName = TEXT("Slots.SlotConfig");
+				FString PartPresetPropertyName = TEXT("Slots.PartPreset");
+				FString SlotNamePropertyName = TEXT("Slots.SlotName");
+
+				if (InPreset.properties.Contains(SlotConfigPropertyName))
+				{
+					FBIMWebPresetProperty slotConfigProperty = InPreset.properties[SlotConfigPropertyName];
+					FGuid slotConfigGuid;
+					FGuid::Parse(slotConfigProperty.value[0], slotConfigGuid);
+					SlotConfigPresetGUID = slotConfigGuid;
+				}
+
+				if (InPreset.properties.Contains(PartPresetPropertyName) && InPreset.properties.Contains(SlotNamePropertyName))
+				{
+					FBIMWebPresetProperty slotNamesProperty = InPreset.properties[SlotNamePropertyName];
+					FBIMWebPresetProperty partPresetsProperty = InPreset.properties[PartPresetPropertyName];
+		
+					for (int i = 0; i < partPresetsProperty.value.Num(); i++)
+					{
+						FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
+
+						FGuid slotPresetGuid, partPresetGuid;
+						if (FGuid::Parse(partPresetsProperty.value[i], partPresetGuid) && FGuid::Parse(slotNamesProperty.value[i], slotPresetGuid))
+						{
+							partSlot.PartPresetGUID = partPresetGuid;
+							partSlot.SlotPresetGUID = slotPresetGuid;
+						}
+					}
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::InputPins:
+			{
+				for (auto prop : presetProp.Value)
+				{
+					FName pinName = FName(prop.Key);
+					bool found = false;
+					
+					for (auto propValue : prop.Value)
+					{
+						if (propValue.IsEmpty())
+						{
+							continue;;
+						}
+				
+						for (int32 setIndex = 0; setIndex < PinSets.Num(); ++setIndex)
+						{
+							if (PinSets[setIndex].SetName == pinName)
+							{
+								int32 setPosition = 0;
+								for (auto& cap : ChildPresets)
+								{
+									if (cap.ParentPinSetIndex == setIndex)
+									{
+										setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
+									}
+								}
+
+								FGuid guid;
+								if (ensure(FGuid::Parse(propValue, guid)))
+								{
+									AddChildPreset(guid, setIndex, setPosition);
+								}
+								
+								found = true;
+							}
+						}
+					}
+				
+					if (!found)
+					{
+						//PRESET_INTEGRATION_TODO: Validate that any missed pins have a -1 in the taxonomy for that pin
+						UE_LOG(LogTemp, Warning, TEXT("Could not find pin [%s] on preset [%s]"), *pinName.ToString(), *GUID.ToString());
+					}
+				}
+			}
+			break;
+		case EPresetPropertyMatrixNames::EdgeDetail:
+			// PRESET_INTEGRATION_TODO: Edge Detail does not even contain any data, lets move this out of custom data parsing and
+			// into a processing part. -NG
+			SetCustomData(FEdgeDetailData(FEdgeDetailData::CurrentVersion));
+			break;
+		}
+	}
+}
+
+void FBIMPresetInstance::ConvertCustomDataToWebProperties(FBIMWebPreset& OutPreset, UWorld* World) const
+{
+	// TODO: make this the reverse of ConvertWebPropertiesToCustomData 
+	FString customDataJSONString;
+	FPresetCustomDataWrapper presetCustomData;
+	presetCustomData.CustomDataWrapper = CustomDataByClassName;
+	WriteJsonGeneric<FPresetCustomDataWrapper>(customDataJSONString, &presetCustomData);
+	OutPreset.customDataJSON = customDataJSONString;
+}
+
+void FBIMPresetInstance::ConvertWebPropertiesFromChildPresets(FBIMWebPreset& OutPreset) const
+{
+	TMap<EBIMPinTarget, TArray<FString>> childPresetProps;
+	for (auto item : ChildPresets)
+	{
+		// example of an InputPins prop key is InputPins.ChildRiser
+		FString key = FString::Printf(TEXT("InputPins.Child")) + GetEnumValueString(item.Target);
+		if (OutPreset.properties.Contains(key))
+		{
+			auto guids = OutPreset.properties.Find(key);
+			guids->value.Push(item.PresetGUID.ToString());
+		} else
+		{
+			FBIMWebPresetProperty inputPinsProperty;
+			inputPinsProperty.key = key;
+			inputPinsProperty.value.Add(item.PresetGUID.ToString());
+			OutPreset.properties.Add(key, inputPinsProperty);
+		}
+	}
+}
+
+TSharedPtr<FJsonValue> FBIMPresetInstance::GetCustomDataValue(const FString& DataStruct, const FString& FieldName) const
+{
+	const FStructDataWrapper* wrapper = CustomDataByClassName.Find(*DataStruct);
+
+	if (!wrapper)
+	{
+		return nullptr;
+	}
+
+	TSharedPtr<FJsonObject> jsonOb;
+	wrapper->GetJsonObject(jsonOb);
+
+	return jsonOb.Get()->TryGetField(FieldName);
+}
+
+bool FBIMPresetInstance::TryGetCustomDataString(const FString& DataStruct, const FString& FieldName, FString& OutStr) const
+{
+	TSharedPtr<FJsonValue> value = GetCustomDataValue(DataStruct, FieldName);
+
+	if (value != nullptr && value->Type == EJson::String)
+	{
+		OutStr = value->AsString();
+		return true;
+	}
+
+	return false;
+}
+
+bool FBIMPresetInstance::TryGetCustomDataNumber(const FString& DataStruct, const FString& FieldName, float& OutNum) const
+{
+	TSharedPtr<FJsonValue> value = GetCustomDataValue(DataStruct, FieldName);
+
+	if (value != nullptr && value->Type == EJson::Number)
+	{
+		OutNum = value->AsNumber();
+		return true;
+	}
+
+	return false;
+}
+
+bool FBIMPresetInstance::TrySetCustomDataString(const FString& DataStruct, const FString& FieldName, const FString& InStr)
+{
+	FStructDataWrapper* wrapper = CustomDataByClassName.Find(*DataStruct);
+
+	if (!wrapper)
+	{
+		return false;
+	}
+
+	TSharedPtr<FJsonObject> jsonOb;
+	wrapper->GetJsonObject(jsonOb);
+
+	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::String>(FieldName))
+	{
+		jsonOb.Get()->SetStringField(FieldName, InStr);
+		wrapper->SetJsonObject(jsonOb);
+		return true;
+	}
+
+	return false;
+}
+
+bool FBIMPresetInstance::TrySetCustomDataNumber(const FString& DataStruct, const FString& FieldName, const float InNum)
+{
+	FStructDataWrapper* wrapper = CustomDataByClassName.Find(*DataStruct);
+
+	if (!wrapper)
+	{
+		return false;
+	}
+
+	TSharedPtr<FJsonObject> jsonOb;
+	wrapper->GetJsonObject(jsonOb);
+	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::Number>(FieldName))
+	{
+		jsonOb.Get()->SetNumberField(FieldName, InNum);
+		wrapper->SetJsonObject(jsonOb);
+		return true;
+	}
+
+	return false;
 }
 
 #undef LOCTEXT_NAMESPACE

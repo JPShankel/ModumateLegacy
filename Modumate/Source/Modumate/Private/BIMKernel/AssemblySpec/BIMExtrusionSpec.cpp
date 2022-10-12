@@ -18,7 +18,7 @@ EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FBIMPresetCollectionProx
 	}
 
 	FGuid profileKey;
-	if (ensureAlways(Properties.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID,profileKey) && profileKey.IsValid()))
+	if (ensureAlways(Properties.TryGetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID,profileKey) && profileKey.IsValid()))
 	{
 		const FSimpleMeshRef* trimMesh = PresetCollection.GetSimpleMeshByGUID(profileKey);
 

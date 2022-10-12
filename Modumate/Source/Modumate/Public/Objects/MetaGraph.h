@@ -39,7 +39,7 @@ public:
 	virtual bool FromWebMOI(const FString& InJson) override;
 	virtual FVector GetCorner(int32 Index) const override;
 	virtual int32 GetNumCorners() const override { return CachedCorners.Num(); };
-
+	
 	UPROPERTY()
 	FMOIMetaGraphData InstanceData;
 
@@ -50,3 +50,4 @@ private:
 
 	void SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas);
 };
+

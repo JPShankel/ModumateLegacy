@@ -237,4 +237,5 @@ namespace BIMPropertyNames
 	const FBIMNameType UIGroup = TEXT("UIGroup");
 	const FBIMNameType Width = TEXT("Width");
 	const FBIMNameType Zalign = TEXT("Zalign");
+	const FBIMNameType DimensionKey = TEXT("DimensionKey");
 }

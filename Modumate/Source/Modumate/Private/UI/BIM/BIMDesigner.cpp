@@ -953,13 +953,8 @@ bool UBIMDesigner::SavePresetFromNode(const FBIMEditorNodeIDType& InstanceID)
 		return false;
 	}
 
-	// Update its DisplayName from property
-	FText presetDisplayName;
-	if (node->Preset.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
-	{
-		node->Preset.DisplayName = presetDisplayName;
-	}
-
+	node->Preset.Origination = node->Preset.Origination == EPresetOrigination::VanillaDerived ? EPresetOrigination::EditedDerived : EPresetOrigination::Invented;
+	
 	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeUpdateDelta(node->Preset, this);
 	Controller->GetDocument()->ApplyDeltas({ presetDelta }, GetWorld());
 

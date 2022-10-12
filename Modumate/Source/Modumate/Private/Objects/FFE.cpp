@@ -160,13 +160,13 @@ bool AMOIFFE::GetTransformedLocationState(const FTransform Transform, FMOIStateD
 void AMOIFFE::UpdateQuantities()
 {
 	CachedQuantities.Empty();
-	CachedQuantities.AddQuantity(CachedAssembly.UniqueKey(), 1.0f);
+	CachedQuantities.AddQuantity(GetAssembly().UniqueKey(), 1.0f);
 	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
 bool AMOIFFE::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
 {
-	QuantitiesVisitor.AddQuantity(CachedAssembly.UniqueKey(), 1.0f);
+	QuantitiesVisitor.AddQuantity(GetAssembly().UniqueKey(), 1.0f);
 
 	return true;
 }

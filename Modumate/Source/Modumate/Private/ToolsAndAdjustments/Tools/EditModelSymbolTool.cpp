@@ -71,6 +71,8 @@ void USymbolTool::OnAssemblyChanged()
 	if (symbolPreset)
 	{
 		FBIMSymbolPresetData symbolData;
+
+		// Similar to UPasteTool, find a minimal anchor point.
 		if (ensure(symbolPreset->TryGetCustomData(symbolData)))
 		{
 			SymbolAnchor = symbolData.Anchor;

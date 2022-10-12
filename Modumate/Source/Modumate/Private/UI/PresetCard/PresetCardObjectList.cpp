@@ -61,7 +61,7 @@ void UPresetCardObjectList::BuildAsDescendentList(const FGuid& InGUID, bool bAsE
 	bIsDescendentlist = true;
 	PresetGUID = InGUID;
 
-	TArray<FGuid> presetList;
+	TSet<FGuid> presetList;
 	EMPlayerController->GetDocument()->GetPresetCollection().GetDescendentPresets(PresetGUID, presetList);
 
 	MainText->ChangeText(FText::Format(
@@ -88,7 +88,7 @@ void UPresetCardObjectList::BuildAsAncestorList(const FGuid& InGUID, bool bAsExp
 	bIsDescendentlist = false;
 	PresetGUID = InGUID;
 
-	TArray<FGuid> presetList;
+	TSet<FGuid> presetList;
 	EMPlayerController->GetDocument()->GetPresetCollection().GetAncestorPresets(PresetGUID, presetList);
 
 	MainText->ChangeText(FText::Format(

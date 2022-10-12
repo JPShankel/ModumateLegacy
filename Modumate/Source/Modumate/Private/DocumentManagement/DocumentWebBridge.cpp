@@ -654,7 +654,8 @@ void UModumateDocumentWebBridge::create_or_swap_edge_detail(TArray<int32> Select
 	if (!newDetailPresetGuid.IsValid() && !bClearingDetail)
 	{
 		FBIMPresetInstance newDetailPreset;
-		if (!ensure((presetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, newDetailPreset) == EBIMResult::Success) &&
+		FBIMTagPath edgeDetalNCP = FBIMTagPath(TEXT("Property_Spatiality_ConnectionDetail_Edge"));
+		if (!ensure((presetCollection.GetBlankPresetForNCP(edgeDetalNCP, newDetailPreset) == EBIMResult::Success) &&
 			newDetailPreset.SetCustomData(newDetailData) == EBIMResult::Success))
 		{
 			return;
@@ -729,21 +730,32 @@ void UModumateDocumentWebBridge::create_or_update_preset(const FString& PresetDa
 		return;
 	}
 
-	TArray<FDeltaPtr> deltas;
-	auto* existingPreset = Document->GetPresetCollection().PresetFromGUID(newPreset.GUID);
+	UpdateOrAddPreset(newPreset);
+}
 
-	if (existingPreset)
+void UModumateDocumentWebBridge::push_initial_presets_and_taxonomy(const FString& InitialPresets,
+	const FString& Taxonomy)
+{
+	UE_LOG(LogCallTrace, Log, TEXT("push_initial_presets_and_taxonomy() started"));
+	ensure(Document->GetPresetCollection().PresetTaxonomy.FromWebTaxonomyJson(Taxonomy) == EBIMResult::Success);
+	
+	TSharedPtr<FJsonObject> initialPresetsJson = MakeShareable(new FJsonObject);
+	TSharedRef<TJsonReader<>> initialPresetsReader = TJsonReaderFactory<>::Create(InitialPresets);
+	if(!ensure(FJsonSerializer::Deserialize(initialPresetsReader, initialPresetsJson)))
 	{
-		auto updatePresetDelta = Document->GetPresetCollection().MakeUpdateDelta(newPreset);
-		deltas.Add(updatePresetDelta);
+		return;
 	}
-	else
+	TMap<FString, TSharedPtr<FJsonValue>> topLevelEntries = initialPresetsJson->Values;
+	for(const auto& entry: topLevelEntries)
 	{
-		auto newPresetDelta = Document->GetPresetCollection().MakeCreateNewDelta(newPreset);
-		deltas.Add(newPresetDelta);
+		FBIMPresetInstance newPreset;
+		FBIMWebPreset webPreset;
+		TSharedPtr<FJsonObject> objPreset = entry.Value->AsObject();
+		FJsonObjectConverter::JsonObjectToUStruct<FBIMWebPreset>(objPreset.ToSharedRef(), &webPreset);
+		newPreset.FromWebPreset(webPreset, GetWorld());
+		UpdateOrAddPreset(newPreset);
 	}
-
-	Document->ApplyDeltas(deltas, GetWorld());
+	UE_LOG(LogCallTrace, Log, TEXT("push_initial_presets_and_taxonomy() finished"));
 }
 
 void UModumateDocumentWebBridge::delete_preset(const FString& InGUID)
@@ -870,7 +882,7 @@ void UModumateDocumentWebBridge::create_alignment_preset(int32 SubjectMOI, int32
 		return;
 	}
 
-	const FBIMPresetInstance* basePreset = Document->GetPresetCollection().PresetsByGUID.Find(alignmentPresets.Last());
+	const FBIMPresetInstance* basePreset = Document->GetPresetCollection().PresetFromGUID(alignmentPresets.Last());
 
 	if (!ensure(basePreset))
 	{
@@ -936,4 +948,25 @@ void UModumateDocumentWebBridge::export_views(TArray<int32> CameraViewIDs)
 	}
 	controller->CaptureCameraViewsRayTracing(rayTracingEnabledViews, filePath);
 }
+
+void UModumateDocumentWebBridge::UpdateOrAddPreset(FBIMPresetInstance& Preset)
+{
+	TArray<FDeltaPtr> deltas;
+	auto* existingPreset = Document->GetPresetCollection().PresetFromGUID(Preset.GUID);
+
+	if (existingPreset)
+	{
+		auto updatePresetDelta = Document->GetPresetCollection().MakeUpdateDelta(Preset);
+		deltas.Add(updatePresetDelta);
+	}
+	else
+	{
+		auto newPresetDelta = Document->GetPresetCollection().MakeCreateNewDelta(Preset);
+		deltas.Add(newPresetDelta);
+	}
+
+
+	Document->ApplyDeltas(deltas, GetWorld());
+}
+
 #undef LOCTEXT_NAMESPACE

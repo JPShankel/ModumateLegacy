@@ -218,7 +218,7 @@ void AMOIEdgeHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArra
 	{
 		TArray<FDrawingDesignerLined> linesDouble;
 		FVector localViewDirection(GetWorldTransform().InverseTransformVector(ViewDirection));
-		gameInstance->GetMeshCache()->GetDesignerLines(CachedAssembly, CachedScale * InstanceData.FlipSigns, false, localViewDirection,
+		gameInstance->GetMeshCache()->GetDesignerLines(GetAssembly(), CachedScale * InstanceData.FlipSigns, false, localViewDirection,
 			linesDouble, MinLength);
 		const FMatrix xform(GetWorldTransform().ToMatrixWithScale());
 		for (const auto& l : linesDouble)
@@ -257,22 +257,22 @@ void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 
 		// Obj scale, currently not 9-sliced, scale according to native size to match with edge length
 		float lineLength = (LineStartPos - LineEndPos).Size();
-		float cmaLength = CachedAssembly.GetCompoundAssemblyNativeSize().Z;
+		float cmaLength = GetAssembly().GetCompoundAssemblyNativeSize().Z;
 		float lengthScale = lineLength / cmaLength;
 		FVector cmaScale = FVector(1.f, 1.f, lengthScale);
 		CachedScale = cmaScale;
 
 		// Obj pivot at midpoint and offset
-		FVector objSize = CachedAssembly.GetCompoundAssemblyNativeSize() * cmaScale;
+		FVector objSize = GetAssembly().GetCompoundAssemblyNativeSize() * cmaScale;
 		float cmaOffsetX = InstanceData.OffsetNormal.GetOffsetDistance(InstanceData.FlipSigns.X, objSize.X);
 		float cmaOffsetY = InstanceData.OffsetUp.GetOffsetDistance(InstanceData.FlipSigns.Y, objSize.Y);
 		FVector cmaLocation = (LineStartPos + LineEndPos) / 2.f;
 		cmaLocation += (cmaOffsetX * LineNormal);
 		cmaLocation += (cmaOffsetY * LineUp);
 
-		if (CachedAssembly.Parts.Num() > 0)
+		if (GetAssembly().Parts.Num() > 0)
 		{
-			cma->MakeFromAssemblyPartAsync(FAssetRequest(CachedAssembly, nullptr), 0, cmaScale, false, bCreateCollision);
+			cma->MakeFromAssemblyPartAsync(FAssetRequest(GetAssembly(), nullptr), 0, cmaScale, false, bCreateCollision);
 			FTransform cmaTransform;
 			cmaTransform.SetLocation(cmaLocation);
 			cmaTransform.SetRotation(cmaRotation);
@@ -367,7 +367,7 @@ void AMOIEdgeHosted::OnInstPropUIChangedExtensionEnd(float NewValue)
 
 void AMOIEdgeHosted::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	auto assemblyGuid = assembly.UniqueKey();
 	const AModumateObjectInstance* parentObject = GetParentObject();
 	if (!ensure(parentObject))

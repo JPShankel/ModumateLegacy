@@ -70,8 +70,6 @@ struct MODUMATE_API FBIMPatternCoordinate
 
 	UPROPERTY()
 	int32 Z = 0;
-
-	void FromCSVCells(const TArray<FString>& Cells);
 };
 
 UENUM()

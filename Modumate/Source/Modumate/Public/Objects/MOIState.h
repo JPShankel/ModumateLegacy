@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "BIMKernel/Core/BIMKey.h"
 #include "Objects/ModumateObjectEnums.h"
 #include "ModumateCore/StructDataWrapper.h"
 

@@ -162,7 +162,7 @@ bool AMOIFinish::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) con
 
 void AMOIFinish::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	auto assemblyGuid = assembly.UniqueKey();
 	const int32 hostingPolyId = GetParentID();
 	TSharedPtr<FGraph2D> graph = Document->FindSurfaceGraphByObjID(hostingPolyId);

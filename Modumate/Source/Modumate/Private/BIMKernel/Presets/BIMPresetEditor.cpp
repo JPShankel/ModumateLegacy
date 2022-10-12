@@ -343,7 +343,6 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMEditorNodeIDT
 
 	// Build a temporary top-level assembly node to host the single layer
 	FBIMPresetInstance assemblyPreset;
-	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
 	assemblyPreset.GUID= FGuid::NewGuid();
 	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
 
@@ -351,7 +350,6 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMEditorNodeIDT
 	FBIMPresetPinAttachment& attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
 	attachment.ParentPinSetIndex = 0;
 	attachment.ParentPinSetPosition = 0;
-	attachment.PresetID = layerNode->Preset.PresetID;
 	attachment.PresetGUID = layerNode->Preset.GUID;
 
 	// Fetch the root node to get node and object type information for the temp assembly
@@ -359,7 +357,6 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMEditorNodeIDT
 	{
 		if (inst->ParentInstance == nullptr)
 		{
-			assemblyPreset.NodeType = inst->Preset.NodeType;
 			assemblyPreset.ObjectType = inst->Preset.ObjectType;
 			assemblyPreset.Properties.AddProperties(inst->Preset.Properties);
 			break;
@@ -670,7 +667,6 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMEditorNodeIDType& Ins
 			{
 				if (sibling.ParentPinSetIndex == inst->MyParentPinSetIndex && sibling.ParentPinSetPosition == inst->MyParentPinSetPosition)
 				{
-					sibling.PresetID = preset->PresetID;
 					sibling.PresetGUID = preset->GUID;
 					break;
 				}
@@ -682,7 +678,6 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMEditorNodeIDType& Ins
 			{
 				if (part.SlotPresetGUID == parentSlot)
 				{
-					part.PartPreset = preset->PresetID;
 					part.PartPresetGUID = preset->GUID;
 					break;
 				}

@@ -2,11 +2,13 @@
 
 #include "Online/ModumateCloudConnection.h"
 
+#include "HttpManager.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "ModumateCore/PrettyJSONWriter.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ProjectConnection.h"
+#include "HAL/Event.h"
 
 /*
 * With this (without the ECVF_Cheat flag) we can override the AMS endpoint on any shipping build (installer or otherwise) by adding these lines to:
@@ -303,15 +305,36 @@ void FModumateCloudConnection::NetworkTick(UWorld* World)
 
 bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType,
 	const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
-	bool bRefreshTokenOnAuthFailure)
+	bool bRefreshTokenOnAuthFailure, bool bSynchronous)
 {
+	bool bRequestFinished = false;
+	
 	if (!ensureAlways(Endpoint.Len() > 0 && Endpoint[0] == TCHAR('/')))
 	{
 		return false;
 	}
 
+	auto myCallback = Callback;
+	auto myError = ServerErrorCallback;
+
+	if(bSynchronous)
+	{
+		myCallback = [&](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			Callback(bSuccessful, Response);
+			bRequestFinished = true;
+		};
+
+		myError = [&](int32 ErrorCode, const FString& ErrorString)
+		{
+			ServerErrorCallback(ErrorCode, ErrorString);
+			bRequestFinished = true;
+		};	
+	}
+
+	
 	int32 requestAutomationIndex = INDEX_NONE;
-	auto Request = MakeRequest(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, &requestAutomationIndex);
+	auto Request = MakeRequest(myCallback, myError, bRefreshTokenOnAuthFailure, &requestAutomationIndex);
 
 	Request->SetURL(GetCloudAPIURL() + Endpoint);
 	Request->SetVerb(GetRequestTypeString(RequestType));
@@ -337,11 +360,11 @@ bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequest
 			FTimerManager& timerManager = AutomationHandler->GetTimerManager();
 			FTimerHandle responseHandlerTimer;
 
-			timerManager.SetTimer(responseHandlerTimer, [weakThisCaptured, Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, requestAutomationIndex, bAutomatedSuccess, automatedCode, automatedContent]() {
+			timerManager.SetTimer(responseHandlerTimer, [weakThisCaptured, myCallback, myError, bRefreshTokenOnAuthFailure, requestAutomationIndex, bAutomatedSuccess, automatedCode, automatedContent]() {
 				TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
 				if (sharedThis.IsValid())
 				{
-					sharedThis->HandleRequestResponse(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, bAutomatedSuccess, automatedCode, automatedContent);
+					sharedThis->HandleRequestResponse(myCallback, myError, bRefreshTokenOnAuthFailure, bAutomatedSuccess, automatedCode, automatedContent);
 				}
 				}, responseTime, false);
 
@@ -349,7 +372,38 @@ bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequest
 		}
 	}
 
-	return Request->ProcessRequest();
+	bool rtn = Request->ProcessRequest();
+	if(bSynchronous)
+	{
+		//Block until this particular request has been completed
+		//NOTE that other requests may complete during this time and
+		// their handlers could be called.
+		double BeginWaitTime = FPlatformTime::Seconds();
+		double LastTime = BeginWaitTime;
+		double CurrentWaitTime = 0;
+		//PRESET_INTEGRATION_TODO: Lower to a more acceptable value once other work is done
+		double MaxSyncTimeSeconds = 50; //seconds
+		GConfig->GetDouble(TEXT("HTTP"), TEXT("MaxSyncTimeSeconds"), MaxSyncTimeSeconds, GEngineIni);
+
+		double SyncSleepTime = 0.25; //seconds
+		GConfig->GetDouble(TEXT("HTTP"), TEXT("MaxSyncTimeSeconds"), MaxSyncTimeSeconds, GEngineIni);
+		
+		while(!bRequestFinished && CurrentWaitTime < MaxSyncTimeSeconds)
+		{
+			const double AppTime = FPlatformTime::Seconds();
+			auto& manager = FHttpModule::Get().GetHttpManager();
+			manager.FlushTick(AppTime - LastTime);
+			LastTime = AppTime;
+			CurrentWaitTime = AppTime - BeginWaitTime;
+			FPlatformProcess::Sleep(SyncSleepTime);
+		}
+
+		if(CurrentWaitTime >= MaxSyncTimeSeconds)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to complete synchronous cloud transaction before return, endpoint=%s"), *Endpoint);
+		}
+	}
+	return rtn;
 }
 
 bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)

@@ -92,10 +92,10 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProx
 	*/
 	FString patternGuidString;
 	FGuid patternGuid;
-	if (Preset.Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternGuidString) && FGuid::Parse(patternGuidString, patternGuid))
+	if (Preset.Properties.TryGetProperty(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternGuidString) && FGuid::Parse(patternGuidString, patternGuid))
 	{
 		const FLayerPattern* pattern = PresetCollection.GetPatternByGUID(patternGuid);
-		if (ensureAlways(pattern != nullptr))
+		if (ensure(pattern != nullptr))
 		{
 			Pattern = *pattern;
 		}
@@ -145,7 +145,7 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProx
 		for (auto& materialBinding : materialBindings.MaterialBindings)
 		{
 			FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
-			if (!ensureAlways(materialBinding.GetEngineMaterial(PresetCollection, module.Material) == EBIMResult::Success))
+			if (!ensure(materialBinding.GetEngineMaterial(PresetCollection, module.Material) == EBIMResult::Success))
 			{
 				const FArchitecturalMaterial* material = PresetCollection.GetArchitecturalMaterialByGUID(PresetCollection.GetDefaultMaterialGUID());
 				if (ensureAlways(material != nullptr))

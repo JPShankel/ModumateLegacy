@@ -1864,6 +1864,7 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc
 	for (const auto& deltaPair : GroupCopyDeltas)
 	{
 		FDeltaPtr delta = deltaPair.Value;
+
 		switch (deltaPair.Key)
 		{
 		case FSelectedObjectToolMixin::kVertexPosition:
@@ -1909,7 +1910,6 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc
 			OutDeltas.Add(delta);
 			break;
 		}
-
 		}
 	}
 }

@@ -75,7 +75,8 @@ bool UModumateRoomStatics::GetRoomConfig(const AModumateObjectInstance *RoomObj,
 
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::UseGroupType, OutRoomConfig.UseGroupType) && bSuccess;
 
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, OutRoomConfig.DisplayName) && bSuccess;
+	// removed in deprecation of the Name property, should get it from the preset->DisplayName now
+	// bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, OutRoomConfig.DisplayName) && bSuccess;
 
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, OutRoomConfig.OccupantsNumber) && bSuccess;
 
@@ -117,7 +118,8 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, 0.0f);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Code, roomConfig->UseGroupCode.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::UseGroupType, roomConfig->UseGroupType.ToString());
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, roomConfig->DisplayName.ToString());
+	// removed in deprecation of the Name property, should get it from the preset->DisplayName now
+	//RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, roomConfig->DisplayName.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, 0.0f);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, roomConfig->OccupantLoadFactor);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, FindEnumValueString(roomConfig->AreaType));

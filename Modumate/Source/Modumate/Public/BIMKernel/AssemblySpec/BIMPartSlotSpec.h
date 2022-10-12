@@ -8,7 +8,6 @@
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Core/BIMTagPath.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 

@@ -3,18 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMPresetTypeDefinition.h"
+#include "BIMKernel/Presets/PresetOrigination.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMTagPath.h"
-#include "BIMKernel/Core/BIMKey.h"
-#include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
-#include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
-#include "BIMKernel/Presets/BIMPresetNCPTaxonomy.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/StructDataWrapper.h"
 
 #include "BIMPresetInstance.generated.h"
 
-struct FBIMKey;
+struct FBIMWebPreset;
 
 /*
 A preset specifies a crafting node type, a set of specific values for the type's properties and specifications for which
@@ -26,6 +25,23 @@ struct FBIMPresetCollection;
 class FBIMPresetCollectionProxy;
 class UModumateDocument;
 
+UENUM()
+enum class EPresetPropertyMatrixNames : uint8
+{
+	IESLight,
+	ConstructionCost,
+	MiterPriority,
+	PatternRef,
+	ProfileRef,
+	MeshRef,
+	Material,
+	Dimensions,
+	Slots,
+	InputPins,
+	EdgeDetail,
+	Error = 255
+};
+
 USTRUCT()
 struct MODUMATE_API FBIMPresetPinAttachment
 {
@@ -36,9 +52,6 @@ struct MODUMATE_API FBIMPresetPinAttachment
 
 	UPROPERTY()
 	int32 ParentPinSetPosition = 0;
-
-	UPROPERTY()
-	FBIMKey PresetID;
 
 	UPROPERTY()
 	FGuid PresetGUID;
@@ -53,12 +66,6 @@ USTRUCT()
 struct MODUMATE_API FBIMPresetPartSlot
 {
 	GENERATED_BODY()
-		
-	UPROPERTY()
-	FBIMKey PartPreset;
-
-	UPROPERTY()
-	FBIMKey SlotPreset;
 
 	UPROPERTY()
 	FGuid PartPresetGUID;
@@ -86,117 +93,19 @@ struct MODUMATE_API FPresetCustomDataWrapper
 	TMap<FName, FStructDataWrapper> CustomDataWrapper;
 };
 
-UENUM()
-enum class EBIMWebPresetPropertyType : uint8
-{
-	none = 0,
-	string,
-	number,
-	boolean,
-	color,
-};
-
-USTRUCT()
-struct MODUMATE_API FBIMWebPresetProperty
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FString key;
-
-	UPROPERTY()
-	FString name;
-	
-	UPROPERTY()
-	EBIMWebPresetPropertyType type = EBIMWebPresetPropertyType::string;
-	
-	UPROPERTY()
-	TArray<FString> value;
-	
-	UPROPERTY()
-	bool isEditable = false;
-	
-	UPROPERTY()
-	bool isVisibleInEditor = false;
-};
-
-USTRUCT()
-struct MODUMATE_API FBIMWebPreset
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FGuid guid;
-
-	UPROPERTY()
-	TArray<FGuid> childPresets;
-
-	UPROPERTY()
-	FString name;
-	
-	UPROPERTY()
-	FBIMTagPath tagPath;
-
-	// deprecated
-	UPROPERTY()
-	FString customDataJSON;
-
-	// deprecated
-	UPROPERTY()
-	FString typeMark;
-	
-	UPROPERTY()
-	TMap<FString, FBIMWebPresetProperty> properties;
-};
-
-USTRUCT()
-struct MODUMATE_API FWebQuantity
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	float Count = 0.0f;
-
-	UPROPERTY()
-	float Linear = 0.0f;
-
-	UPROPERTY()
-	float Area = 0.0f;
-
-	UPROPERTY()
-	float Volume = 0.0f;
-
-	UPROPERTY()
-	float MaterialCost = 0.0f;
-
-	UPROPERTY()
-	float LaborCost = 0.0f;
-
-};
-
 USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
 {
 	GENERATED_BODY()
-
-	// TODO: roll fields below into type definition and make it the top level UPROPERTY
+	
 	UPROPERTY()
-	FBIMPresetTypeDefinition TypeDefinition;
-
-	UPROPERTY()
+	//Use the origination field instead
+	//@deprecated
 	bool bEdited = false;
-
-	//TODO: Debug data must be UPROPERTY() to serialize in cache, cannot be conditionally compiled out
-	//To be deprecated with move to SQL
-	UPROPERTY()
-	FString DEBUG_SourceFile;
-
-	UPROPERTY()
-	int32 DEBUG_SourceRow = 0;
-
+	
 	UPROPERTY()
 	FBIMPresetForm PresetForm;
-
+	
 	UPROPERTY()
 	FBIMPropertySheet Properties;
 
@@ -208,13 +117,16 @@ struct MODUMATE_API FBIMPresetInstance
 
 	UPROPERTY()
 	EBIMValueScope NodeScope = EBIMValueScope::None;
+	
+	UPROPERTY()
+	TArray<FBIMPresetNodePinSet> PinSets;
 
 	UPROPERTY()
-	FName NodeType;
+	EPresetOrigination Origination;
 
 	UPROPERTY()
-	FBIMKey PresetID;
-
+	FGuid CanonicalBase;
+	
 	UPROPERTY()
 	FGuid GUID;
 
@@ -222,28 +134,16 @@ struct MODUMATE_API FBIMPresetInstance
 	FGuid ParentGUID;
 
 	UPROPERTY()
-	FBIMKey SlotConfigPresetID;
-
-	UPROPERTY()
-	FGuid SlotConfigPresetGUID;
-
-	UPROPERTY()
 	EObjectType ObjectType = EObjectType::OTNone;
 
 	UPROPERTY()
-	EConfiguratorNodeIconType IconType = EConfiguratorNodeIconType::None;
-
-	UPROPERTY()
-	EConfiguratorNodeIconOrientation Orientation = EConfiguratorNodeIconOrientation::Inherited;
+	FGuid SlotConfigPresetGUID;
 
 	UPROPERTY()
 	TArray<FBIMPresetPartSlot> PartSlots;
 
 	UPROPERTY()
 	TArray<FBIMPresetPinAttachment> ChildPresets;
-
-	UPROPERTY()
-	TArray<FBIMTagPath> ParentTagPaths;
 
 	UPROPERTY()
 	FBIMTagPath MyTagPath;
@@ -284,6 +184,36 @@ struct MODUMATE_API FBIMPresetInstance
 	template<class T> bool HasCustomData() const
 	{
 		return CustomDataByClassName.Contains(T::StaticStruct()->GetFName());
+	}
+
+	TSharedPtr<FJsonValue> GetCustomDataValue(const FString& DataStruct, const FString& FieldName) const;
+
+	bool TryGetCustomDataString(const FString& DataStruct, const FString& FieldName, FString& OutStr) const;
+	template<class T>
+	bool TryGetCustomDataString(const FString& FieldName, FString& OutStr) const
+	{
+		return TryGetCustomDataString(T::StaticStruct()->GetName(), FieldName, OutStr);
+	}
+
+	bool TrySetCustomDataString(const FString& DataStruct, const FString& FieldName, const FString& InStr);
+	template<class T>
+	bool TrySetCustomDataString(const FString& FieldName, const FString& InStr)
+	{
+		return TrySetCustomDataString(T::StaticStruct()->GetName(), FieldName, InStr);
+	}
+
+	bool TryGetCustomDataNumber(const FString& DataStruct, const FString& FieldName, float& OutNum) const;
+	template<class T>
+	bool TryGetCustomDataNumber(const FString& FieldName, float& OutNum) const
+	{
+		return TryGetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, OutNum);
+	}
+
+	bool TrySetCustomDataNumber(const FString& DataStruct, const FString& FieldName, const float InNum);
+	template<class T>
+	bool TrySetCustomDataNumber(const FString& FieldName, const float InNum)
+	{
+		return TrySetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, InNum);
 	}
 
 	bool HasProperty(const FBIMNameType& Name) const;
@@ -338,6 +268,9 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult RemoveChildPreset(int32 PinSetIndex, int32 PinSetPosition);
 
 	EBIMResult SetPartPreset(const FGuid& SlotPresetGUID, const FGuid& PartPresetGUID);
+	EBIMResult UpgradeData(FBIMPresetCollection& PresetCollection, int32 InDocVersion);
+	
+	bool ReplaceImmediateChildGuid(FGuid& OldGuid, FGuid& NewGuid);
 
 	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
 	bool HasOpenPin() const;
@@ -347,12 +280,21 @@ struct MODUMATE_API FBIMPresetInstance
 	bool ValidatePreset() const;
 
 	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth,float& OutThickness) const;
-
-	EBIMResult UpgradeData(const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion);
-
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
 	EBIMResult FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World);
 
+	/**
+	 * For Canonical Presets, this method copies the preset in to a 
+     * VanillaDerived Copy w/ the provided GUID. It is up to the caller
+     * to add it to the BIM Collection and VDP tables.
+     * TODO: Clean up the Collection<>Preset interface -JN
+	 */
+	FBIMPresetInstance Derive(const FGuid& NewGUID) const;
+
+	void ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World);
+	void ConvertCustomDataToWebProperties(FBIMWebPreset& OutPreset, UWorld* World) const;
+	void ConvertWebPropertiesFromChildPresets(FBIMWebPreset& OutPreset) const;
+	
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;
 };

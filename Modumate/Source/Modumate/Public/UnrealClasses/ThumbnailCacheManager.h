@@ -5,7 +5,6 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "IImageWrapper.h"
 #include "UObject/Object.h"
-#include "BIMKernel/Core/BIMKey.h"
 
 #include "ThumbnailCacheManager.generated.h"
 

@@ -20,8 +20,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 	Reset();
 	EBIMResult ret = EBIMResult::Success;
 	PresetGUID = InPresetGUID;
-
-
+	
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
 	Layers for stair tread and risers can be in embedded layered assemblies...when we get to those layers we need to know where they land in the top level assembly
@@ -71,11 +70,14 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 		return EBIMResult::Error;
 	}
 
+	// set the displayName of the assembly
+	DisplayName = assemblyPreset->DisplayName.ToString();
+
 	assemblyPreset->TryGetCustomData(LightConfiguration);
 
 	switch (assemblyPreset->ObjectType)
 	{
-		case EObjectType::OTEdgeDetail: 
+		case EObjectType::OTEdgeDetail:
 			ensureAlways(assemblyPreset->TryGetCustomData(EdgeDetailData)); 
 			break;
 		case EObjectType::OTPattern2D:
@@ -305,7 +307,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 			partPreset->TryGetCustomData(partSpec.LightConfiguration);
 			// If this child has a mesh asset ID, this fetch the mesh and use it 
 			FGuid meshAsset;
-			if (partPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
+			if (partPreset->Properties.TryGetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshAsset))
 			{
 				const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(meshAsset);
 				if (!ensureAlways(mesh != nullptr))
@@ -323,7 +325,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 				for (auto& matBinding : bindingSet.MaterialBindings)
 				{
 					FArchitecturalMaterial newMat;
-					if (ensureAlways(matBinding.GetEngineMaterial(PresetCollection, newMat) == EBIMResult::Success))
+					if (ensure(matBinding.GetEngineMaterial(PresetCollection, newMat) == EBIMResult::Success))
 					{
 						partSpec.ChannelMaterials.Add(matBinding.Channel, newMat);
 					}
@@ -517,7 +519,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy&
 			bZalign = !vectorStr.IsEmpty();
 		}
 
-		if (!RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshKey))
+		if (!RootProperties.TryGetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshKey))
 		{
 			return EBIMResult::Error;
 		}
@@ -640,7 +642,6 @@ FModumateUnitValue FBIMAssemblySpec::CalculateThickness() const
 
 EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& PresetCollection)
 {
-	RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name, DisplayName);
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments, Comments);
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code, CodeName);
 

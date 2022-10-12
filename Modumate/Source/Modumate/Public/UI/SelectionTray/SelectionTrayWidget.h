@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Objects/ModumateObjectEnums.h"
-#include "BIMKernel/Core/BIMKey.h"
 
 #include "SelectionTrayWidget.generated.h"
 

@@ -1200,6 +1200,11 @@ const FBIMAssemblySpec &AModumateObjectInstance::GetAssembly() const
 	return CachedAssembly;
 }
 
+FBIMAssemblySpec& AModumateObjectInstance::GetAssembly()
+{
+	return CachedAssembly;
+}
+
 void AModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 {
 	if (bNewLayersReversed != bAssemblyLayersReversed)

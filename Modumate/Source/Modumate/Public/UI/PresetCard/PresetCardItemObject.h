@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "UI/PresetCard/PresetCardMain.h"
 #include "Objects/ModumateObjectEnums.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
 
 #include "PresetCardItemObject.generated.h"

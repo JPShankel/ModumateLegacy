@@ -343,9 +343,9 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &
 		auto isStructuralLayer = [this](int32 LayerIdx)
 		{
 			return 
-				LayerIdx < CachedAssembly.Layers.Num()
+				LayerIdx < GetAssembly().Layers.Num()
 				&& LayerIdx > 0
-				&& CachedAssembly.Layers[LayerIdx].LayerPriority.PriorityGroup == EBIMPresetLayerPriorityGroup::Structure;
+				&& GetAssembly().Layers[LayerIdx].LayerPriority.PriorityGroup == EBIMPresetLayerPriorityGroup::Structure;
 		};
 
 		TArray<FVector2D> previousLinePoints;
@@ -904,7 +904,7 @@ bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBound
 
 void AMOIPlaneHostedObj::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	const int32 numLayers = assembly.Layers.Num();
 	auto assemblyGuid = assembly.UniqueKey();
 	int32 parentID = GetParentID();

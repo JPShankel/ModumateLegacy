@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 
 #include "BIMDesigner.generated.h"

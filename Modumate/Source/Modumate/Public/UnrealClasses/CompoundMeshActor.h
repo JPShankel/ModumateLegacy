@@ -92,7 +92,6 @@ public:
 
 	// Temporary MOI data, used for objects to refer to the data they would use
 	// if they were to become a fully-fledged MOI, by systems like tools.
-	FBIMKey TempAssemblyKey;
 	EToolMode TempObjectToolMode;
 
 	// The part layout that's filled and evaluated by a given assembly;

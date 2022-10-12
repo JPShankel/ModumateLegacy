@@ -6,8 +6,6 @@
 #include "Objects/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
-#include "BIMKernel/Core/BIMKey.h"
-
 #include "BIMKernel/AssemblySpec/BIMLayerSpec.h"
 #include "BIMKernel/AssemblySpec/BIMPartSlotSpec.h"
 #include "BIMKernel/AssemblySpec/BIMExtrusionSpec.h"

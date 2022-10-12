@@ -304,7 +304,7 @@ void AMOIStructureLine::GetDrawingDesignerItems(const FVector& viewDirection, TA
 	}
 
 	TArray<FVector> perimeter;
-	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineNormal, LineUp,
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(GetAssembly(), LineNormal, LineUp,
 		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
 	{
 		return;
@@ -322,7 +322,7 @@ void AMOIStructureLine::GetDrawingDesignerItems(const FVector& viewDirection, TA
 
 void AMOIStructureLine::UpdateQuantities()
 {
-	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FBIMAssemblySpec& assembly = GetAssembly();
 	auto assemblyGuid = assembly.UniqueKey();
 	const AMOIMetaEdgeSpan* spanObject = Cast<AMOIMetaEdgeSpan>(Document->GetObjectById(GetParentID()) );
 	if (!ensure(spanObject))
@@ -421,7 +421,8 @@ void AMOIStructureLine::OnInstPropUIChangedExtensionEnd(float NewValue)
 bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollision)
 {
 	const FSimplePolygon* profile = nullptr;
-	if (!ensure(DynamicMeshActor.IsValid() && UModumateObjectStatics::GetPolygonProfile(&CachedAssembly, profile)))
+	FBIMAssemblySpec ass = GetAssembly();
+	if (!ensure(DynamicMeshActor.IsValid() && UModumateObjectStatics::GetPolygonProfile(&ass, profile)))
 	{
 		return false;
 	}
@@ -453,12 +454,12 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 
 	ProfileFlip.Set(InstanceData.FlipSigns.X, InstanceData.FlipSigns.Y);
 
-	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(GetAssembly(), InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
 	{
 		return false;
 	}
 
-	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineNormal, LineUp,
+	DynamicMeshActor->SetupExtrudedPolyGeometry(GetAssembly(), LineStartPos, LineEndPos, LineNormal, LineUp,
 		InstanceData.OffsetNormal, InstanceData.OffsetUp, InstanceData.Extensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
 
 	return true;
@@ -471,7 +472,7 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<FDraftingComposite>& P
 	OutPerimeters.Reset();
 
 	TArray<FVector> perimeter;
-	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineNormal, LineUp,
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(GetAssembly(), LineNormal, LineUp,
 		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
 	{
 		return;

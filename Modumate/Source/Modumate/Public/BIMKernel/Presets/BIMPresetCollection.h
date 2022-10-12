@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VDPTable.h"
 
-#include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
@@ -16,9 +16,9 @@
 #include "Database/ModumateArchitecturalMesh.h"
 #include "Database/ModumateArchitecturalLight.h"
 
-
 #include "BIMPresetCollection.generated.h"
 
+class UModumateGameInstance;
 static constexpr int32 BIMPresetCollectionCurrentVersion = 8;
 // Version 5 - FBIMPresetForm & BIM deltas
 // Version 6 - Taxonomy added to collection
@@ -72,14 +72,9 @@ struct MODUMATE_API FBIMPresetCollection
 	int32 Version = BIMPresetCollectionCurrentVersion;
 	
 	UPROPERTY()
-	TMap<FName, FBIMPresetTypeDefinition> NodeDescriptors;
-
-	UPROPERTY()
-	TMap<FGuid, FBIMPresetInstance> PresetsByGUID;
+	FVDPTable VDPTable;
 
 	FGuid DefaultMaterialGUID;
-	FString ManifestDirectoryPath;
-
 
 	// Not a UPROPERTY because we don't want it to serialize in saved games
 	// Copied from the object database for convenience
@@ -88,10 +83,35 @@ struct MODUMATE_API FBIMPresetCollection
 	FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID);
 	const FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID) const;
 
-	EBIMResult AddPreset(const FBIMPresetInstance& InPreset);
-	EBIMResult RemovePreset(const FGuid& InGUID);
+	/**
+	 * Adds the preset provided.
+	 * Returns the locally stored copy of the preset in OutPreset.
+	 * Note: InPreset may not necessarily == OutPreset, depending on Origination
+	 */
+	EBIMResult AddPreset(const FBIMPresetInstance& InPreset, FBIMPresetInstance& OutPreset);
+	
+	/**
+	 * Further Processes a Preset
+	 * This does several steps:
+	 * 1) If the preset is a VDP, it will update all references to it's CanonicalBase
+	 *    in OTHER presets to its GUID.
+	 * 2) Populates the Asset Caches in the collection
+	 * 3) Walks mesh references and populates child mesh dimension properties
+	 * 4) Processes all named dimensions and populates the numberMap if needed
+	 * 5) Sets the part sizes from the provided mesh references
+	 * 6) Creates a cached assembly spec
+	 */
+	EBIMResult ProcessPreset(const FGuid& GUID);
 
-	void ReadPresetData(bool bTruncate = true);
+	/**
+	 * Removes a preset from the collection. This assumes that dependent
+	 * ancestor presets and MOIs have already been migrated AWAY from
+	 * the preset being removed.
+	 */
+	EBIMResult RemovePreset(const FGuid& InGUID);
+	
+	bool GetAllPresetKeys(TArray<FGuid>& OutKeys) const;
+	bool Contains(const FGuid& Guid) const;
 
 	//When an assembly can't be found, use a default
 	static TMap<EObjectType, FBIMAssemblySpec> DefaultAssembliesByObjectType;
@@ -100,9 +120,14 @@ struct MODUMATE_API FBIMPresetCollection
 	TSet<FBIMTagPath> AllNCPs;
 
 	EBIMResult PostLoad();
-	EBIMResult ProcessNamedDimensions();
-	EBIMResult ProcessStarterAssemblies(const TArray<FGuid>& StarterPresets);
-	EBIMResult SetPartSizesFromMeshes();
+	EBIMResult ProcessNamedDimensions(FBIMPresetInstance& Preset);
+	EBIMResult ProcessAllNamedDimensions();
+	EBIMResult ProcessMeshReferences(FBIMPresetInstance& Preset);
+	EBIMResult ProcessAllMeshReferences();
+	EBIMResult ProcessAllAssembies();
+	EBIMResult ProcessAssemblyForPreset(FBIMPresetInstance& Preset);
+	EBIMResult SetPartSizesFromMeshes(FBIMPresetInstance& Preset);
+	EBIMResult SetAllPartSizesFromMeshes();
 
 	EObjectType GetPresetObjectType(const FGuid& PresetID) const;
 
@@ -110,24 +135,22 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets, bool bExactMatch = false) const;
 	EBIMResult GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const;
 
-	EBIMResult GetAllDescendentPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
-	EBIMResult GetAllAncestorPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
+	EBIMResult GetDirectCanonicalDescendents(const FGuid& PresetID, TSet<FGuid>& OutCanonicals) const;
+	EBIMResult GetAllDescendentPresets(const FGuid& PresetGUID, TSet<FGuid>& OutPresets) const;
+	EBIMResult GetAllAncestorPresets(const FGuid& PresetGUID, TSet<FGuid>& OutPresets) const;
 
-	EBIMResult GetDescendentPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const;
-	EBIMResult GetAncestorPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const;
+	EBIMResult GetDescendentPresets(const FGuid& InPresetGUID, TSet<FGuid>& OutPresets) const;
+	EBIMResult GetAncestorPresets(const FGuid& InPresetGUID, TSet<FGuid>& OutPresets) const;
 
 	EBIMResult GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate,TArray<FGuid>& OutPresets) const;
 	EBIMResult GetPresetsForSlot(const FGuid& SlotPresetGUID,TArray<FGuid>& OutPresets) const;
-
-	EBIMResult GenerateBIMKeyForPreset(const FGuid& PresetID, FBIMKey& OutKey) const;
+	
 	EBIMResult GetAvailableGUID(FGuid& OutGUID);
-
-	EBIMResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages);
 
 	EBIMResult ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const;
 	EBIMResult GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, TArray<FGuid>& OutAvailablePresets) const;
-
-	EBIMResult GetBlankPresetForObjectType(EObjectType ObjectType, FBIMPresetInstance& OutPreset) const;
+	
+	EBIMResult GetBlankPresetForNCP(FBIMTagPath TagPath, FBIMPresetInstance& OutPreset) const;
 
 	TSharedPtr<FBIMPresetDelta> MakeUpdateDelta(const FBIMPresetInstance& UpdatedPreset, UObject* AnalyticsWorldContextObject = nullptr) const;
 	TSharedPtr<FBIMPresetDelta> MakeUpdateDelta(const FGuid& PresetID, UObject* AnalyticsWorldContextObject = nullptr) const;
@@ -145,10 +168,13 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult RemoveProjectAssemblyForPreset(const FGuid& PresetID);
 	EBIMResult UpdateProjectAssembly(const FBIMAssemblySpec& Assembly);
 	const FBIMAssemblySpec* GetAssemblyByGUID(EToolMode Mode, const FGuid& Key) const;
+	bool ReadInitialPresets(const UModumateGameInstance* GameInstance);
 
 	bool SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const;
-	bool ReadPresetsFromDocRecord(int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord, const FBIMPresetCollection& UntruncatedCollection);
-
+	bool ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord, const UModumateGameInstance* GameInstance);
+	bool UpgradeDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord, const UModumateGameInstance* GameInstance);
+	bool UpgradeMoiStateData(FMOIStateData& InOutMoi, const FBIMPresetCollection& OldCollection,const TMap<FGuid, FBIMPresetInstance>& CustomGuidMap, TSet<FGuid>& OutMissingCanonicals) const;
+	
 	EBIMResult GetWebPresets(FBIMWebPresetCollection& OutPresets, UWorld* World);
 
 	// Datasmith
@@ -186,6 +212,16 @@ struct MODUMATE_API FBIMPresetCollection
 
 	bool operator==(const FBIMPresetCollection& RHS) const;
 	bool operator!=(const FBIMPresetCollection& RHS) const;
+
+protected:
+	UPROPERTY()
+	TMap<FGuid, FBIMPresetInstance> PresetsByGUID;
+
+private:
+	static void PopulateTaxonomyFromCloudSync(FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
+	static void PopulateInitialCanonicalPresetsFromCloudSync(FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
+	static bool PopulateMissingCanonicalPresetsFromCloudSync(const TSet<FGuid> Presets, FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
+	static void ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> JsonObject, FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
 };
 
 class MODUMATE_API FBIMPresetCollectionProxy

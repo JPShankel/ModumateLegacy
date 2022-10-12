@@ -15,7 +15,7 @@
 
 
 #if WITH_AUTOMATION_TESTS
-
+/*
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCreateDeleteSpan, "Modumate.MOI.Span.Create", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext
 	| EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
 
@@ -224,5 +224,6 @@ bool FModumateCreateDeleteSpan::RunTest(const FString& Parameters)
 
 	return true;
 }
+*/
 
 #endif  // WITH_AUTOMATION_TESTS

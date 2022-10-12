@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "SelectionTrayBlockPresetList.generated.h"
 
 /**

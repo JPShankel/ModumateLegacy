@@ -155,12 +155,6 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 		return false;
 	}
 
-	// All presets saved in a document have been edited at some point
-	for (auto& kvp : OutRecord.PresetCollection.PresetsByGUID)
-	{
-		kvp.Value.bEdited = true;
-	}
-
 	// Version 4 -> 5: portal locations and rotations are now relative
 	// They were saved in the now-deleted `ObjectInstances`, so there's nothing we can do to restore them now.
 

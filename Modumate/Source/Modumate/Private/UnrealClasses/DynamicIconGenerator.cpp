@@ -1333,9 +1333,9 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconFromColor(const FBIMKey& ColorHex, UMaterialInterface*& OutMaterial)
+bool ADynamicIconGenerator::SetIconFromColor(const FString& ColorHex, UMaterialInterface*& OutMaterial)
 {
-	FLinearColor iconColor = FColor::FromHex(ColorHex.ToString());
+	FLinearColor iconColor = FColor::FromHex(ColorHex);
 	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconColorMaterial, this);
 	dynMat->SetVectorParameterValue(MaterialColorParamName, iconColor);
 	OutMaterial = dynMat;

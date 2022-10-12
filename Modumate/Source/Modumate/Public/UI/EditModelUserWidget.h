@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/Core/BIMKey.h"
-
 #include "Objects/ModumateObjectEnums.h"
 #include "EditModelUserWidget.generated.h"
 

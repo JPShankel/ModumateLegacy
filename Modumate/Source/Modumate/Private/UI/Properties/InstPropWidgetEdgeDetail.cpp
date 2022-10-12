@@ -199,7 +199,8 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 	if (!NewDetailPresetID.IsValid() && !bClearingDetail)
 	{
 		FBIMPresetInstance newDetailPreset;
-		if (!ensure((presetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, newDetailPreset) == EBIMResult::Success) &&
+		FBIMTagPath edgeDetalNCP = FBIMTagPath(TEXT("Property_Spatiality_ConnectionDetail_Edge"));
+		if (!ensure((presetCollection.GetBlankPresetForNCP(edgeDetalNCP, newDetailPreset) == EBIMResult::Success) &&
 			newDetailPreset.SetCustomData(newDetailData)==EBIMResult::Success))
 		{
 			return false;

@@ -80,8 +80,10 @@ protected:
 	UFUNCTION()
 	void OnAutoUploadTimer();
 
-	void OnDownloadDocumentSuccess(const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty);
+	void OnDownloadDocumentSuccess(const FModumateDocumentHeader& DocHeader, FMOIDocumentRecord& DocRecord, bool bEmpty);
 	void OnDownloadDocumentFailure(int32 ErrorCode, const FString& ErrorMessage);
+
+	
 	void OnUploadedDocument(bool bSuccess, uint32 UploadedDocHash);
 	void OnReceivedProjectInfo(const FProjectInfoResponse& InProjectInfo);
 };

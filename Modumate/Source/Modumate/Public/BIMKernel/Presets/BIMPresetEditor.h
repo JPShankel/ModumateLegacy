@@ -18,7 +18,7 @@ class FBIMPresetEditorNode;
 
 /*
 	FBIMPresetEditor contains all the context information for editing presets.
-	Node descriptors, preset definitions and preset lists are read in via BIMCSVReader
+	Node descriptors, preset definitions and preset lists are retreived from the asset database
 	The crafting widget and preset manager use this node set to implement the crafting interface
 */
 

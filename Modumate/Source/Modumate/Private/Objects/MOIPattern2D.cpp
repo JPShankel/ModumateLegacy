@@ -101,8 +101,8 @@ void AMOIPattern2D::UpdateDynamicGeometry()
 		int32 xFlexTotalWeight = 0;
 		int32 yFlexTotalWeight = 0;
 		FBIMPatternSequence xPatternElements, yPatternElements;
-		xPatternElements = CachedAssembly.PatternData.SequenceX;
-		yPatternElements = CachedAssembly.PatternData.SequenceY;
+		xPatternElements = GetAssembly().PatternData.SequenceX;
+		yPatternElements = GetAssembly().PatternData.SequenceY;
 		//calculate essential element x length
 		for (FBIMPatternSegment& patternAxisDataX : xPatternElements.Segments)
 		{

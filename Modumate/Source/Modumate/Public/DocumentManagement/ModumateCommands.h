@@ -39,6 +39,7 @@ namespace ModumateCommands
 
 	// BIM
 	MODUMATE_COMMAND(kBIMDebug, "bim_debug");
+	MODUMATE_COMMAND(kDumpPreset, "dump_preset");
 
 	// Design Options
 	MODUMATE_COMMAND(kDesignOption, "design_option");

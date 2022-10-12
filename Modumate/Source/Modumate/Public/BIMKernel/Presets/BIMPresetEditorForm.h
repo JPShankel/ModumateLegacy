@@ -21,6 +21,7 @@ enum class EBIMPresetEditorField : uint8
 	TextProperty,
 	NumberProperty,
 	AssetProperty,
+	NameProperty,
 	DimensionProperty,
 	MaterialBinding,
 	LayerPriorityGroup,
