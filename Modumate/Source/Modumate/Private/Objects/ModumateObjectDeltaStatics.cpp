@@ -74,8 +74,18 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 			else if (moi->GetObjectType() == EObjectType::OTMetaGraph)
 			{
 				TArray<int32> allVertexIDs;
+				TSet<AModumateObjectInstance*> groupMembers;
 				doc->GetVolumeGraph(id)->GetVertices().GenerateKeyArray(allVertexIDs);
 				OutTransformableIDs.Append(allVertexIDs);
+				UModumateObjectStatics::GetObjectsInGroups(doc, { id }, groupMembers);
+				for (const auto* object : groupMembers)
+				{
+					if (object->GetObjectType() == EObjectType::OTFurniture)
+					{
+						OutTransformableIDs.Add(object->ID);
+					}
+				}
+				OutTransformableIDs.Add(moi->ID);  // Add group itself.
 			}
 			else if (moi->GetParentObject() && 
 					(moi->GetParentObject()->GetObjectType() == EObjectType::OTMetaEdgeSpan ||
@@ -1309,9 +1319,12 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 		}
 		else
 		{
-			const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(id));
-			if (ensure(groupMoi))
+			const AModumateObjectInstance* moi = Doc->GetObjectById(id);
+			switch (moi->GetObjectType())
 			{
+			case EObjectType::OTMetaGraph:
+			{
+				const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(moi);
 				FMOIStateData groupData(groupMoi->GetStateData());
 				FMOIStateData oldGroupData(groupData);
 				FMOIMetaGraphData groupCustomData;
@@ -1326,6 +1339,22 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 				oldGroupData.CustomData.SaveStructData(groupCustomData, UE_EDITOR);
 
 				moiDelta->AddMutationState(groupMoi, oldGroupData, groupData);
+				break;
+			}
+
+			case EObjectType::OTFurniture:
+			{
+				FMOIStateData oldState = moi->GetStateData();
+				FMOIStateData newState(oldState);
+				moi->GetTransformedLocationState(kvp.Value, oldState);
+				moi->GetTransformedLocationState(kvp.Value * transform, newState);
+				moiDelta->AddMutationState(moi, oldState, newState);
+				break;
+			}
+
+			default:
+				check(false);
+				break;
 			}
 		}
 	}

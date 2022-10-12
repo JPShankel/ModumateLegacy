@@ -89,10 +89,6 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 
 	vertexIDs.Reset();
 	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedGroupObjects.Array(), doc, vertexIDs);
-	if (vertexIDs.Num() > 0)
-	{
-		vertexIDs.Append(OriginalSelectedGroupObjects);  // Add group postitions themselves.
-	}
 	for (int32 id : vertexIDs)
 	{
 		auto obj = doc->GetObjectById(id);
