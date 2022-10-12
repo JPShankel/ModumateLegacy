@@ -4410,13 +4410,23 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 		//take screenshot
 		FString currentFilename = CurrentCameraView->InstanceData.Name;
 		currentFilename.Append(TEXT(".png"));
+		TArray<float> originalWeights;
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+		FPostProcessSettings screenshotTakerPPV = EMPlayerPawn->ScreenshotTaker->PostProcessSettings;
+		FWeightedBlendables oldBlendablesList, newBlendablesList;
+		oldBlendablesList = ppv->Settings.WeightedBlendables;
+		for (auto material : ppv->Settings.WeightedBlendables.Array)
+		{
+			newBlendablesList.Array.Add(FWeightedBlendable(0.0f, material.Object));
+		}
+		ppv->Settings.WeightedBlendables = newBlendablesList;
 		CaptureScreen(SSFilepath, currentFilename, CurrentCameraView->InstanceData.FOV);
+		ppv->Settings.WeightedBlendables = oldBlendablesList;
 		if (RTSSCameraViews.Num() == 0)
 		{
 			bScreenshotInProgress = false;
 			//restore player camera and skylight
 			UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
-			APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
 			if (ppv != nullptr && RTSettings != nullptr)
 			{
 				RTSettings->Init();
@@ -4429,7 +4439,6 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 			EMPlayerPawn->SetActorLocationAndRotation(OriginalPlayerTransform.GetLocation(), OriginalPlayerTransform.GetRotation());
 			SkyActor->SetCurrentDateTime(OriginalDateTime);
 			EMPlayerPawn->ScreenshotTaker->bCaptureEveryFrame = false;
-			
 			//TODO: re-enable user input
 			return;
 		}
@@ -4437,7 +4446,6 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 		CurrentCameraView = RTSSCameraViews.Pop();
 		//update player camera and skylight to camera view settings
 		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
-		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
 		if (ppv != nullptr && RTSettings != nullptr)
 		{
 			RTSettings->Init();
@@ -4523,8 +4531,17 @@ void AEditModelPlayerController::CaptureCameraView(FString Filepath, const AMOIC
 	//need to call clean objects so that the change happens to the mois immediately
 	FString currentFilename = CameraView->InstanceData.Name;
 	currentFilename.Append(TEXT(".png"));
+
+	FWeightedBlendables oldBlendablesList, newBlendablesList;
+	oldBlendablesList = ppv->Settings.WeightedBlendables;
+	for (auto material : ppv->Settings.WeightedBlendables.Array)
+	{
+		newBlendablesList.Array.Add(FWeightedBlendable(0.0f, material.Object));
+	}
+	ppv->Settings.WeightedBlendables = newBlendablesList;
 	CaptureScreen(Filepath, currentFilename, CameraView->InstanceData.FOV);
-	
+	ppv->Settings.WeightedBlendables = oldBlendablesList;
+
 	//restore original settings
 	EMPlayerPawn->SetActorLocationAndRotation(originalTransform.GetLocation(), originalTransform.GetRotation());
 	
