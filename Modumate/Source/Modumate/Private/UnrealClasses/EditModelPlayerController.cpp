@@ -4469,7 +4469,7 @@ void AEditModelPlayerController::CaptureScreen(FString Filepath, FString Filenam
 		return;
 	}
 	//EMPlayerPawn->ScreenshotTaker->SetWorldTransform(EMPlayerPawn->GetActorTransform());
-	//EMPlayerPawn->ScreenshotTaker->FOVAngle = FOV;
+	EMPlayerPawn->ScreenshotTaker->FOVAngle = FOV;
 	// Create render target
 	UTextureRenderTarget2D* screenshotRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, screenshotWidth, screenshotHeight, ETextureRenderTargetFormat::RTF_RGBA8_SRGB);
 	EMPlayerPawn->ScreenshotTaker->TextureTarget = screenshotRT;
