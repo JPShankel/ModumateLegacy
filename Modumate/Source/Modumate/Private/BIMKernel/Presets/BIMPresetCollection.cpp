@@ -1861,7 +1861,9 @@ void FBIMPresetCollection::PopulateInitialCanonicalPresetsFromCloudSync(FBIMPres
 
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 	FString currentVersion = projectSettings->ProjectVersion;
-	FString endpoint = TEXT("/assets/presets?StartsInProject=1&version=") + currentVersion;
+	//TODO: Fix endpoint for startsInProject to cache so this doesn't take ~10 seconds to load
+	//FString endpoint = TEXT("/assets/presets?StartsInProject=1&version=") + currentVersion;
+	FString endpoint = TEXT("/assets/presets?version=") + currentVersion;
 	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
 		//Customizer
 		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
