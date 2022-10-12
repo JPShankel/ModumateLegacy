@@ -847,6 +847,9 @@ bool FModumatePlatform::ConsumeTempMessage(FString& OutMessage)
 	return false;
 }
 
+void FModumatePlatform::PickContainer(FString& Filepath)
+{
+}
 
 #endif
 
