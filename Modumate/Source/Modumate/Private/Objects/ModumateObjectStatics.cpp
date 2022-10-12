@@ -1104,6 +1104,14 @@ void UModumateObjectStatics::GetTerrainSurfaceObjectEnabledFlags(const AModumate
 	const auto& polygons = graph2d->GetPolygons();
 	for (const auto& polygonKvp : polygons)
 	{
+		// Terrain vertices and edges visibility follow the parent's vsibility, using one of the following conditions:
+		// 1. Always follow visibility of parent polygon, regardless its status to parent perimeter 
+		// 2. Only follow visibility of parent polygon if it's part of the completed perimeter
+#if 1
+		bOutVisible = terrainMoi->GetIsTranslucent() && !terrainMoi->IsRequestedHidden();
+		bOutCollisionEnabled = bOutVisible; // Assume collision is always equal to its visibility?
+		return;
+#else
 		if (polygonKvp.Value.bInterior)
 		{
 			const FGraph2DPolygon* polygonInterior = graph2d->FindPolygon(polygonKvp.Key);
@@ -1127,6 +1135,7 @@ void UModumateObjectStatics::GetTerrainSurfaceObjectEnabledFlags(const AModumate
 				}
 			}
 		}
+#endif
 	}
 }
 
