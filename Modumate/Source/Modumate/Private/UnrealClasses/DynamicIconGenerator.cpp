@@ -16,6 +16,7 @@
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -1280,6 +1281,11 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 			{
 				SceneCaptureComp->ShowOnlyActorComponents(object->GetActor());
 			}
+		}
+
+		if (ensure(Controller->SkyActor))
+		{
+			SceneCaptureComp->ShowOnlyActorComponents(Controller->SkyActor);
 		}
 
 		FBox groupBox(ForceInit);
