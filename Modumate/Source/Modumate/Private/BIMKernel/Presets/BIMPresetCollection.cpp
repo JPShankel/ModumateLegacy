@@ -989,6 +989,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 	// Parse the default material GUID
 	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
 	PopulateTaxonomyFromCloudSync(*this, GameInstance);
+	DocRecord.PresetCollection.PresetTaxonomy = this->PresetTaxonomy;
 	
 	//Upgrade any presets in the document that need upgrading
 	// Because upgrading may change other presets in the collection
@@ -1124,7 +1125,6 @@ bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocument
 	if(DocRecordVersion < 24)
 	{
 		FBIMPresetCollection& oldCollection = DocRecord.PresetCollection;
-		PopulateTaxonomyFromCloudSync(oldCollection, GameInstance);
 		
 		//Replace GUIDs in the doc record
 		TMap<FGuid, FBIMPresetInstance> oldToInvented;
@@ -1862,8 +1862,7 @@ void FBIMPresetCollection::PopulateInitialCanonicalPresetsFromCloudSync(FBIMPres
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 	FString currentVersion = projectSettings->ProjectVersion;
 	//TODO: Fix endpoint for startsInProject to cache so this doesn't take ~10 seconds to load
-	//FString endpoint = TEXT("/assets/presets?StartsInProject=1&version=") + currentVersion;
-	FString endpoint = TEXT("/assets/presets?version=") + currentVersion;
+	FString endpoint = TEXT("/assets/presets?StartsInProject=1&version=") + currentVersion;
 	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
 		//Customizer
 		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
