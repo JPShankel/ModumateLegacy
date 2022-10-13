@@ -23,6 +23,15 @@ bool UMoveObjectTool::Activate()
 {
 	Super::Activate();
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	// Release previous stored values before activating
+	if (OriginalTransforms.Num() ||
+		OriginalGroupTransforms.Num() ||
+		OriginalSelectedObjects.Num() ||
+		OriginalSelectedGroupObjects.Num() ||
+		GroupCopyDeltas.Num())
+	{
+		ReleaseSelectedObjects();
+	}
 	return true;
 }
 

@@ -83,8 +83,10 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 		{
 			continue;
 		}
-
-		moi->RequestCollisionDisabled(StateRequestTag, true);
+		if (!moi->IsCollisionRequestedDisabled())
+		{
+			moi->RequestCollisionDisabled(StateRequestTag, true);
+		}
 	}
 
 	vertexIDs.Reset();
