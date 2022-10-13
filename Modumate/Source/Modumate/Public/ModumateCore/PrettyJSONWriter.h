@@ -12,15 +12,15 @@ typedef TJsonWriter< TCHAR, TPrettyJsonPrintPolicy<TCHAR> > FPrettyJsonStringWri
 template <class T>
 static bool WriteJsonGeneric(FString& OutJson, const T* InObject)
 {
-	bool bStandardizeCase = FJsonObjectConverter::bStandardizeCase;
-	FJsonObjectConverter::bStandardizeCase = false;
+	bool bFixID = FJsonObjectConverter::bFixID;
+	FJsonObjectConverter::bFixID = false;
 
 	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<T>(*InObject);
 	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&OutJson);
 
 	//Return it prettified
 	bool bSuccess = FJsonSerializer::Serialize(docOb.ToSharedRef(), JsonStringWriter);
-	FJsonObjectConverter::bStandardizeCase = bStandardizeCase;
+	FJsonObjectConverter::bFixID = bFixID;
 
 	return bSuccess;
 };
