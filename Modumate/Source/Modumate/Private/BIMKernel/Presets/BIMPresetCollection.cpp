@@ -667,6 +667,25 @@ EBIMResult FBIMPresetCollection::AddPreset(const FBIMPresetInstance& InPreset, F
 		{
 			PresetsByGUID.Add(InPreset.GUID, InPreset);
 			OutPreset = PresetsByGUID[InPreset.GUID];
+			
+			//Not Canonical, but still needs to be in VDP table
+			if(InPreset.Origination == EPresetOrigination::EditedDerived ||
+				InPreset.Origination == EPresetOrigination::VanillaDerived)
+			{
+				if(ensure(InPreset.CanonicalBase.IsValid()))
+				{
+					FGuid canon;
+					if(VDPTable.HasDerived(InPreset.GUID) &&
+						VDPTable.GetAssociated(InPreset.GUID, canon))
+					{
+						ensure(InPreset.CanonicalBase == canon);
+					}
+					else
+					{
+						VDPTable.Add(InPreset.CanonicalBase, InPreset.GUID);
+					}				
+				}
+			}
 			rtn = EBIMResult::Success;
 		}
 	}
