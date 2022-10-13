@@ -687,6 +687,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		allGroupIDs.Add(UModumateObjectStatics::GetGroupIdForObject(Doc, itemId));
 	}
 	
+	// Transform from the propagator to the canonical space.
 	FTransform masterTransform(groupMoi->GetWorldTransform().Inverse());
 
 	FBIMSymbolPresetData newSymbolData;
@@ -709,7 +710,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		if (otherGroupMoi)
 		{
 			FModumateObjectDeltaStatics::GetDeltasForGraphDelete(Doc, otherGroup, OutDeltas, false);
-			FTransform transform(masterTransform * otherGroupMoi->GetWorldTransform());
+			FTransform transform(otherGroupMoi->GetWorldTransform());
 			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, newSymbolData, transform, OutDeltas));
 		}
 	}
