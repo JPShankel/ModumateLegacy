@@ -4,6 +4,7 @@
 
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 
 #include "ModumateCore/EnumHelpers.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -1484,6 +1485,23 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 
 void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World)
 {
+
+	// TODO: the only custom data that does not work with properties currently is Symbols
+	// This needs to be fixed and there is a ticket for it. This is a bugfix for the release of 3.4
+	FPresetCustomDataWrapper presetCustomData;
+	if (ReadJsonGeneric<FPresetCustomDataWrapper>(InPreset.customDataJSON, &presetCustomData)) {
+		// we only want the symbols custom data.
+		FName symbolStructName(FBIMSymbolPresetData::StaticStruct()->GetName());
+		auto* symbolCustomData = presetCustomData.CustomDataWrapper.Find(symbolStructName);
+		if (symbolCustomData != nullptr)
+		{
+				auto& addedVal = CustomDataByClassName.Add(symbolStructName, *symbolCustomData);
+				addedVal.LoadFromJson();
+		}
+	}
+
+
+	
 	TMap<EPresetPropertyMatrixNames, TMap<FString, TArray<FString>>> propertyMap;
 	
 	for (auto& presetProp : InPreset.properties)
