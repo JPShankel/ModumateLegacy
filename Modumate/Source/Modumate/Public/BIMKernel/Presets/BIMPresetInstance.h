@@ -277,19 +277,12 @@ struct MODUMATE_API FBIMPresetInstance
 
 	EBIMResult SetMaterialChannelsForMesh(const FBIMPresetCollection& PresetCollection, const FGuid& InMeshGuid);
 
-	bool ValidatePreset() const;
+	bool CheckChildrenForErrors() const;
+	bool EnsurePresetIsValidForUse() const;
 
 	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth,float& OutThickness) const;
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
 	EBIMResult FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World);
-
-	/**
-	 * For Canonical Presets, this method copies the preset in to a 
-     * VanillaDerived Copy w/ the provided GUID. It is up to the caller
-     * to add it to the BIM Collection and VDP tables.
-     * TODO: Clean up the Collection<>Preset interface -JN
-	 */
-	FBIMPresetInstance Derive(const FGuid& NewGUID) const;
 
 	void ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World);
 	void ConvertCustomDataToWebProperties(FBIMWebPreset& OutPreset, UWorld* World) const;

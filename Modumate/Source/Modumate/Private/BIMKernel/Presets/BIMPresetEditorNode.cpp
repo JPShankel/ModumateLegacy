@@ -349,7 +349,7 @@ bool FBIMPresetEditorNode::ValidateNode() const
 
 		previousPtr = childPtr;
 	}
-	return Preset.ValidatePreset();
+	return Preset.CheckChildrenForErrors();
 }
 
 /*

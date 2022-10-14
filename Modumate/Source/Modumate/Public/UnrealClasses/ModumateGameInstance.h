@@ -162,7 +162,8 @@ public:
 
 private:
 	void DumpPresetToFile(const FGuid& Key) const;
-	
+	void DumpBimCollection(const FString& FileName, const FBIMPresetCollection& Collection) const;
+
 public:
 	void BringViewportWindowToFront();
 	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);

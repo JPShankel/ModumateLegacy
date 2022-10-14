@@ -43,13 +43,21 @@ bool FVDPTable::HasCanonical(const FGuid& guid) const
 	return BtoA.Contains(guid);
 }
 
-bool FVDPTable::Remove(const FGuid& Derived)
+bool FVDPTable::Remove(const FGuid& Value)
 {
-	if(ensure(AtoB.Contains(Derived)))
+	if(AtoB.Contains(Value))
 	{
-		const FGuid Canonical = AtoB[Derived];
-		AtoB.Remove(Derived);
+		const FGuid Canonical = AtoB[Value];
+		AtoB.Remove(Value);
 		BtoA.Remove(Canonical);
+		return true;
+	}
+
+	if (BtoA.Contains(Value))
+	{
+		const FGuid Derived = BtoA[Value];
+		AtoB.Remove(Derived);
+		BtoA.Remove(Value);
 		return true;
 	}
 

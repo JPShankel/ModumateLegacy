@@ -18,6 +18,7 @@ namespace ModumateCommands
 	MODUMATE_COMMAND(kReanalyzeGraph, "reanalyze_graph");
 	MODUMATE_COMMAND(kCleanAllObjects, "clean_all_objects");
 	MODUMATE_COMMAND(kReplayDeltas, "replay_deltas");
+	MODUMATE_COMMAND(kValidateCbor, "validate_cbor");
 
 	// Edit environment commands
 	MODUMATE_COMMAND(kSetFOV, "set_fov");

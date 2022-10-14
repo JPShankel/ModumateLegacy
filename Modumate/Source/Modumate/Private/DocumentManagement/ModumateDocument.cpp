@@ -1089,11 +1089,11 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 	
 	if (PresetDelta.NewState.GUID.IsValid())
 	{
-		bool bIsNewPreset = !BIMPresetCollection.Contains(PresetDelta.NewState.GUID);
+		bool bIsNewPreset = !BIMPresetCollection.ContainsNonCanon(PresetDelta.NewState.GUID);
 
 
 		FBIMPresetInstance CollectionPreset;
-		BIMPresetCollection.AddPreset(PresetDelta.NewState, CollectionPreset);
+		BIMPresetCollection.AddOrUpdatePreset(PresetDelta.NewState, CollectionPreset);
 		BIMPresetCollection.ProcessPreset(CollectionPreset.GUID);
 
 		// Find all affected presets and update affected assemblies
@@ -3561,6 +3561,11 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
+	if (InHeader.Version < DocVersion)
+	{
+		bInitialDocumentDirty = true;
+	}
+	
 	for (const auto* spanMoi : GetObjectsOfType({ EObjectType::OTMetaEdgeSpan, EObjectType::OTMetaPlaneSpan }))
 	{
 		UpdateSpanData(spanMoi);

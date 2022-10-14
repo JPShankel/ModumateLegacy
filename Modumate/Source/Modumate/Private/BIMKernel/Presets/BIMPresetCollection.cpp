@@ -613,85 +613,28 @@ const FBIMPresetInstance* FBIMPresetCollection::PresetFromGUID(const FGuid& InGU
 	return PresetsByGUID.Find(VDPTable.TranslateToDerived(InGUID));
 }
 
-EBIMResult FBIMPresetCollection::AddPreset(const FBIMPresetInstance& InPreset, FBIMPresetInstance& OutPreset)
+EBIMResult FBIMPresetCollection::AddOrUpdatePreset(const FBIMPresetInstance& InPreset, FBIMPresetInstance& OutPreset)
 {
-	EBIMResult rtn = EBIMResult::Error;
-	if (ensureAlways(InPreset.GUID.IsValid()))
+	if(!InPreset.EnsurePresetIsValidForUse())
 	{
-		if(InPreset.Origination == EPresetOrigination::Canonical)
+		return EBIMResult::Error;
+	}
+	
+	if(InPreset.Origination != EPresetOrigination::Invented)
+	{
+		//Update the VDP Table
+		if(VDPTable.HasCanonical(InPreset.CanonicalBase))
 		{
-			//There are two possibilities when adding a canonical preset currently:
-			// 1) The preset is ALREADY in our VDP table (we already have a VDP/EDP for it). Return it.
-			// 2) The preset is NOT in our VDP table - create and add
-			if(VDPTable.HasCanonical(InPreset.GUID))
-			{
-				FBIMPresetInstance vdp;
-				FGuid vdpGuid;
-				if(ensure(VDPTable.GetAssociated(InPreset.GUID, vdpGuid)))
-				{
-					//There is an Derived preset already in the collection
-					// Use that one. This promotes user edits into canonical
-					// references. Note that this branch can be a VDP too. If,
-					// for instance, the user adds a marketplace item twice.
-					if(PresetsByGUID.Contains(vdpGuid))
-					{
-						OutPreset = PresetsByGUID[vdpGuid];
-						rtn = EBIMResult::Success;
-					}
-					//There is no preset w/ that Associated GUID existing. The assumption
-					// here is that it's a VDP -- NOT EDP.
-					// EDP's should already be added by this point through the
-					// ReadPresetsFromDocRecord() method.
-					else
-					{
-						vdp = InPreset.Derive(vdpGuid);
-						PresetsByGUID.Add(vdp.GUID, vdp);
-						OutPreset = PresetsByGUID[vdp.GUID];
-					}
-				}
-			}
-			else
-			{
-				FGuid NewGuid;
-				if(ensure(GetAvailableGUID(NewGuid) == EBIMResult::Success))
-				{
-					auto vdp = InPreset.Derive(NewGuid);
-					VDPTable.Add(InPreset.GUID, vdp.GUID);
-					PresetsByGUID.Add(vdp.GUID, vdp);
-					OutPreset = vdp;
-					rtn = EBIMResult::Success;
-				}		
-			}
+			VDPTable.Remove(InPreset.CanonicalBase);
 		}
-		else
-		{
-			PresetsByGUID.Add(InPreset.GUID, InPreset);
-			OutPreset = PresetsByGUID[InPreset.GUID];
-			
-			//Not Canonical, but still needs to be in VDP table
-			if(InPreset.Origination == EPresetOrigination::EditedDerived ||
-				InPreset.Origination == EPresetOrigination::VanillaDerived)
-			{
-				if(ensure(InPreset.CanonicalBase.IsValid()))
-				{
-					FGuid canon;
-					if(VDPTable.HasDerived(InPreset.GUID) &&
-						VDPTable.GetAssociated(InPreset.GUID, canon))
-					{
-						ensure(InPreset.CanonicalBase == canon);
-					}
-					else
-					{
-						VDPTable.Add(InPreset.CanonicalBase, InPreset.GUID);
-					}				
-				}
-			}
-			rtn = EBIMResult::Success;
-		}
+		VDPTable.Add(InPreset.CanonicalBase, InPreset.GUID);
 	}
 
+	//Update the Presets Table
+	PresetsByGUID.Add(InPreset.GUID, InPreset);
+	OutPreset = PresetsByGUID[InPreset.GUID];
 	
-	return rtn;
+	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetCollection::ProcessPreset(const FGuid& GUID)
@@ -745,25 +688,9 @@ EBIMResult FBIMPresetCollection::RemovePreset(const FGuid& InGUID)
 	if (preset != nullptr)
 	{
 		//TODO: Figure out how the UX works around removing VDPs and EDPs -JN
-#if WITH_EDITOR
-		if(ensureAlways(preset->Origination != EPresetOrigination::Canonical))
-		{
-			if(preset->Origination != EPresetOrigination::Invented)
-			{
-				if(ensureAlways(VDPTable.Contains(preset->GUID)))
-				{
-					VDPTable.Remove(InGUID);
-					PresetsByGUID.Remove(preset->GUID);
-					return EBIMResult::Success;
-				}
-			}
-		}
-#else
-		
 		VDPTable.Remove(InGUID);
-		PresetsByGUID.Remove(preset->GUID);
+		PresetsByGUID.Remove(InGUID);
 		return EBIMResult::Success;
-#endif
 	}
 	return EBIMResult::Error;
 }
@@ -774,7 +701,7 @@ bool FBIMPresetCollection::GetAllPresetKeys(TArray<FGuid>& OutKeys) const
 	return true;
 }
 
-bool FBIMPresetCollection::Contains(const FGuid& Guid) const
+bool FBIMPresetCollection::ContainsNonCanon(const FGuid& Guid) const
 {
 	return PresetsByGUID.Contains(Guid);
 }
@@ -820,8 +747,9 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDuplicateDelta(const FGuid
 
 	if (ensureAlways(!NewPreset.GUID.IsValid()))
 	{
-		NewPreset.ParentGUID = original->GUID;
 		NewPreset = *original;
+		NewPreset.Origination = EPresetOrigination::Invented;
+		NewPreset.ParentGUID = original->GUID;
 		NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Duplicate of {0}"), NewPreset.DisplayName);
 
 		GetAvailableGUID(NewPreset.GUID);
@@ -1005,6 +933,8 @@ bool FBIMPresetCollection::ReadInitialPresets(const UModumateGameInstance* GameI
 */
 bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord, const UModumateGameInstance* GameInstance)
 {
+	*this = FBIMPresetCollection();
+	
 	// Parse the default material GUID
 	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
 	PopulateTaxonomyFromCloudSync(*this, GameInstance);
@@ -1014,17 +944,38 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 	// Because upgrading may change other presets in the collection
 	// and Adding presets is done by Value, we need to upgrade ALL
 	// before adding to the collection.
-	for (TTuple<FGuid, FBIMPresetInstance>& kvp : DocRecord.PresetCollection.PresetsByGUID)
+	auto world = GameInstance->GetWorld();
+	bool bShouldUpgradeData = false;
+	if (world)
 	{
-		kvp.Value.UpgradeData(DocRecord.PresetCollection, DocRecordVersion);
+		auto state = Cast<AEditModelGameState>(world->GetGameState());
+		if(state)
+		{
+			bShouldUpgradeData = !state->IsNetMode(NM_Client);
+		}
 	}
-	UpgradeDocRecord(DocRecordVersion, DocRecord, GameInstance);
+
+	//Only the server or standalone clients should upgrade the preset collection
+	if(bShouldUpgradeData)
+	{
+		for (TTuple<FGuid, FBIMPresetInstance>& kvp : DocRecord.PresetCollection.PresetsByGUID)
+		{
+			kvp.Value.UpgradeData(DocRecord.PresetCollection, DocRecordVersion);
+		}
+		UpgradeDocRecord(DocRecordVersion, DocRecord, GameInstance);	
+	}
+	else if(!ensure(DocRecordVersion == DocVersion))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could not upgrade BIMPresetCollection"));
+		return false;
+	}
 	
 	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
 	
 	//Read in VDP table -- This needs to occur before any presets are added.
 	VDPTable = docPresets.VDPTable;
 
+	auto count = 0;
 	for (auto& kvp : docPresets.PresetsByGUID)
 	{
 		
@@ -1032,9 +983,14 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 		    kvp.Value.Origination == EPresetOrigination::Invented)
 		{
 			FBIMPresetInstance CollectionPreset;
-			AddPreset(kvp.Value, CollectionPreset);	
+			AddOrUpdatePreset(kvp.Value, CollectionPreset);	
+		}
+		else
+		{
+			count++;
 		}
 	}
+	UE_LOG(LogTemp, Log, TEXT("Ignored %d Vanilla Derived presets while loading record"), count);
 
 	PopulateInitialCanonicalPresetsFromCloudSync(*this, GameInstance);
 	
@@ -1047,7 +1003,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 			neededPresets.Add(VDPTable.TranslateToCanonical(derived));
 		}
 	}
-		
+
 	//Query the web for said presets
 	PopulateMissingCanonicalPresetsFromCloudSync(neededPresets, *this, GameInstance);
 	
@@ -1158,12 +1114,15 @@ bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocument
 			oldToInvented.Add(oldGuid, preset);
 		}
 
+		auto count = oldCollection.PresetsByGUID.Num();
 		//Remove and re-add to fix key
 		for(auto& kvp : oldToInvented)
 		{
-			oldCollection.RemovePreset(kvp.Key);
-			oldCollection.AddPreset(kvp.Value, kvp.Value);
+			ensure(oldCollection.RemovePreset(kvp.Key) != EBIMResult::Error);
+			ensure(oldCollection.AddOrUpdatePreset(kvp.Value, kvp.Value) != EBIMResult::Error);
 		}
+
+		ensure(oldCollection.PresetsByGUID.Num() == count);
 
 		//Get all the initial presets that are typical in post-24
 		PopulateInitialCanonicalPresetsFromCloudSync(oldCollection, GameInstance);
@@ -1175,7 +1134,6 @@ bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocument
 		TArray<FMOIStateData*> fixMeAfterMissingPresetsArePopulated;
 		for(FMOIStateData& objectData : DocRecord.ObjectData)
 		{
-			auto count = missingCanonicalPresets.Num();
 			if(!UpgradeMoiStateData(objectData, oldCollection, oldToInvented, missingCanonicalPresets))
 			{
 				fixMeAfterMissingPresetsArePopulated.Add(&objectData);
@@ -1210,7 +1168,7 @@ bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocument
 			{
 				if(dataPtr->AssemblyGUID.IsValid())
 				{
-					ensure(oldCollection.Contains(dataPtr->AssemblyGUID));	
+					ensure(oldCollection.ContainsNonCanon(dataPtr->AssemblyGUID));	
 				}
 			}
 		}
@@ -1222,9 +1180,6 @@ bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocument
 				if(preset.Value.ReplaceImmediateChildGuid(oti.Key, oti.Value.GUID))
 				{
 					ensure(oldCollection.PresetsByGUID.Contains(oti.Value.GUID));
-					
-					ensure(preset.Value.Origination != EPresetOrigination::Unknown);
-					ensure(preset.Value.Origination != EPresetOrigination::Canonical);
 					if(preset.Value.Origination == EPresetOrigination::VanillaDerived)
 					{
 						preset.Value.Origination = EPresetOrigination::EditedDerived;
@@ -1259,7 +1214,7 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 				}
 
 				FBIMPresetInstance CollectionPreset;
-				DocRecord.PresetCollection.AddPreset(serializedPreset, CollectionPreset);
+				DocRecord.PresetCollection.AddOrUpdatePreset(serializedPreset, CollectionPreset);
 			}
 		}
 	}
@@ -1375,7 +1330,7 @@ EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FString& NewPr
 		GetAvailableGUID(NewPreset.GUID);
 		OutPresetID = NewPreset.GUID;
 	}
-	AddPreset(NewPreset, NewPreset);
+	AddOrUpdatePreset(NewPreset, NewPreset);
 
 	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(EObjectType::OTFurniture);
 	FBIMAssemblySpec newSpec;
@@ -1951,17 +1906,36 @@ void FBIMPresetCollection::ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> J
 	TMap<FString, TSharedPtr<FJsonValue>> topLevelEntries = JsonObject->Values;
 	for(const auto& entry: topLevelEntries)
 	{
-		FBIMPresetInstance newPreset;
+		FBIMPresetInstance canonicalPreset;
 		FBIMWebPreset webPreset;
 		TSharedPtr<FJsonObject> objPreset = entry.Value->AsObject();
 		FJsonObjectConverter::JsonObjectToUStruct<FBIMWebPreset>(objPreset.ToSharedRef(), &webPreset);
 		webPreset.origination = EPresetOrigination::Canonical;
 		webPreset.canonicalBase.Invalidate();
-		ensure(newPreset.FromWebPreset(webPreset, GameInstance->GetWorld()) != EBIMResult::Error);
-		if(ensureAlways(newPreset.GUID.IsValid() && newPreset.Origination == EPresetOrigination::Canonical))
+		
+		if(ensure(canonicalPreset.FromWebPreset(webPreset, GameInstance->GetWorld()) != EBIMResult::Error))
 		{
-			FBIMPresetInstance vdp;
-			Collection.AddPreset(newPreset, vdp);
+			if(ensure(canonicalPreset.GUID.IsValid()))
+			{
+				FBIMPresetInstance vdp = canonicalPreset;
+				vdp.GUID = FGuid::NewGuid();
+				vdp.CanonicalBase = canonicalPreset.GUID;
+				vdp.Origination = EPresetOrigination::VanillaDerived;
+			
+				if(Collection.VDPTable.HasCanonical(canonicalPreset.GUID))
+				{
+					//Use the existing GUID
+					auto derived = Collection.VDPTable.TranslateToDerived(canonicalPreset.GUID);
+					vdp.GUID = derived;
+				}
+
+				//If the GUID exists already, don't add it -- it would replace it and we
+				// would lose any user edits.
+				if(!Collection.ContainsNonCanon(vdp.GUID))
+				{
+					Collection.AddOrUpdatePreset(vdp, vdp);
+				}
+			}
 		}
 	}
 }

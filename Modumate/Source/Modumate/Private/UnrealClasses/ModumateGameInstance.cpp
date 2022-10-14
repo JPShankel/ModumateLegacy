@@ -7,6 +7,10 @@
 //#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 //#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 
+#include "StructDeserializer.h"
+#include "StructSerializer.h"
+#include "Backends/CborStructDeserializerBackend.h"
+#include "Backends/CborStructSerializerBackend.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Dom/JsonObject.h"
 #include "Drafting/DraftingManager.h"
@@ -183,7 +187,7 @@ void UModumateGameInstance::DumpPresetToFile(const FGuid& Key) const
 	FString outJson;
 	WriteJsonGeneric(outJson, preset);
 						
-	FString file = FPaths::ProjectConfigDir();
+	FString file = FPaths::ProjectLogDir();
 	file.Append(Key.ToString() + TEXT(".json"));
 	if(FFileHelper::SaveStringToFile(outJson,*file))
 	{
@@ -194,6 +198,24 @@ void UModumateGameInstance::DumpPresetToFile(const FGuid& Key) const
 		UE_LOG(LogTemp, Warning, TEXT("Failed to write: \"%s\" "),*file);
 	}
 }
+
+void UModumateGameInstance::DumpBimCollection(const FString& FileName, const FBIMPresetCollection& Collection) const
+{
+	FString outJson;
+	WriteJsonGeneric(outJson, &Collection);
+						
+	FString file = FPaths::ProjectConfigDir();
+	file.Append(FileName + TEXT(".json"));
+	if(FFileHelper::SaveStringToFile(outJson, *file))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sucsesfuly wrote: \"%s\" "),*file);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to write: \"%s\" "),*file);
+	}
+}
+
 void UModumateGameInstance::RegisterAllCommands()
 {
 	RegisterCommand(kBIMDebug, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
@@ -245,6 +267,76 @@ void UModumateGameInstance::RegisterAllCommands()
 			return true;
 		}
 		return false;
+	});
+
+	RegisterCommand(kValidateCbor, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		// Store project record from mdmt file
+		auto Document = this->GetDocument();
+		auto World = GetWorld();
+		if (!ensure(Document) || !ensure(World))
+		{
+			return false;
+		}
+
+		FGuid guid;
+		FGuid::Parse(TEXT("ED701750B1494647AE92DAAF59A70FC6"), guid);
+		FBIMPresetInstance preset = *Document->GetPresetCollection().PresetFromGUID(guid);
+		preset.Origination = EPresetOrigination::Invented;
+
+		
+		FString profileRef;
+		if (preset.Properties.TryGetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef))
+		{
+			preset.Properties.DeleteProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID);
+			preset.Properties.SetProperty<FString>(EBIMValueScope::Roof, BIMPropertyNames::AssetID, profileRef);
+		}
+		
+		//Serialize and Then deserialize and compare
+		FModumateDocumentHeader docHeader;
+		FMOIDocumentRecord docRecord;
+		TArray<uint8> docBuffer;
+		Document->SerializeRecords(World, docHeader, docRecord);
+		FModumateSerializationStatics::SaveDocumentToBuffer(docHeader, docRecord, docBuffer);
+		DumpBimCollection(TEXT("bimcollection_before"), docRecord.PresetCollection);
+
+		FModumateDocumentHeader outDocHeader;
+		FMOIDocumentRecord outDocRecord;
+		FModumateSerializationStatics::LoadDocumentFromBuffer(docBuffer, outDocHeader, outDocRecord);
+		DumpBimCollection(TEXT("bimcollection_after"), outDocRecord.PresetCollection);
+		
+		UE_LOG(LogTemp, Log, TEXT("****Before Serialize****"));
+		preset.Properties.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {
+			UE_LOG(LogTemp, Log, TEXT("%s = %s"), *Key.QN().ToString(), *Value);
+			});
+		
+		TArray<uint8> OutBuffer;
+		FStructSerializerPolicies policies;
+		policies.NullValues = EStructSerializerNullValuePolicies::Serialize;
+		policies.ReferenceLoops = EStructSerializerReferenceLoopPolicies::Serialize;
+		policies.MapSerialization = EStructSerializerMapPolicies::KeyValuePair;
+		
+		FMemoryWriter totalBufferWriter(OutBuffer);
+		
+		FCborStructSerializerBackend headerSerializerBackend(totalBufferWriter, EStructSerializerBackendFlags::Default | EStructSerializerBackendFlags::WriteCborStandardEndianness);
+		FStructSerializer::Serialize(preset.Properties, headerSerializerBackend, policies);
+
+		FMemoryReader totalBufferReader(OutBuffer);
+		
+		FStructDeserializerPolicies outPolicies;
+		outPolicies.MissingFields = EStructDeserializerErrorPolicies::Error;
+		ECborEndianness endianness = ECborEndianness::StandardCompliant;
+
+		FCborStructDeserializerBackend headerDeserializerBackend(totalBufferReader, endianness);
+		FStructDeserializer::Deserialize(preset.Properties, headerDeserializerBackend, outPolicies);
+
+		UE_LOG(LogTemp, Log, TEXT("****After Deserialize****"));
+		preset.Properties.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {
+			UE_LOG(LogTemp, Log, TEXT("%s = %s"), *Key.QN().ToString(), *Value);
+			});
+		
+		
+		return true;
 	});
 
 	RegisterCommand(kImportDatasmith, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)

@@ -227,7 +227,7 @@ bool UBIMDebugger::PerformBIMDebugTest(EBIMDebugTestType BIMDebugTest)
 	case EBIMDebugTestType::TestDebugTrue:
 		return true;
 	case EBIMDebugTestType::ValidatePreset:
-		return preset->ValidatePreset();
+		return preset->CheckChildrenForErrors();
 	}
 
 	return false;

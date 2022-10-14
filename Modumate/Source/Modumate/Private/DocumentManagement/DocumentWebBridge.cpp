@@ -952,7 +952,36 @@ void UModumateDocumentWebBridge::export_views(TArray<int32> CameraViewIDs)
 void UModumateDocumentWebBridge::UpdateOrAddPreset(FBIMPresetInstance& Preset)
 {
 	TArray<FDeltaPtr> deltas;
-	auto* existingPreset = Document->GetPresetCollection().PresetFromGUID(Preset.GUID);
+
+	//If the preset we are updating/adding is canonical then we have to derive it
+	// before we send out the deltas. This forces all our participants to have the
+	// same guids.
+	if(Preset.Origination == EPresetOrigination::Canonical)
+	{
+		//We CANNOT add Canonical Presets to our Preset Collection...
+		auto Collection = Document->GetPresetCollection();
+		
+		//Do we have this canonical in our preset collection already?
+		if(Collection.VDPTable.HasCanonical(Preset.CanonicalBase))
+		{
+			
+			//TODO: Add to VDP tables preset targets (which we have to create)
+			// and figure out a way to prompt a user to choose one (which
+			// wouldn't be here). -JN
+
+			//Don't add it for now.
+			return;
+		}
+		else
+		{
+			//Derive it.
+			Preset.CanonicalBase = Preset.GUID;
+			Preset.GUID = FGuid::NewGuid();
+			Preset.Origination = EPresetOrigination::VanillaDerived;
+		}
+	}
+	
+	auto existingPreset = Document->GetPresetCollection().ContainsNonCanon(Preset.GUID);
 
 	if (existingPreset)
 	{

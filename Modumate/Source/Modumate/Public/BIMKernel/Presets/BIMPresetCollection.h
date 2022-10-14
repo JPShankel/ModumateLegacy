@@ -88,7 +88,7 @@ struct MODUMATE_API FBIMPresetCollection
 	 * Returns the locally stored copy of the preset in OutPreset.
 	 * Note: InPreset may not necessarily == OutPreset, depending on Origination
 	 */
-	EBIMResult AddPreset(const FBIMPresetInstance& InPreset, FBIMPresetInstance& OutPreset);
+	EBIMResult AddOrUpdatePreset(const FBIMPresetInstance& InPreset, FBIMPresetInstance& OutPreset);
 	
 	/**
 	 * Further Processes a Preset
@@ -111,7 +111,7 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult RemovePreset(const FGuid& InGUID);
 	
 	bool GetAllPresetKeys(TArray<FGuid>& OutKeys) const;
-	bool Contains(const FGuid& Guid) const;
+	bool ContainsNonCanon(const FGuid& Guid) const;
 
 	//When an assembly can't be found, use a default
 	static TMap<EObjectType, FBIMAssemblySpec> DefaultAssembliesByObjectType;

@@ -280,7 +280,7 @@ bool FBIMPresetInstance::ReplaceImmediateChildGuid(FGuid& OldGuid, FGuid& NewGui
 	return rtn;
 }
 
-bool FBIMPresetInstance::ValidatePreset() const
+bool FBIMPresetInstance::CheckChildrenForErrors() const
 {
 	if (ChildPresets.Num() > 0)
 	{
@@ -300,6 +300,27 @@ bool FBIMPresetInstance::ValidatePreset() const
 			}
 		}
 	}
+	
+	return true;
+}
+
+bool FBIMPresetInstance::EnsurePresetIsValidForUse() const
+{
+	if (!ensure(GUID.IsValid()))
+	{
+		return false;
+	}
+	
+	if (!ensure(Origination != EPresetOrigination::Unknown && Origination != EPresetOrigination::Canonical))
+	{
+		return false;
+	}
+
+	if (!ensure(Origination == EPresetOrigination::Invented || CanonicalBase.IsValid()))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -1238,22 +1259,23 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 		FString patternVal;
 		if (Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternVal))
 		{
-			Properties.SetProperty<FString>(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternVal);
 			Properties.DeleteProperty<FString>(EBIMValueScope::Pattern, BIMPropertyNames::AssetID);
+			Properties.SetProperty<FString>(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternVal);
 		}
 
 		FString profileRef;
 		if (Properties.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, profileRef))
 		{
-			Properties.SetProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef);
 			Properties.DeleteProperty<FString>(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
+			Properties.SetProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef);
+			
 		}
 
 		FString meshVal;
 		if (Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshVal))
 		{
-			Properties.SetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshVal);
 			Properties.DeleteProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
+			Properties.SetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshVal);
 		}
 
 		// We have deprecated the name property in the bim editor
@@ -1376,21 +1398,6 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 	}
 
 	return EBIMResult::Success;
-}
-
-FBIMPresetInstance FBIMPresetInstance::Derive(const FGuid& NewGUID) const
-{
-	if(ensureAlways(Origination == EPresetOrigination::Canonical))
-	{
-		FBIMPresetInstance copy = *this;
-		copy.CanonicalBase = GUID;
-		copy.GUID = NewGUID;
-		copy.Origination = EPresetOrigination::VanillaDerived;
-		return copy;
-	}
-
-	//On Failure, return a direct copy
-	return *this;
 }
 
 EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const

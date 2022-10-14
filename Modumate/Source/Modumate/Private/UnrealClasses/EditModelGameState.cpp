@@ -157,7 +157,8 @@ bool AEditModelGameState::UploadDocument()
 	{
 		return false;
 	}
-
+	
+	
 	auto weakThis = MakeWeakObjectPtr<AEditModelGameState>(this);
 	bool bRequestSuccess = cloudConnection->UploadProject(CurProjectID, docHeader, docRecord,
 		[weakThis, curDocHash](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
