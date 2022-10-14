@@ -16,14 +16,14 @@ AMOICameraView::AMOICameraView()
 {
 	FWebMOIProperty prop;
 
-	prop.name = TEXT("FOV");
+	prop.name = TEXT("fOV");
 	prop.type = EWebMOIPropertyType::text;
 	prop.displayName = TEXT("FOV");
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.name, prop);
 
-	prop.name = TEXT("SavedTime");
+	prop.name = TEXT("savedTime");
 	prop.type = EWebMOIPropertyType::cameraTime;
 	prop.displayName = TEXT("Date");
 	prop.isEditable = true;
@@ -65,7 +65,7 @@ AMOICameraView::AMOICameraView()
 	prop.isVisible = true;
 	WebProperties.Add(prop.name, prop);
 
-	prop.name = TEXT("UpdateCameraPosition");
+	prop.name = TEXT("updateCameraPosition");
 	prop.type = EWebMOIPropertyType::cameraPositionUpdate;
 	prop.displayName = TEXT("Camera Position");
 	prop.isEditable = true;
@@ -159,7 +159,7 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 			return false;
 		}
 
-		const FWebMOIProperty* FormPropUpdatePosition = WebMOI.properties.Find(TEXT("UpdateCameraPosition"));
+		const FWebMOIProperty* FormPropUpdatePosition = WebMOI.properties.Find(TEXT("updateCameraPosition"));
 		const bool bUpdatePosition = FormPropUpdatePosition->valueArray[0] == TEXT("true");
 
 		if (bUpdatePosition)
@@ -182,11 +182,11 @@ bool AMOICameraView::ToWebMOI(FWebMOI& OutMOI) const
 {
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
-		const FWebMOIProperty* formPropUpdatePosition = WebProperties.Find(TEXT("UpdateCameraPosition"));
+		const FWebMOIProperty* formPropUpdatePosition = WebProperties.Find(TEXT("updateCameraPosition"));
 		FWebMOIProperty webPropUpdatePosition = *formPropUpdatePosition;
 		webPropUpdatePosition.valueArray.Empty();
 		webPropUpdatePosition.valueArray.Add(TEXT("false"));
-		OutMOI.properties.Add(TEXT("UpdateCameraPosition"), webPropUpdatePosition);
+		OutMOI.properties.Add(TEXT("updateCameraPosition"), webPropUpdatePosition);
 		
 		return true;
 	}
