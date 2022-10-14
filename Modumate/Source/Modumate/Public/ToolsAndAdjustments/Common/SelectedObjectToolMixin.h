@@ -10,7 +10,7 @@
 class MODUMATE_API FSelectedObjectToolMixin
 {
 public:
-	enum CopyDeltaType { kOther, kVertexPosition, kGroup, kPreset };
+	enum CopyDeltaType { kOther, kVertexPosition, kGroup, kPreset, kFfe };
 
 protected:
 

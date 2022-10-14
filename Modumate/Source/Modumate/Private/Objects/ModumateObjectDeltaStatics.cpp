@@ -1048,6 +1048,7 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		OutDeltas.Emplace(FSelectedObjectToolMixin::kVertexPosition, newElementsDelta);
 
 		auto moiDelta = MakeShared<FMOIDelta>();
+		auto ffeDelta = MakeShared<FMOIDelta>();
 
 		TArray<FDeltaPtr> objectDeltas;
 
@@ -1136,6 +1137,12 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 					break;
 				}
 
+				case EObjectType::OTFurniture:
+				{
+					ffeDelta->AddCreateDestroyState(newState, EMOIDeltaType::Create);
+					continue;
+				}
+
 				default:
 					break;
 				}
@@ -1195,7 +1202,14 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			}
 		}
 
-		OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, moiDelta);
+		if (moiDelta->IsValid())
+		{
+			OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, moiDelta);
+		}
+		if (ffeDelta->IsValid())
+		{
+			OutDeltas.Emplace(FSelectedObjectToolMixin::kFfe, ffeDelta);
+		}
 	}
 
 	if (optionToNewGroupsMap.Num() > 0)
@@ -1865,7 +1879,7 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc
 	{
 		FDeltaPtr delta = deltaPair.Value;
 
-		switch (deltaPair.Key)
+		switch (FSelectedObjectToolMixin::CopyDeltaType(deltaPair.Key))
 		{
 		case FSelectedObjectToolMixin::kVertexPosition:
 		{
@@ -1910,6 +1924,26 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc
 			OutDeltas.Add(delta);
 			break;
 		}
+
+		case FSelectedObjectToolMixin::kFfe:
+		{
+			const FMOIDelta* groupDelta = static_cast<FMOIDelta*>(delta.Get());
+			auto ffeDelta = MakeShared<FMOIDelta>();
+			for (auto& singleDelta: groupDelta->States)
+			{
+				FMOIStateData newFfeState(singleDelta.NewState);
+				FMOIFFEData ffeData;
+				if (ensure(newFfeState.CustomData.LoadStructData(ffeData)) )
+				{
+					ffeData.Location += Offset;
+					newFfeState.CustomData.SaveStructData(ffeData);
+					ffeDelta->AddCreateDestroyState(newFfeState, EMOIDeltaType::Create);
+				}
+			}
+			OutDeltas.Add(ffeDelta);
+			break;
+		}
+
 		}
 	}
 }

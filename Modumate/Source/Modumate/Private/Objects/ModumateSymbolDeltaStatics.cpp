@@ -17,6 +17,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Algo/ForEach.h"
 #include "TransformTypes.h"
+#include "Objects/FFE.h"
 
 void FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas)
 {
@@ -66,7 +67,12 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 	case EMOIDeltaType::Mutate:
 	{
 		FBIMSymbolPresetData symbolData;
-		if (ensure(symbolPreset->TryGetCustomData(symbolData)))
+		if (DeltaState.NewState.ObjectType == EObjectType::OTFurniture)
+		{
+			Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
+			groupMoi->MarkDirty(EObjectDirtyFlags::Structure);
+		}
+		else if (ensure(symbolPreset->TryGetCustomData(symbolData)))
 		{
 			int primaryId = MOD_ID_NONE;
 			auto newMoiDelta = MakeShared<FMOIDelta>();
@@ -123,11 +129,7 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 	case EMOIDeltaType::Create:
 	{
 		Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
-		auto* moi = Doc->GetObjectById(groupId);
-		if (ensure(moi))
-		{   // Graph might've already been cleaned.
-			moi->MarkDirty(EObjectDirtyFlags::Structure);
-		}
+		groupMoi->MarkDirty(EObjectDirtyFlags::Structure);
 		break;
 	}
 
@@ -468,7 +470,17 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 			&& UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType()) == EGraphObjectType::None)
 		{
 			OutPreset.Members.Add(moi->ID, moi->GetStateData()).CustomData.SaveJsonFromCbor();
-			if (moi->GetObjectType() == EObjectType::OTSurfaceGraph)
+			if (moi->GetObjectType() == EObjectType::OTFurniture)
+			{
+				FMOIStateData& ffeState = OutPreset.Members[moi->ID];
+				FMOIFFEData ffeData;
+				ffeState.CustomData.LoadStructData(ffeData);
+				FTransform canonicalXform(moi->GetWorldTransform() * Transform);
+				ffeData.Location = canonicalXform.GetLocation();
+				ffeData.Rotation = canonicalXform.GetRotation();
+				ffeState.CustomData.SaveStructData(ffeData, true);
+			}
+			else if (moi->GetObjectType() == EObjectType::OTSurfaceGraph)
 			{
 				const TSharedPtr<FGraph2D> graph2d = Doc->FindSurfaceGraph(moi->ID);
 				if (ensure(graph2d))
@@ -629,6 +641,21 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 				Algo::ForEach(spanInstanceData.GraphMembers, [&oldIDToNewID](int32& S)
 					{ S = oldIDToNewID[S]; });
 				newState.CustomData.SaveStructData(spanInstanceData, UE_EDITOR);
+				break;
+			}
+
+			case EObjectType::OTFurniture:
+			{
+				FMOIFFEData ffeInstanceData;
+				if (ensure(newState.CustomData.LoadStructData(ffeInstanceData)) )
+				{
+					FTransform newTransform(FTransform(ffeInstanceData.Rotation, ffeInstanceData.Location)* Transform);
+					ffeInstanceData.Location = newTransform.GetLocation();
+					ffeInstanceData.Rotation = newTransform.GetRotation();
+					newState.CustomData.SaveStructData(ffeInstanceData);
+				}
+
+
 				break;
 			}
 
