@@ -304,6 +304,8 @@ void UModumateGameInstance::RegisterAllCommands()
 		FMOIDocumentRecord outDocRecord;
 		FModumateSerializationStatics::LoadDocumentFromBuffer(docBuffer, outDocHeader, outDocRecord);
 		DumpBimCollection(TEXT("bimcollection_after"), outDocRecord.PresetCollection);
+
+
 		
 		UE_LOG(LogTemp, Log, TEXT("****Before Serialize****"));
 		preset.Properties.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {

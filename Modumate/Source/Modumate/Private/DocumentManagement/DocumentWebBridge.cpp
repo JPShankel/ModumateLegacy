@@ -962,7 +962,8 @@ void UModumateDocumentWebBridge::UpdateOrAddPreset(FBIMPresetInstance& Preset)
 		auto Collection = Document->GetPresetCollection();
 		
 		//Do we have this canonical in our preset collection already?
-		if(Collection.VDPTable.HasCanonical(Preset.CanonicalBase))
+		if(Collection.VDPTable.HasCanonical(Preset.GUID) ||
+		   Collection.VDPTable.HasCanonical(Preset.CanonicalBase))
 		{
 			
 			//TODO: Add to VDP tables preset targets (which we have to create)
