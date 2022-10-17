@@ -185,6 +185,57 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructSerializationTest, "Modumate.Co
 		TestTrue(TEXT("A.VectorMap == B.VectorMap"), bPropsEqualAB);
 	}
 
+	FModumateTestStruct2 testStruct3A;
+
+	// Struct 3 Add/Remove Test for TMap serialization fix applied in 3.4 -JN
+	auto removeRandomElement = [&]() {
+		TArray<FName> Keys;
+		testStruct3A.VectorMap.GetKeys(Keys);
+							
+		int32 ElementToRemove = FMath::RandRange(0, Keys.Num()-1);
+		auto& RemoveKey = Keys[ElementToRemove];
+		testStruct3A.VectorMap.Remove(RemoveKey);
+	};
+
+	auto addRandomElement = [&]()
+	{
+		FGuid Key = FGuid::NewGuid();
+		testStruct3A.VectorMap.Add(FName(Key.ToString()),
+			FVector(FMath::RandRange(0.f, 1.f),
+					FMath::RandRange(0.f, 1.f),
+					FMath::RandRange(0.f, 1.f)));
+	};
+
+	for(int i = 0; i < 1500; i++)
+	{
+		bool bShouldRemoveElement = testStruct3A.VectorMap.Num() > 0 && FMath::RandRange(0.f, 1.f) > 0.5f;
+		bShouldRemoveElement ? removeRandomElement : addRandomElement();
+	}
+
+	//Always end in a remove
+	removeRandomElement();
+
+	//Serialize and Then deserialize and compare
+	TArray<uint8> OutBuffer;
+	FStructSerializerPolicies policies;
+	policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
+	FMemoryWriter totalBufferWriter(OutBuffer);
+	FCborStructSerializerBackend headerSerializerBackend(totalBufferWriter, EStructSerializerBackendFlags::Default | EStructSerializerBackendFlags::WriteCborStandardEndianness);
+	FStructSerializer::Serialize(testStruct3A, headerSerializerBackend, policies);
+		
+	FMemoryReader totalBufferReader(OutBuffer);
+
+	FStructDeserializerPolicies outPolicies;
+	outPolicies.MissingFields = EStructDeserializerErrorPolicies::Error;
+	ECborEndianness endianness = ECborEndianness::StandardCompliant;
+
+
+	FModumateTestStruct2 testStruct3B;
+	FCborStructDeserializerBackend headerDeserializerBackend(totalBufferReader, endianness);
+	FStructDeserializer::Deserialize(testStruct3B, headerDeserializerBackend, outPolicies);
+
+	TestTrue(TEXT("Map serialization after remove success"), testStruct3B.VectorMap.OrderIndependentCompareEqual(testStruct3A.VectorMap));
+	
 	// JSON serialization
 
 	FString testStructWithObjString;
@@ -200,8 +251,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructSerializationTest, "Modumate.Co
 	TArray<uint8> buffer;
 	FMemoryWriter writer(buffer);
 	FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
-
-	FStructSerializerPolicies policies;
+	
 	policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
 
 	FStructSerializer::Serialize(testStruct1A, serializerBackend, policies);
