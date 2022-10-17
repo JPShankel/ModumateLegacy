@@ -1909,6 +1909,8 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
 			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 			gameState->Document->SaveFile(GetWorld(), newFile, false, true);
+			// Upload project thumbnail
+			UploadWebThumbnail();
 
 			TimeOfLastAutoSave = FDateTime::Now();
 			bWantAutoSave = false;
