@@ -143,7 +143,7 @@ public:
 	void create_local_project_from_ams();
 
 	UFUNCTION()
-	void open_cloud_project_from_ams(int32 ProjectID);
+	void connect_to_server(const FString& JsonBlob);
 
 	UFUNCTION()
 	void pass_user_package_from_ams(const FString& content);

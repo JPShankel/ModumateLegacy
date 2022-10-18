@@ -50,6 +50,9 @@ public:
 	bool OpenCloudProject(const FString& ProjectID);
 
 	UFUNCTION()
+	bool OpenCloudProjectDirect(const FProjectConnectToServerRequest& Request);
+
+	UFUNCTION()
 	void OnCloudProjectFailure(const FText& ErrorMessage = FText::GetEmpty());
 
 	UFUNCTION()

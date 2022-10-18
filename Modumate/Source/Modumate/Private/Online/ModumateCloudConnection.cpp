@@ -50,7 +50,9 @@ FString FModumateCloudConnection::GetCloudAPIURL() const
 
 FString FModumateCloudConnection::GetCloudProjectPageURL() const
 {
-	return GetCloudRootURL() + TEXT("/workspace/projects");
+	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+	FString currentVersion = projectSettings->ProjectVersion;
+	return GetCloudRootURL() + TEXT("/workspace/projects?version=") + currentVersion;
 }
 
 FString FModumateCloudConnection::GetCloudWorkspacePlansURL() const
@@ -814,6 +816,34 @@ bool FModumateCloudConnection::UploadProject(const FString& ProjectID, const FMo
 	}
 
 	return bRequestSuccess;
+}
+
+bool FModumateCloudConnection::ReadyForConnection(const FString& ProjectID)
+{
+#if UE_SERVER
+	UE_LOG(LogTemp, Log, TEXT("Notifying cloud that project %s is ready for connections"), *ProjectID);
+	
+	FString endpoint = TEXT("/projects/") + ProjectID + TEXT("/status");
+	if (!RequestEndpoint(endpoint, ERequestType::Post,
+		[](FHttpRequestRef& RefRequest)
+		{
+			RefRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+			RefRequest->SetContentAsString(TEXT("{\"status\": \"ready\"}"));
+		},
+
+		[](bool bSuccess, const TSharedPtr<FJsonObject>& Payload) { ensure(bSuccess); },
+
+		[](int32 ErrorCode, const FString& ErrorMessage)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to report server ready error: %d - %s"), ErrorCode, *ErrorMessage);
+		},
+		false))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ReportMultiPlayerFailure: Failed to notify cloud that server is ready for connections"));
+		return false;
+	}
+#endif
+	return true;
 }
 
 void FModumateCloudConnection::Tick()

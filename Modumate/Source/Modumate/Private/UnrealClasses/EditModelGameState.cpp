@@ -43,7 +43,7 @@ void AEditModelGameState::InitDocument(const FString& LocalUserID, int32 LocalUs
 		DocumentWebBridge->Document = Document;
 
 		auto gameInstance = GetGameInstance<UModumateGameInstance>();
-		if(ensure(gameInstance))
+		if(ensure(gameInstance) && IsNetMode(NM_Standalone))
 		{
 			Document->GetPresetCollection().ReadInitialPresets(gameInstance);
 		}
@@ -315,6 +315,17 @@ void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeade
 	else if (IsNetMode(NM_DedicatedServer) && Document->IsDirty(false))
 	{
 		UploadDocument();
+	}
+
+	//Poke endpoint to let cloud know we're ready to connect
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	if(IsNetMode(NM_DedicatedServer) && gameInstance)
+	{
+		auto cloud = gameInstance->GetCloudConnection();
+		if(cloud)
+		{
+			cloud->ReadyForConnection(CurProjectID);
+		}
 	}
 }
 

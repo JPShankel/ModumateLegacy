@@ -70,6 +70,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		bool DownloadProject(const FString& ProjectID, const FProjectCallback& DownloadCallback, const FErrorCallback& ServerErrorCallback);
 		bool UploadProject(const FString& ProjectID, const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		bool ReadyForConnection(const FString& ProjectID);
 
 		bool Login(const FString& Username, const FString& Password, const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);

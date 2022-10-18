@@ -19,11 +19,40 @@ struct MODUMATE_API FProjectConnectionHelpers
 	static FString MakeProjectThumbnailEndpoint(const FString& ProjectID);
 };
 
+// Used to convey information to the client in connect_to_server
+USTRUCT()
+struct MODUMATE_API FProjectConnectToServerRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString ip;
+
+	UPROPERTY()
+	FString port;
+
+	UPROPERTY()
+	FString key;
+
+	UPROPERTY()
+	FString userId;
+
+	UPROPERTY()
+	FString projectId;
+};
+
 // Must match the API spec for components/schemas/Connection in the AMS
 USTRUCT()
 struct MODUMATE_API FProjectConnectionResponse
 {
 	GENERATED_BODY()
+
+	FProjectConnectionResponse() = default;
+	FProjectConnectionResponse(const FProjectConnectToServerRequest& Request) : 
+		IP(Request.ip),
+		Port(FCString::Atoi(*Request.port)),
+		Key(Request.key)
+	{}
 
 	UPROPERTY()
 	FString IP;
@@ -37,6 +66,7 @@ struct MODUMATE_API FProjectConnectionResponse
 	UPROPERTY()
 	TArray<FString> Permissions;
 };
+
 
 // Must match the API spec for components/schemas/Project in the AMS
 USTRUCT()

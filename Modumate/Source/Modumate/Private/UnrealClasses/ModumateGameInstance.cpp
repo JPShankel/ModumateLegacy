@@ -1386,15 +1386,20 @@ void UModumateGameInstance::create_local_project_from_ams()
 	}
 }
 
-void UModumateGameInstance::open_cloud_project_from_ams(int32 ProjectID)
+void UModumateGameInstance::connect_to_server(const FString& JsonBlob)
 {
-	UWorld* world = GetWorld();
-	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
-	if (mainMenuGameMode)
+	FProjectConnectToServerRequest req;
+	if(ReadJsonGeneric(JsonBlob, &req))
 	{
-		mainMenuGameMode->OpenCloudProject(FString::FromInt(ProjectID));
+		UWorld* world = GetWorld();
+		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+		if (mainMenuGameMode)
+		{
+			mainMenuGameMode->OpenCloudProjectDirect(req);
+		}
 	}
 }
+
 
 void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 {

@@ -281,6 +281,13 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 	return true;
 }
 
+bool AMainMenuGameMode::OpenCloudProjectDirect(const FProjectConnectToServerRequest& Request)
+{
+	PendingCloudProjectID = Request.projectId;
+	FProjectConnectionResponse Response {Request};
+	return OnCreatedProjectConnection(Response);
+}
+
 void AMainMenuGameMode::OnCloudProjectFailure(const FText& ErrorMessage)
 {
 	// Wipe the encryption key(s) that this client may have cached for its user and this pending project, so they won't get used on the next connection attempt.
@@ -372,9 +379,7 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
 		OnCloudProjectFailure();
 		return false;
 	}
-
-	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
-
+	
 	// TODO: format the text with the name of the project itself
 	FText openProjectText = LOCTEXT("OpenProjectBegin", "Opening online project...");
 	if (playerController->StartMenuWebBrowserWidget)
@@ -384,7 +389,9 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
 
 	gameInstance->OnStartConnectCloudProject(PendingCloudProjectID);
 	PendingCloudProjectID.Empty();
-
+	
+	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
+	
 	return true;
 }
 

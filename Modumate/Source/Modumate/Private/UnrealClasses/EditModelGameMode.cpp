@@ -53,8 +53,8 @@ void AEditModelGameMode::InitGameState()
 	}
 	localUserIdx = 0;
 #endif
-
-	gameState->InitDocument(localUserID, localUserIdx);
+	
+	gameState->InitDocument(localUserID, localUserIdx);	
 
 #if UE_SERVER
 	if (GameSession)
