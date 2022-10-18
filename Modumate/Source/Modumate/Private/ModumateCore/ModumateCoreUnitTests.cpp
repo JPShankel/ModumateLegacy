@@ -209,7 +209,14 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructSerializationTest, "Modumate.Co
 	for(int i = 0; i < 1500; i++)
 	{
 		bool bShouldRemoveElement = testStruct3A.VectorMap.Num() > 0 && FMath::RandRange(0.f, 1.f) > 0.5f;
-		bShouldRemoveElement ? removeRandomElement : addRandomElement();
+		if(bShouldRemoveElement)
+		{
+			removeRandomElement();
+		}
+		else
+		{
+			addRandomElement();
+		}
 	}
 
 	//Always end in a remove

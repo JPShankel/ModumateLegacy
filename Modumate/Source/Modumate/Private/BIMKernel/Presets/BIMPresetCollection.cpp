@@ -933,6 +933,7 @@ bool FBIMPresetCollection::ReadInitialPresets(const UModumateGameInstance* GameI
 */
 bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord, const UModumateGameInstance* GameInstance)
 {
+	UE_LOG(LogTemp, Log, TEXT("Reading presets from document record"));
 	*this = FBIMPresetCollection();
 	
 	// Parse the default material GUID
@@ -951,7 +952,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 		auto state = Cast<AEditModelGameState>(world->GetGameState());
 		if(state)
 		{
-			bShouldUpgradeData = !state->IsNetMode(NM_Client);
+			bShouldUpgradeData = DocRecordVersion < DocVersion && !state->IsNetMode(NM_Client);
 		}
 	}
 
@@ -990,7 +991,10 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 			count++;
 		}
 	}
-	UE_LOG(LogTemp, Log, TEXT("Ignored %d Vanilla Derived presets while loading record"), count);
+	if(count > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ignored %d presets while loading record"), count);
+	}
 
 	PopulateInitialCanonicalPresetsFromCloudSync(*this, GameInstance);
 	
@@ -1020,7 +1024,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 	ProcessAllNamedDimensions();
 	SetAllPartSizesFromMeshes();
 	ProcessAllAssembies();
-	
+	UE_LOG(LogTemp, Log, TEXT("Done reading presets for document"));
 	return PostLoad() == EBIMResult::Success;
 }
 bool FBIMPresetCollection::UpgradeMoiStateData(FMOIStateData& InOutMoi, const FBIMPresetCollection& OldCollection, const TMap<FGuid, FBIMPresetInstance>& CustomGuidMap, TSet<FGuid>& OutMissingCanonicals) const
@@ -1862,9 +1866,18 @@ void FBIMPresetCollection::PopulateInitialCanonicalPresetsFromCloudSync(FBIMPres
 bool FBIMPresetCollection::PopulateMissingCanonicalPresetsFromCloudSync(const TSet<FGuid> Presets,
 	FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance)
 {
+	const int32 MAX_URL_SIZE = 2048;
+	
 	if(Presets.Num() == 0) return true;
 	
 	FString endpoint = TEXT("/assets/presets?guid=");
+	if(endpoint.Len() >= MAX_URL_SIZE)
+	{
+		//TODO: Split preset list in 2 and recurse. -JN
+		UE_LOG(LogTemp, Error, TEXT("Too many missing presets, count=%d"), Presets.Num());
+		return false;
+	}
+	
 	for (auto& preset :Presets)
 	{
 		endpoint.Append(preset.ToString() + TEXT(","));
@@ -1874,8 +1887,6 @@ bool FBIMPresetCollection::PopulateMissingCanonicalPresetsFromCloudSync(const TS
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 	FString currentVersion = projectSettings->ProjectVersion;
 	endpoint.Append(TEXT("&version=") + currentVersion);
-	
-	UE_LOG(LogTemp, Log, TEXT("Presets: %s"), *endpoint);
 	
 	auto cloud = GameInstance->GetCloudConnection();
 	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
@@ -1897,7 +1908,7 @@ bool FBIMPresetCollection::PopulateMissingCanonicalPresetsFromCloudSync(const TS
 		}
 	, true, true);
 	
-	UE_LOG(LogTemp, Log, TEXT("Preset Request Completed"));
+	UE_LOG(LogTemp, Log, TEXT("Mssing Preset Request Completed"));
 	return true;
 }
 
