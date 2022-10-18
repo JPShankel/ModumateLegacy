@@ -1298,7 +1298,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 		// name property deprecated in the bim editor
 		PresetForm.Elements = PresetForm.Elements.FilterByPredicate([this](const FBIMPresetFormElement& elem)
 		{
-			return elem.FieldName == FBIMPropertyKey(NodeScope, FName(TEXT("Name"))).QN().ToString();
+			return elem.FieldName != FBIMPropertyKey(NodeScope, FName(TEXT("Name"))).QN().ToString();
 		});
 
 		FString presetName;
