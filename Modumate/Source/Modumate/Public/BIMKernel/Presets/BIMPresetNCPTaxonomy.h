@@ -127,7 +127,6 @@ struct FBIMPresetNCPTaxonomy
 	UPROPERTY()
 	TArray<FBIMPresetTaxonomyNode> nodes;
 
-	EBIMResult FromWebTaxonomyJson(const FString& Taxonomy);
 	EBIMResult FromWebTaxonomy(TSharedPtr<FJsonObject> Taxonomy);
 
 	EBIMResult GetFirstPartialMatch(const FBIMTagPath& TagPath, FBIMPresetTaxonomyNode& OutNode) const;

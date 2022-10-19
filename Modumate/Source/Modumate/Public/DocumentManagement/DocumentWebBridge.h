@@ -109,9 +109,6 @@ public:
 	void create_or_update_preset(const FString& PresetData);
 
 	UFUNCTION()
-	void push_initial_presets_and_taxonomy(const FString& InitialPresets, const FString& Taxonomy);
-
-	UFUNCTION()
 	void duplicate_preset(const FString& InGUID);
 
 	UFUNCTION()

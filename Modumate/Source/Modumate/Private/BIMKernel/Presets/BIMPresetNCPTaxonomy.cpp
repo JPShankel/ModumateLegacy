@@ -132,18 +132,6 @@ void FBIMPresetTaxonomyNode::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	}
 }
 
-EBIMResult FBIMPresetNCPTaxonomy::FromWebTaxonomyJson(const FString& Taxonomy)
-{
-	EBIMResult result = EBIMResult::Error;
-	TSharedPtr<FJsonObject> taxonomy = MakeShareable(new FJsonObject);
-	TSharedRef<TJsonReader<>> taxonomyReader = TJsonReaderFactory<>::Create(Taxonomy);
-	if(!FJsonSerializer::Deserialize(taxonomyReader, taxonomy))
-	{
-		return EBIMResult::Error;
-	}
-	return FromWebTaxonomy(taxonomy);
-}
-
 EBIMResult FBIMPresetNCPTaxonomy::FromWebTaxonomy(TSharedPtr<FJsonObject> Taxonomy)
 {
 	EBIMResult result = EBIMResult::Error;

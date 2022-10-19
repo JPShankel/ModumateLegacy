@@ -733,31 +733,6 @@ void UModumateDocumentWebBridge::create_or_update_preset(const FString& PresetDa
 	UpdateOrAddPreset(newPreset);
 }
 
-void UModumateDocumentWebBridge::push_initial_presets_and_taxonomy(const FString& InitialPresets,
-	const FString& Taxonomy)
-{
-	UE_LOG(LogCallTrace, Log, TEXT("push_initial_presets_and_taxonomy() started"));
-	ensure(Document->GetPresetCollection().PresetTaxonomy.FromWebTaxonomyJson(Taxonomy) == EBIMResult::Success);
-	
-	TSharedPtr<FJsonObject> initialPresetsJson = MakeShareable(new FJsonObject);
-	TSharedRef<TJsonReader<>> initialPresetsReader = TJsonReaderFactory<>::Create(InitialPresets);
-	if(!ensure(FJsonSerializer::Deserialize(initialPresetsReader, initialPresetsJson)))
-	{
-		return;
-	}
-	TMap<FString, TSharedPtr<FJsonValue>> topLevelEntries = initialPresetsJson->Values;
-	for(const auto& entry: topLevelEntries)
-	{
-		FBIMPresetInstance newPreset;
-		FBIMWebPreset webPreset;
-		TSharedPtr<FJsonObject> objPreset = entry.Value->AsObject();
-		FJsonObjectConverter::JsonObjectToUStruct<FBIMWebPreset>(objPreset.ToSharedRef(), &webPreset);
-		newPreset.FromWebPreset(webPreset, GetWorld());
-		UpdateOrAddPreset(newPreset);
-	}
-	UE_LOG(LogCallTrace, Log, TEXT("push_initial_presets_and_taxonomy() finished"));
-}
-
 void UModumateDocumentWebBridge::delete_preset(const FString& InGUID)
 {
 	if (!ensure(Document!=nullptr))
