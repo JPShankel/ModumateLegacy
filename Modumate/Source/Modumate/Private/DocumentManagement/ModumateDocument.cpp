@@ -3560,12 +3560,38 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 			}
 		}
 	}
-
+	
+	if(InHeader.Version < 25 && !world->IsNetMode(NM_Client))
+	{
+	
+		//Fix any drawing designer nodes that may have lost their children
+		for(auto& node : DrawingDesignerDocument.nodes)
+		{
+			int32 childId = FCString::Atoi(*node.Key);
+			if(node.Value.parent != INDEX_NONE)
+			{
+				auto parentId = FString::FromInt(node.Value.parent);
+				if(ensureAlways(DrawingDesignerDocument.nodes.Contains(parentId)))
+				{
+					auto& parent = DrawingDesignerDocument.nodes[parentId];
+					if(!parent.children.Contains(childId))
+					{
+						parent.children.Add(childId);
+						UE_LOG(LogTemp, Warning, TEXT("Drawing node lost child, fixing. parent=%s, child=%s"), *parentId, *node.Key);
+						bInitialDocumentDirty = true;
+					}
+				}			
+			}
+		}
+	}
+	
+	
+	//Even if no changes occur, push the doc version update to the cloud
 	if (InHeader.Version < DocVersion)
 	{
 		bInitialDocumentDirty = true;
 	}
-	
+    	
 	for (const auto* spanMoi : GetObjectsOfType({ EObjectType::OTMetaEdgeSpan, EObjectType::OTMetaPlaneSpan }))
 	{
 		UpdateSpanData(spanMoi);
