@@ -354,6 +354,7 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 
 #if !UE_SERVER
 	GetWorldTimerManager().SetTimer(AutoSaveTimer, this, &AEditModelPlayerController::OnAutoSaveTimer, 1.0f, true, 0.0f);
+	GetWorldTimerManager().SetTimer(AutoUploadWebThumbnailTimer, this, &AEditModelPlayerController::OnAutoUploadWebThumbnailTimer, 60.0f, true, 60.0f);
 
 	// Create icon generator in the farthest corner of the universe
 	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
@@ -1805,6 +1806,11 @@ void AEditModelPlayerController::OnAutoSaveTimer()
 #endif
 }
 
+void AEditModelPlayerController::OnAutoUploadWebThumbnailTimer()
+{
+	UploadWebThumbnail();
+}
+
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
 
 bool AEditModelPlayerController::UploadInputTelemetry(bool bAsynchronous) const
@@ -1909,8 +1915,6 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
 			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 			gameState->Document->SaveFile(GetWorld(), newFile, false, true);
-			// Upload project thumbnail
-			UploadWebThumbnail();
 
 			TimeOfLastAutoSave = FDateTime::Now();
 			bWantAutoSave = false;

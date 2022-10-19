@@ -90,6 +90,7 @@ private:
 	void UpdateMouseHits(float DeltaTime);
 	void UpdateUserSnapPoint();
 
+	FTimerHandle AutoUploadWebThumbnailTimer;
 	FTimerHandle AutoSaveTimer;
 	FDateTime SessionStartTime;
 	FGuid TelemetrySessionKey;
@@ -248,6 +249,9 @@ public:
 
 	UFUNCTION()
 	void OnAutoSaveTimer();
+
+	UFUNCTION()
+	void OnAutoUploadWebThumbnailTimer();
 
 	void HandleDigitKey(int32 DigitKey);
 
