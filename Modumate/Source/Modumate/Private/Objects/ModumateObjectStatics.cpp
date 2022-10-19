@@ -562,13 +562,13 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 		bOutVisible = !MetaMOI->IsRequestedHidden() &&
 			(bMetaViewMode || (bHybridViewMode && !(bHasChildren || bHasSpan))) &&
 			(!bConnectedToAnyFace || bConnectedToVisibleFace);
-		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory || bConnectedToVisibleChild;
+		bOutCollisionEnabled = bOutVisible || IsMetaEdgeObjCollidable(MetaMOI) || bConnectedToVisibleChild;
 		break;
 	}
 	case EObjectType::OTMetaPlane:
 	{
 		bOutVisible = !MetaMOI->IsRequestedHidden() && (bMetaViewMode || (bHybridViewMode && !(bHasChildren || bHasSpan)));
-		bOutCollisionEnabled = !MetaMOI->IsCollisionRequestedDisabled() && (bOutVisible || bInCompatibleToolCategory);
+		bOutCollisionEnabled = !MetaMOI->IsCollisionRequestedDisabled() && (bOutVisible || IsMetaPlaneObjCollidable(MetaMOI));
 		break;
 	}
 	default:
@@ -686,6 +686,92 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 	}
 
 	return true;
+}
+
+bool UModumateObjectStatics::IsMetaEdgeObjCollidable(const AModumateObjectInstance* MetaMOI)
+{
+	// For whatever reason if world and playerController not found, default to true
+	AEditModelPlayerController* playerController = MetaMOI && MetaMOI->GetWorld() ? MetaMOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	if (playerController == nullptr)
+	{
+		return true;
+	}
+	const UModumateDocument* doc = MetaMOI->GetDocument();
+	// MetaView is always compatible. MetaObj collision is only compatible in SeparatorView when its span hosting obj is not hidden
+	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
+	if (curToolCategory == EToolCategories::MetaGraph)
+	{
+		return true;
+	}
+	else if (curToolCategory == EToolCategories::Separators)
+	{
+		TArray<int32> spanIDs;
+		GetSpansForEdgeObject(doc, MetaMOI, spanIDs);
+		if (spanIDs.Num() > 0)
+		{
+			const auto* spanMOI = doc->GetObjectById(spanIDs[0]);
+			const auto* hostedChild = (spanMOI && spanMOI->GetChildIDs().Num() > 0) ? doc->GetObjectById(spanMOI->GetChildIDs()[0]) : nullptr;
+			if (hostedChild)
+			{
+				return !hostedChild->IsCollisionRequestedDisabled();
+			}
+		}
+		else // If not EdgeSpan, check if it is connected to any collidable faces
+		{
+			const FGraph3D& volumeGraph = *doc->FindVolumeGraph(MetaMOI->ID);
+			if (!volumeGraph.ContainsObject(MetaMOI->ID))
+			{
+				return true;
+			}
+			auto* graphEdge = volumeGraph.FindEdge(MetaMOI->ID);
+			for (const auto& edgeFaceConn : graphEdge->ConnectedFaces)
+			{
+				const auto* connectedFaceMOI = doc->GetObjectById(FMath::Abs(edgeFaceConn.FaceID));
+				if (connectedFaceMOI && (connectedFaceMOI->GetObjectType() == EObjectType::OTMetaPlane) && !connectedFaceMOI->IsCollisionEnabled())
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UModumateObjectStatics::IsMetaPlaneObjCollidable(const AModumateObjectInstance* MetaMOI)
+{
+	// For whatever reason if world and playerController not found, default to true
+	AEditModelPlayerController* playerController = MetaMOI && MetaMOI->GetWorld() ? MetaMOI->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	if (playerController == nullptr)
+	{
+		return true;
+	}
+	const UModumateDocument* doc = MetaMOI->GetDocument();
+	// MetaView is always compatible. MetaObj collision is only compatible in SeparatorView when its span hosting obj is not hidden
+	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
+	if (curToolCategory == EToolCategories::MetaGraph)
+	{
+		return true;
+	}
+	else if (curToolCategory == EToolCategories::Separators)
+	{
+		TArray<int32> spanIDs;
+		GetSpansForFaceObject(doc, MetaMOI, spanIDs);
+		if (spanIDs.Num() > 0)
+		{
+			const auto* spanMOI = doc->GetObjectById(spanIDs[0]);
+			const auto* hostedChild = (spanMOI && spanMOI->GetChildIDs().Num() > 0) ? doc->GetObjectById(spanMOI->GetChildIDs()[0]) : nullptr;
+			if (hostedChild)
+			{
+				return !hostedChild->IsCollisionRequestedDisabled();
+			}
+		}
+		else
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<AModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)

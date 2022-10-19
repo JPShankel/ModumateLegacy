@@ -70,6 +70,9 @@ public:
 	static bool GetMetaObjEnabledFlags(const AModumateObjectInstance* MetaMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
 	static bool GetSurfaceObjEnabledFlags(const AModumateObjectInstance* SurfaceMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
 
+	static bool IsMetaEdgeObjCollidable(const AModumateObjectInstance* MetaMOI);
+	static bool IsMetaPlaneObjCollidable(const AModumateObjectInstance* MetaMOI);
+
 	static void GetGraphIDsFromMOIs(const TSet<AModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
 
 	static void GetMOIAlignmentTargets(const UModumateDocument* Doc, const AMOIMetaPlaneSpan* SpanMOI, TSet<int32>& OutTargets);
