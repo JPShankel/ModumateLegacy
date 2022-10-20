@@ -26,9 +26,11 @@ TArray<FModumateDimension> FDrawingDesignerAutomation::GenerateDimensions(int32 
 		}
 
 	}
+	
 	FVector axisX, axisY, center;
-	TArray<FVector2D> cached2DPositions;
 	FVector origin = corners[0];
+	TArray<FVector2D> cached2DPositions;
+
 	FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
 	UModumateGeometryStatics::AnalyzeCachedPositions(corners, plane, axisX, axisY, cached2DPositions, center);
 	FBox2D drawingBox = FBox2D(cached2DPositions);
@@ -47,14 +49,27 @@ TArray<FModumateDimension> FDrawingDesignerAutomation::GenerateDimensions(int32 
 		dim.Points[0] = dim.Points[0] / size;
 		dim.Points[1] = dim.Points[1] / size;
 		dim.TextPosition = dim.TextPosition / size;
-		
+
 		if(!FDrawingDesignerRenderControl::IsFloorplan(*cutPlane))
 		{
-			//Rotate everything if it's a floorplan
 			dim.Points[0] = FVector2d{1,1} - dim.Points[0];
 			dim.Points[1] = FVector2d{1,1} - dim.Points[1];
 			dim.TextPosition = FVector2d{1, 1} - dim.TextPosition;
 		}
+		else
+		{
+			//Floorplan == true
+			//TODO: Figure out why the corners go counterclockwise on flip -JN
+			if(cutPlane->InstanceData.Rotation.Y < 0)
+			{
+				dim.Points[0] = -1*dim.Points[0];
+				dim.Points[1] = -1*dim.Points[1];
+				dim.TextPosition = -1 * dim.TextPosition;
+			}
+		}
+
+	
+		
 		rtn.Push(dim);
 	}
 	return rtn;
