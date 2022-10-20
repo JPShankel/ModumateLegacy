@@ -3769,7 +3769,6 @@ FMouseWorldHitType AEditModelPlayerController::GetShiftConstrainedMouseHit(const
 	if (!IsShiftDown())
 	{
 		EMPlayerState->SnappedCursor.ShiftLocked = false;
-		EMPlayerState->SnappedCursor.ShiftUnsnapped = false;
 		return ret;
 	}
 
@@ -3813,33 +3812,29 @@ FMouseWorldHitType AEditModelPlayerController::GetShiftConstrainedMouseHit(const
 				direction = EMPlayerState->SnappedCursor.AffordanceFrame.Normal;
 				break;
 			default:
-				EMPlayerState->SnappedCursor.ShiftUnsnapped = true;
+			{    // Visually closest world axis:
+				float xDistance, yDistance, zDistance;
+				FVector interceptUnused1, interceptUnused2;
+				if (UModumateGeometryStatics::FindShortestDistanceBetweenRays(EMPlayerState->SnappedCursor.OriginPosition, EMPlayerState->SnappedCursor.OriginDirection,
+					origin, FVector::ForwardVector, interceptUnused1, interceptUnused2, xDistance) &&
+					UModumateGeometryStatics::FindShortestDistanceBetweenRays(EMPlayerState->SnappedCursor.OriginPosition, EMPlayerState->SnappedCursor.OriginDirection,
+						origin, FVector::RightVector, interceptUnused1, interceptUnused2, yDistance) &&
+					UModumateGeometryStatics::FindShortestDistanceBetweenRays(EMPlayerState->SnappedCursor.OriginPosition, EMPlayerState->SnappedCursor.OriginDirection,
+						origin, FVector::UpVector, interceptUnused1, interceptUnused2, zDistance))
+				{
+					direction = xDistance < yDistance ? (xDistance < zDistance ? FVector::ForwardVector : FVector::UpVector)
+						: (yDistance < zDistance ? FVector::LeftVector : FVector::UpVector);
+				}
+
 				break;
+			}
 		};
 		EMPlayerState->SnappedCursor.ShiftLockOrigin = origin;
 		EMPlayerState->SnappedCursor.ShiftLockDirection = direction;
 		EMPlayerState->SnappedCursor.ShiftLocked = true;
 	}
 
-	if (EMPlayerState->SnappedCursor.ShiftUnsnapped)
-	{	// In unsnapped mode find closest point on world axes from affordance origin as projected hit.
-		FVector origin = EMPlayerState->SnappedCursor.AffordanceFrame.Origin;
-
-		float xDistance, yDistance, zDistance;
-		FVector xIntercept, yIntercept, zIntercept, interceptUnused;
-		if (UModumateGeometryStatics::FindShortestDistanceBetweenRays(EMPlayerState->SnappedCursor.OriginPosition, EMPlayerState->SnappedCursor.OriginDirection,
-			origin, FVector::ForwardVector, interceptUnused, xIntercept, xDistance) &&
-			UModumateGeometryStatics::FindShortestDistanceBetweenRays(EMPlayerState->SnappedCursor.OriginPosition, EMPlayerState->SnappedCursor.OriginDirection,
-				origin, FVector::RightVector, interceptUnused, yIntercept, yDistance) &&
-			UModumateGeometryStatics::FindShortestDistanceBetweenRays(EMPlayerState->SnappedCursor.OriginPosition, EMPlayerState->SnappedCursor.OriginDirection,
-				origin, FVector::UpVector, interceptUnused, zIntercept, zDistance))
-		{
-			ret.Location = xDistance < yDistance ? (xDistance < zDistance ? xIntercept : zIntercept)
-				: (yDistance < zDistance ? yIntercept : zIntercept);
-			ret.Valid = true;
-		}
-	}
-	else if (EMPlayerState->SnappedCursor.ShiftLocked)
+	if (EMPlayerState->SnappedCursor.ShiftLocked)
 	{
 		FMath::PointDistToLine(baseHit.Location, EMPlayerState->SnappedCursor.ShiftLockDirection, EMPlayerState->SnappedCursor.ShiftLockOrigin, ret.Location);
 		ret.Valid = true;
