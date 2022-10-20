@@ -130,6 +130,7 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 	{
 		Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
 		groupMoi->MarkDirty(EObjectDirtyFlags::Structure);
+		bRefreshIcon = true;
 		break;
 	}
 
@@ -162,6 +163,7 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 		{
 			Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
 			groupMoi->MarkDirty(EObjectDirtyFlags::Structure);
+			bRefreshIcon = true;
 		}
 		break;
 	}
