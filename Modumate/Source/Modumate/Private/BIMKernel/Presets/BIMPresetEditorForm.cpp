@@ -2,6 +2,8 @@
 
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
+#include "BIMKernel/Presets/BIMPresetInstance.h"
+
 #define LOCTEXT_NAMESPACE "BIMPresetEditorForm"
 
 
@@ -189,8 +191,12 @@ EBIMResult FBIMPresetForm::AddLightConfigElements()
 	radius.FieldType = EBIMPresetEditorField::LightRadius;
 	radius.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
 
-	AddPropertyElement(LOCTEXT("IESProfile","IES Profile"), TEXT("IESProfile.AssetID"), EBIMPresetEditorField::AssetProperty);
-
+	FBIMPresetFormElement& profile = Elements.AddDefaulted_GetRef();
+	profile.DisplayName = LOCTEXT("IESProfile","IES Profile");
+	profile.FieldName = TEXT("IESProfile.AssetID");
+	profile.FieldType = EBIMPresetEditorField::LightProfile;
+	profile.FormElementWidgetType = EBIMFormElementWidget::GUIDSwap;
+	
 	return EBIMResult::Success;
 }
 

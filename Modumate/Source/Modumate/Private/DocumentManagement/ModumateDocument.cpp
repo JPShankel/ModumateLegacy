@@ -1097,7 +1097,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		BIMPresetCollection.ProcessPreset(CollectionPreset.GUID);
 
 		// Find all affected presets and update affected assemblies
-		TSet<FGuid> affectedPresets;
+		TSet<FGuid> affectedPresets {PresetDelta.NewState.GUID};
 		BIMPresetCollection.GetAllAncestorPresets(CollectionPreset.GUID, affectedPresets);
 		if (CollectionPreset.ObjectType != EObjectType::OTNone)
 		{

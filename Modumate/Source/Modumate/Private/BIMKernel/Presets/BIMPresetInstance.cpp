@@ -405,6 +405,8 @@ EBIMResult FBIMPresetInstance::HandleLightProfileDelta(const FBIMPresetEditorDel
 	{
 		FGuid::Parse(*Delta.NewStringRepresentation, lightConfig.IESProfileGUID);
 		SetCustomData(lightConfig);
+		
+		Properties.SetProperty(EBIMValueScope::IESProfile, BIMPropertyNames::AssetID, lightConfig.IESProfileGUID.ToString());
 	}
 	return EBIMResult::Success;
 }
@@ -543,28 +545,10 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 
 		case EBIMPresetEditorField::LightProfile:
 		{
-			return HandleLightProfileDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::LightIsSpot:
-		{
-			return HandleLightIsSpotDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::NameProperty:
-		{
-			DisplayName = FText::FromString(Delta.NewStringRepresentation);
-			return EBIMResult::Success;
-		}
-
-		case EBIMPresetEditorField::AssetProperty:
-		{
-			FBIMPropertyKey propKey(Delta.FieldName);
-			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
+			auto rtn = HandleLightProfileDelta(Delta);
 			FGuid guid;
-			if (FGuid::Parse(Delta.NewStringRepresentation, guid))
+			if (ensure(FGuid::Parse(Delta.NewStringRepresentation, guid)))
 			{
-				SetMaterialChannelsForMesh(InDocument->GetPresetCollection(),guid);
 				FLightConfiguration lightConfig;
 				if (TryGetCustomData(lightConfig))
 				{
@@ -591,6 +575,29 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 					}
 					SetCustomData(lightConfig);
 				}
+			}
+			return rtn;
+		}
+
+		case EBIMPresetEditorField::LightIsSpot:
+		{
+			return HandleLightIsSpotDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::NameProperty:
+		{
+			DisplayName = FText::FromString(Delta.NewStringRepresentation);
+			return EBIMResult::Success;
+		}
+
+		case EBIMPresetEditorField::AssetProperty:
+		{
+			FBIMPropertyKey propKey(Delta.FieldName);
+			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
+			FGuid guid;
+			if (FGuid::Parse(Delta.NewStringRepresentation, guid))
+			{
+				SetMaterialChannelsForMesh(InDocument->GetPresetCollection(),guid);
 			}
 			return EBIMResult::Success;
 		}
