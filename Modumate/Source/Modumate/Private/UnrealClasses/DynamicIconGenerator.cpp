@@ -1274,12 +1274,28 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 		SceneCaptureComp->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 		SceneCaptureComp->ClearShowOnlyComponents();
 
+		// Because icon capture for symbol is done directly on Moi, stencil values are apply directly to Moi's components
+		TArray<UPrimitiveComponent*> allPrimitives;
+		TArray<bool> backupRenderCustomDepth;
+		TArray<int32> backupStencilValue;
 		for (AModumateObjectInstance* object : groupObjects)
 		{
 			EToolCategories category = UModumateTypeStatics::GetObjectCategory(object->GetObjectType());
 			if (category == EToolCategories::Separators || category == EToolCategories::Attachments)
 			{
 				SceneCaptureComp->ShowOnlyActorComponents(object->GetActor());
+				// Backup visual values from all components
+				TArray<UPrimitiveComponent*> comps;
+				object->GetActor()->GetComponents<UPrimitiveComponent>(comps);
+				for (const auto curComp : comps)
+				{
+					allPrimitives.Add(curComp);
+					backupRenderCustomDepth.Add(curComp->bRenderCustomDepth);
+					backupStencilValue.Add(curComp->CustomDepthStencilValue);
+					// Values should be same as SetComponentForIconCapture()
+					curComp->SetRenderCustomDepth(true);
+					curComp->CustomDepthStencilValue = 1;
+				}
 			}
 		}
 
@@ -1301,11 +1317,6 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 		FMinimalViewInfo newView(originalView);
 		newView.FOV = 40.0f;
 		SceneCaptureComp->SetCameraView(newView);
-		FPostProcessSettings& postProcess = SceneCaptureComp->PostProcessSettings;
-		if (postProcess.WeightedBlendables.Array.Num() > 0)
-		{
-			postProcess.WeightedBlendables.Array[0].Weight = 0.0f;  // No icon PP
-		}
 
 		const FVector boxSize = groupBox.GetSize();
 		FVector viewDir(boxSize.X > boxSize.Y ? FVector(-0.5f, -0.85f, -0.4f) : FVector(-0.85f, 0.5f, -0.4f));
@@ -1318,14 +1329,17 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 		SceneCaptureComp->CaptureScene();
 
 		// Restore scene capture settings:
-		if (postProcess.WeightedBlendables.Array.Num() > 0)
-		{
-			postProcess.WeightedBlendables.Array[0].Weight = 1.0f;
-		}
 		SceneCaptureComp->SetCameraView(originalView);
 		SceneCaptureComp->SetRelativeTransform(originalTransform);
 		SceneCaptureComp->ClearShowOnlyComponents();
 		SceneCaptureComp->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_LegacySceneCapture;
+		// Restore saved values per Moi component
+		for (int32 i = 0; i < allPrimitives.Num(); ++i)
+		{
+			auto* curComp = allPrimitives[i];
+			curComp->SetRenderCustomDepth(backupRenderCustomDepth[i]);
+			curComp->CustomDepthStencilValue = backupStencilValue[i];
+		}
 
 		return true;
 	}
