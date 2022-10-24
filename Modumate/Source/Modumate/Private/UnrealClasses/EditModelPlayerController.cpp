@@ -1333,10 +1333,9 @@ void AEditModelPlayerController::SetThumbnailCapturer(ASceneCapture2D* InThumbna
 		USceneCaptureComponent2D *captureComp = ThumbnailCapturer->GetCaptureComponent2D();
 		if (captureComp && (captureComp->TextureTarget == nullptr))
 		{
-			const FName targetName = MakeUniqueObjectName(captureComp, UTextureRenderTarget2D::StaticClass(), TEXT("SceneCaptureTextureTarget"));
-			captureComp->TextureTarget = NewObject<UTextureRenderTarget2D>(captureComp, targetName);
 			const FIntPoint &defaultThumbSize = FModumateThumbnailHelpers::DefaultThumbSize;
-			captureComp->TextureTarget->InitCustomFormat(defaultThumbSize.X, defaultThumbSize.Y, PF_B8G8R8A8, false);
+			auto rt = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), defaultThumbSize.X, defaultThumbSize.Y, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
+			captureComp->TextureTarget = rt;
 		}
 	}
 }
