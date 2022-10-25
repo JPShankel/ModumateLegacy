@@ -1336,6 +1336,12 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 		}
 	}
 
+	// Add back missing pin-sets
+	if (InDocVersion < 25)
+	{
+		PinSets = PresetCollection.PresetTaxonomy.GetPinSets(MyTagPath);
+	}
+
 	return EBIMResult::Success;
 }
 
