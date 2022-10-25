@@ -1340,6 +1340,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 	if (InDocVersion < 25)
 	{
 		PinSets = PresetCollection.PresetTaxonomy.GetPinSets(MyTagPath);
+		PartSlots = PartSlots.FilterByPredicate([](const FBIMPresetPartSlot& self){return self.PartPresetGUID.IsValid();});
 	}
 
 	return EBIMResult::Success;

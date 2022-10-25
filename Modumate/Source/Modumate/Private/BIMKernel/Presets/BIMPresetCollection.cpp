@@ -55,6 +55,10 @@ EBIMResult FBIMPresetCollection::GetDirectCanonicalDescendents(const FGuid& Pres
 		{
 			OutCanonicals.Add(part.PartPresetGUID);
 		}
+		if (part.SlotPresetGUID.IsValid())
+		{
+			OutCanonicals.Add(part.SlotPresetGUID);
+		}
 	}
 
 	preset->Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
@@ -300,9 +304,9 @@ EBIMResult FBIMPresetCollection::PostLoad()
 					continue;
 				}
 
-				FBIMPresetPartSlot* partSlot = kvp.Value.PartSlots.FindByPredicate([slotPreset](const FBIMPresetPartSlot& PartSlot)
+				FBIMPresetPartSlot* partSlot = kvp.Value.PartSlots.FindByPredicate([this, slotPreset](const FBIMPresetPartSlot& PartSlot)
 				{
-					if (PartSlot.SlotPresetGUID == slotPreset->GUID)
+					if (PartSlot.SlotPresetGUID == VDPTable.TranslateToCanonical(slotPreset->GUID))
 					{
 						return true;
 					}
