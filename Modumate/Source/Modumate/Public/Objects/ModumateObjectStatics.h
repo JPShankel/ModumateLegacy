@@ -137,6 +137,8 @@ public:
 
 	static void GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs);
 	static void UpdateDesignOptionVisibility(UModumateDocument* Doc);
+	static TSet<int32> GetAllVisibleGroupsViaDesignOptions(const UModumateDocument* Doc);
+	static TSet<int32> GetAllVisibleGroupsViaDesignOptions(const UModumateDocument* Doc, const TArray<int32>& Selectedoptions);
 
 	static void GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson);
 	static void GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, TArray<FWebMOI>& OutMOIs);

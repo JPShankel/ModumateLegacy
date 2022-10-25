@@ -23,6 +23,7 @@
 #include "Objects/Terrain.h"
 #include "Objects/StructureLine.h"
 #include "Objects/EdgeHosted.h"
+#include "Objects/MetaGraph.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
@@ -1555,6 +1556,60 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 		Algo::Transform(hiddenObs, hiddenObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
 		playerState->AddHideObjectsById(hiddenObIDs, false);
 	}
+}
+
+TSet<int32> UModumateObjectStatics::GetAllVisibleGroupsViaDesignOptions(const UModumateDocument* Doc)
+{
+	TArray<const AMOIMetaGraph*> allGroupMois;
+	Doc->GetObjectsOfTypeCasted(EObjectType::OTMetaGraph, allGroupMois);
+	TSet<int32> allGroups;
+	Algo::Transform(allGroupMois, allGroups, [](const AMOIMetaGraph* MOI) { return MOI->ID; });
+
+	TArray<const AMOIDesignOption*> allOptionMois;
+	Doc->GetObjectsOfTypeCasted(EObjectType::OTDesignOption, allOptionMois);
+	if (allOptionMois.Num() == 0)
+	{
+		return allGroups;
+	}
+
+	TSet<int32> groupsInOptions, groupsEnabledInOptions;
+	for (const auto* option : allOptionMois)
+	{
+		groupsInOptions.Append(option->InstanceData.groups);
+		if (option->InstanceData.isShowing)
+		{
+			groupsEnabledInOptions.Append(option->InstanceData.groups);
+		}
+	}
+
+	return allGroups.Difference(groupsInOptions.Difference(groupsEnabledInOptions));
+}
+
+TSet<int32> UModumateObjectStatics::GetAllVisibleGroupsViaDesignOptions(const UModumateDocument* Doc, const TArray<int32>& SelectedOptions)
+{
+	TArray<const AMOIMetaGraph*> allGroupMois;
+	Doc->GetObjectsOfTypeCasted(EObjectType::OTMetaGraph, allGroupMois);
+	TSet<int32> allGroups;
+	Algo::Transform(allGroupMois, allGroups, [](const AMOIMetaGraph* MOI) { return MOI->ID; });
+
+	if (SelectedOptions.Num() == 0)
+	{
+		return allGroups;
+	}
+
+	TArray<const AMOIDesignOption*> allOptionMois;
+	Doc->GetObjectsOfTypeCasted(EObjectType::OTDesignOption, allOptionMois);
+	TSet<int32> groupsInOptions, groupsEnabledInOptions;
+	for (const auto* option : allOptionMois)
+	{
+		groupsInOptions.Append(option->InstanceData.groups);
+		if (SelectedOptions.Contains(option->ID))
+		{
+			groupsEnabledInOptions.Append(option->InstanceData.groups);
+		}
+	}
+
+	return allGroups.Difference(groupsInOptions.Difference(groupsEnabledInOptions));
 }
 
 void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide)

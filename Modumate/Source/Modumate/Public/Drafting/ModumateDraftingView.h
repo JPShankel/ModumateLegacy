@@ -42,7 +42,7 @@ public:
 
 public:
 	void GeneratePagesFromCutPlanes(TArray<int32> InCutPlaneIDs);
-	void GeneratePageForDD(int32 CutPlaneID, const FDrawingDesignerGenericRequest& Request);
+	void GeneratePageForDD(const FDrawingDesignerGenericRequest& Request);
 
 // Generate schedules
 public:

@@ -300,6 +300,10 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(TArray<int32> InCutPlaneI
 		draftMan->RequestRender(TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE));
 	}
 
+	// Only draw groups visible according to current Design Options:
+	TSet<int32> optionsVisibleGroups(UModumateObjectStatics::GetAllVisibleGroupsViaDesignOptions(Document));
+	optionsVisibleGroups.Add(MOD_ID_NONE);
+
 	for (AModumateObjectInstance* cutPlane : exportableCutPlanes)
 	{
 		ISceneCaptureObject* sceneCaptureInterface = cutPlane->GetSceneCaptureInterface();
@@ -330,6 +334,9 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(TArray<int32> InCutPlaneI
 
 		page->Children.Add(floorplan);
 		page->Dimensions = presentationSeriesSize;
+
+		floorplan->SetVisibleGroups(optionsVisibleGroups);
+
 		sceneCaptureInterface->CaptureDelegate.AddSP(floorplan.Get(), &FFloorplan::OnPageCompleted);
 		if (!sceneCaptureInterface->StartRender(Document))
 		{
@@ -347,23 +354,43 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(TArray<int32> InCutPlaneI
 	}
 }
 
-void FModumateDraftingView::GeneratePageForDD(int32 CutPlaneID, const FDrawingDesignerGenericRequest& Request)
+void FModumateDraftingView::GeneratePageForDD(const FDrawingDesignerGenericRequest& Request)
 {
 	UModumateGameInstance* gameInstance = World.IsValid() ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager* draftMan = gameInstance ? gameInstance->DraftingManager : nullptr;
 
-	AModumateObjectInstance* cutPlane = Document->GetObjectById(CutPlaneID);
+	FDrawingDesignerDrawingRequest drawingRequest;
+	if (!ReadJsonGeneric(Request.data, &drawingRequest) || drawingRequest.moiId == MOD_ID_NONE)
+	{
+		return;
+	}
+
+	int32 cutPlaneID = drawingRequest.moiId;
+	TArray<int32> designOptions;
+
+	AModumateObjectInstance* cutPlane = Document->GetObjectById(cutPlaneID);
 	if (!ensure(cutPlane))
 	{
 		return;
 	}
+
+	const auto designOptionsAttr = drawingRequest.attributes.JsonObject->TryGetField(TEXT("designOptions"));
+	if (designOptionsAttr.IsValid() && designOptionsAttr->Type == EJson::Array)
+	{
+		for (const auto& option : designOptionsAttr->AsArray())
+		{
+			designOptions.Add(FCString::Atoi(*option->AsString()));
+		}
+	}
+
+	TSet<int32> selectedGroups = UModumateObjectStatics::GetAllVisibleGroupsViaDesignOptions(Document, designOptions);
 
 	DrawingInterface = MakeShared<FModumateDDDraw>(Document, World.Get(), Request);
 
 	draftMan->CurrentDraftingView = this;
 	draftMan->CurrentDrawingInterface = DrawingInterface.Get();
 
-	draftMan->RequestRender(TPair<int32, int32>(CutPlaneID, MOD_ID_NONE));
+	draftMan->RequestRender(TPair<int32, int32>(cutPlaneID, MOD_ID_NONE));
 
 	ISceneCaptureObject* sceneCaptureInterface = cutPlane->GetSceneCaptureInterface();
 	sceneCaptureInterface->SetupPendingRenders();
@@ -371,8 +398,9 @@ void FModumateDraftingView::GeneratePageForDD(int32 CutPlaneID, const FDrawingDe
 	if (sceneCaptureInterface)
 	{
 		auto page = CreateAndAddPage();
-		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, World.Get(), TPair<int32, int32>(CutPlaneID, MOD_ID_NONE)));
+		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, World.Get(), TPair<int32, int32>(cutPlaneID, MOD_ID_NONE)));
 		floorplan->SetDraftingType(ExportType);
+		floorplan->SetVisibleGroups(selectedGroups);
 
 		auto viewArea = floorplan->DrawingContent.Pin();
 		if (viewArea)

@@ -135,13 +135,16 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 
 	for (const auto* moi: inplaneDraftTypes)
 	{
-		moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		if (VisibleGroups.Contains(UModumateObjectStatics::GetGroupIdForObject(Doc, moi->ID)) )
+		{
+			moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		}
 	}
 
 	// Clipping of beyond-cut-plane lines.
 	ParentPage->lineClipping.Reset(new FModumateClippingTriangles(*cutPlane));
 	ParentPage->lineClipping->SetTransform(cutPlane->GetCorner(0), AxisX, 1.0f);
-	ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
+	ParentPage->lineClipping->AddTrianglesFromDoc(Doc, VisibleGroups);
 
 //#define MODUMATE_DRAW_OCCLUDERS
 #ifdef MODUMATE_DRAW_OCCLUDERS
@@ -173,7 +176,10 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 
 	for (auto object: beyondCutObjects)
 	{
-		object->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		if (VisibleGroups.Contains(UModumateObjectStatics::GetGroupIdForObject(Doc, object->ID)) )
+		{
+			object->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		}
 	}
 	// Cut plane holds traced FFE lines.
 	cutPlane->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);

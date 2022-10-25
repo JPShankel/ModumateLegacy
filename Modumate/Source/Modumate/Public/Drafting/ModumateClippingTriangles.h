@@ -18,7 +18,7 @@ class FModumateClippingTriangles
 public:
 	FModumateClippingTriangles(const AModumateObjectInstance& CutPlane);
 	void SetTransform(FVector ViewPosition, FVector ViewXAxis, float ViewScale);
-	void AddTrianglesFromDoc(const UModumateDocument* doc);
+	void AddTrianglesFromDoc(const UModumateDocument* doc, const TSet<int32>& VisibleGroups);
 	TArray<FEdge> ClipWorldLineToView(FEdge line);
 	TArray<FEdge> ClipViewLineToView(FEdge line);
 	FEdge WorldLineToView(FEdge line) const;

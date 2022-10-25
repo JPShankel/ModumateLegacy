@@ -217,15 +217,10 @@ void UModumateDocumentWebBridge::drawing_get_clicked(const FString& InRequest)
 void UModumateDocumentWebBridge::drawing_get_cutplane_lines(const FString& InRequest)
 {
 	FDrawingDesignerGenericRequest req;
-	if (req.ReadJson(InRequest) && req.requestType == EDrawingDesignerRequestType::getCutplaneLines)
+	if (ensure(req.ReadJson(InRequest) && req.requestType == EDrawingDesignerRequestType::getCutplaneLines))
 	{
-		int32 cutPlane = FCString::Atoi(*req.data);
-
-		if (cutPlane != MOD_ID_NONE)
-		{
-			Document->CurrentDraftingView = MakeShared<FModumateDraftingView>(GetWorld(), Document, UDraftingManager::kDD);
-			Document->CurrentDraftingView->GeneratePageForDD(cutPlane, req);
-		}
+		Document->CurrentDraftingView = MakeShared<FModumateDraftingView>(GetWorld(), Document, UDraftingManager::kDD);
+		Document->CurrentDraftingView->GeneratePageForDD(req);
 	}
 }
 

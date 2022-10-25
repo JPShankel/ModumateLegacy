@@ -45,7 +45,7 @@ FModumateClippingTriangles::FModumateClippingTriangles(const AModumateObjectInst
 	}
 }
 
-void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* doc)
+void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* doc, const TSet<int32>& VisibleGroups)
 {
 	ensureAlways(VectorGetComponent(VectorDot4(GlobalVectorConstants::FloatOne, MakeVectorRegister(1.0f, 1.0f, 1.0f, 1.0f)), 0  ) == 4.0f);
 	const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
@@ -68,6 +68,13 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 	for (const auto& object: occluderObjects)
 	{
 		CloudConnection->NetworkTick(World);
+
+		// Is object visible according to Design Options?
+		int32 groupId = UModumateObjectStatics::GetGroupIdForObject(doc, object->ID);
+		if (VisibleGroups.Num() != 0 && !VisibleGroups.Contains(groupId))
+		{
+			continue;
+		}
 
 		FTransform localToWorld;
 		TArray<FVector> vertices;

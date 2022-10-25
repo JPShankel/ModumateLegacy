@@ -36,6 +36,7 @@ public:
 
 	void GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting);
 	virtual bool MakeWorldObjects();
+	void SetVisibleGroups(TSet<int32> NewVisibleGroups) { VisibleGroups = MoveTemp(NewVisibleGroups); }
 
 // Object references
 public:
@@ -52,6 +53,7 @@ public:
 protected:
 	FModumateUnitCoord2D DrawingSize;
 	FModumateUnitCoord2D DrawingMargin;
+	TSet<int32> VisibleGroups;
 
 // Rooms - this information is likely only relevant to plans (cut plane normal = down vector)
 protected:
