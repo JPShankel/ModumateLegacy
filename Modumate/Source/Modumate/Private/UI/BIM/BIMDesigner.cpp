@@ -952,8 +952,11 @@ bool UBIMDesigner::SavePresetFromNode(const FBIMEditorNodeIDType& InstanceID)
 	{
 		return false;
 	}
-
-	node->Preset.Origination = node->Preset.Origination == EPresetOrigination::VanillaDerived ? EPresetOrigination::EditedDerived : EPresetOrigination::Invented;
+	
+	if(node->Preset.Origination == EPresetOrigination::VanillaDerived)
+	{
+		node->Preset.Origination = EPresetOrigination::EditedDerived;
+	}
 	
 	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeUpdateDelta(node->Preset, this);
 	Controller->GetDocument()->ApplyDeltas({ presetDelta }, GetWorld());
