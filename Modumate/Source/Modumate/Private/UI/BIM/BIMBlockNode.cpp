@@ -2,6 +2,7 @@
 
 #include "UI/BIM/BIMBlockNode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
 #include "UI/BIM/BIMDesigner.h"
@@ -149,7 +150,13 @@ void UBIMBlockNode::OnButtonDuplicateReleased()
 	if (ensureAlways(Controller->GetDocument()->DuplicatePreset(GetWorld(), PresetID, newPreset)))
 	{
 		// Note: SetPresetForNodeInBIMDesigner call will destroy this object
-		ParentBIMDesigner->SetPresetForNodeInBIMDesigner(ID, newPreset.GUID);
+		ParentBIMDesigner->SetPresetForNodeInBIMDesigner(ID, newPreset.GUID);	
+		// If this is a root node of an assembly, it should be automatically selected
+		if (IsRootNode && newPreset.ObjectType != EObjectType::OTNone)
+		{
+			Controller->CurrentTool->SetAssemblyGUID(newPreset.GUID);
+			Controller->EMPlayerState->SendWebPlayerState();
+		}
 	}
 }
 
