@@ -1955,4 +1955,13 @@ void FBIMPresetCollection::ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> J
 	}
 }
 
+const FVDPTable* FBIMPresetCollectionProxy::GetVDPTable() const
+{
+	if(ensureAlways(BaseCollection))
+	{
+		return &BaseCollection->VDPTable;
+	}
+	return nullptr;
+}
+
 #undef LOCTEXT_NAMESPACE

@@ -172,7 +172,8 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 		}
 
 		FBIMEditorNodeIDType nodeID = *FString::Printf(TEXT("NODE-%02d"), NextInstanceID);
-		FBIMPresetEditorNodeSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(new FBIMPresetEditorNode(nodeID,iterator.ParentSetIndex,iterator.ParentSetPosition,*preset)));
+		auto* fben = new FBIMPresetEditorNode(nodeID,iterator.ParentSetIndex,iterator.ParentSetPosition,*preset, PresetCollectionProxy.GetVDPTable());
+		FBIMPresetEditorNodeSharedPtr instance = InstancePool.Add_GetRef(MakeShareable(fben));
 		createdInstances.Add(instance);
 		InstanceMap.Add(nodeID, instance);
 		++NextInstanceID;

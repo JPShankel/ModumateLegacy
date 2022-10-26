@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VDPTable.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 
 
@@ -32,7 +33,7 @@ private:
 	FBIMPresetEditorNode() = delete;
 	FBIMPresetEditorNode(const FBIMPresetEditorNode& rhs) = delete;
 	FBIMPresetEditorNode& operator=(const FBIMPresetEditorNode& rhs) = delete;
-	FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID,int32 InPinSetIndex,int32 InPinSetPosition,const FBIMPresetInstance& InPreset);
+	FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID,int32 InPinSetIndex,int32 InPinSetPosition,const FBIMPresetInstance& InPreset, const FVDPTable* VdpTable);
 
 	FBIMEditorNodeIDType InstanceID;
 
@@ -42,6 +43,8 @@ private:
 	EBIMResult DetachSelfFromParent();
 
 	bool ValidateNode() const;
+
+	const FVDPTable* VDPTable; 
 
 public:
 	~FBIMPresetEditorNode()

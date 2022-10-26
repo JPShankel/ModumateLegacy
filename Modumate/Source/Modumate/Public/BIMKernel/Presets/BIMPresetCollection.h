@@ -245,6 +245,8 @@ public:
 	const FArchitecturalMaterial* GetArchitecturalMaterialByGUID(const FGuid& Key) const;
 	const FSimpleMeshRef* GetSimpleMeshByGUID(const FGuid& Key) const;
 
+	const FVDPTable* GetVDPTable() const;
+
 	FGuid GetDefaultMaterialGUID() const;
 
 };

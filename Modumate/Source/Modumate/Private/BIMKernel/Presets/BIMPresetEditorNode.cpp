@@ -9,15 +9,18 @@
 int32 FBIMPresetEditorNode::InstanceCount = 0;
 #endif
 
-FBIMPresetEditorNode::FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID, int32 InPinSetIndex, int32 InPinSetPosition,const FBIMPresetInstance& InPreset) :
+FBIMPresetEditorNode::FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID, int32 InPinSetIndex, int32 InPinSetPosition,
+	const FBIMPresetInstance& InPreset,
+	const FVDPTable* VdpTable) :
 	InstanceID(InInstanceID),
+	VDPTable(VdpTable),
 	Preset(InPreset),
 	MyParentPinSetIndex(InPinSetIndex),
 	MyParentPinSetPosition(InPinSetPosition)
 {
 	CategoryTitle = InPreset.CategoryTitle;
 
-#if WITH_EDITOR 
+#if WITH_EDITOR
 	++InstanceCount;
 #endif
 }
@@ -119,11 +122,17 @@ EBIMResult FBIMPresetEditorNode::FindChild(const FBIMEditorNodeIDType& ChildID, 
 
 	for (auto& checkChild : Preset.ChildPresets)
 	{
-		if (checkChild.PresetGUID == foundChildNode->Preset.GUID)
+		//KLUDGE: This is going to break in the future. We need access to the VDP table to make sure this is
+		// valid. Invented presets
+
+		if(ensure(VDPTable != nullptr))
 		{
-			OutPinSetIndex = checkChild.ParentPinSetIndex;
-			OutPinSetPosition = checkChild.ParentPinSetPosition;
-			return EBIMResult::Success;
+			if(VDPTable->TranslateToDerived(checkChild.PresetGUID) == foundChildNode->Preset.GUID)
+			{
+				OutPinSetIndex = checkChild.ParentPinSetIndex;
+				OutPinSetPosition = checkChild.ParentPinSetPosition;
+				return EBIMResult::Success;
+			}
 		}
 	}
 
@@ -277,6 +286,7 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 	for (auto& presetPart : Preset.PartSlots)
 	{
 		auto* slotNode = slotMap.Find(presetPart.SlotPresetGUID);
+		
 		// Will be null for empty slots
 		if (slotNode != nullptr)
 		{
