@@ -354,7 +354,8 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 
 #if !UE_SERVER
 	GetWorldTimerManager().SetTimer(AutoSaveTimer, this, &AEditModelPlayerController::OnAutoSaveTimer, 1.0f, true, 0.0f);
-	GetWorldTimerManager().SetTimer(AutoUploadWebThumbnailTimer, this, &AEditModelPlayerController::OnAutoUploadWebThumbnailTimer, 60.0f, true, 60.0f);
+	// Take thumbnail image after 1 sec, and every 60 sec after
+	GetWorldTimerManager().SetTimer(AutoUploadWebThumbnailTimer, this, &AEditModelPlayerController::OnAutoUploadWebThumbnailTimer, 60.0f, true, 1.0f);
 
 	// Create icon generator in the farthest corner of the universe
 	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
