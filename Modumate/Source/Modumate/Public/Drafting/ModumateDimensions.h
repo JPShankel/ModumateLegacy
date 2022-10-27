@@ -8,6 +8,8 @@
 
 #include "Objects/ModumateObjectEnums.h"
 #include "Drafting/ModumateDraftingElements.h"
+#include "Graph/Graph2DEdge.h"
+#include "Graph/Graph2DVertex.h"
 
 #include "ModumateDimensions.generated.h"
 
@@ -88,19 +90,16 @@ public:
 class FModumateDimensions
 {
 public:
-
-	
 	bool AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page, const UModumateDocument * Doc,
-	                               FPlane Plane, FVector Origin, FVector AxisX);
-
-
+	                               FPlane Plane, FVector Origin, FVector AxisX, const TSet<int32>* Groups = nullptr);
 	TArray<FModumateDimension> GetDimensions(const UModumateDocument * Doc,
 							FPlane Plane, FVector Origin, FVector AxisX);
-	
+
 private:
 
 	bool PopulateAndProcessDimensions(const UModumateDocument * Doc,
-							FPlane Plane, FVector Origin, FVector AxisX);
+							FPlane Plane, FVector Origin, FVector AxisX, const TSet<int32>* Groups);
+	void Reset();
 	void ProcessDimensions();
 	void AddEdgeAndConnected(int32 Edge, TSet<int32>& OutEdges) const;
 	void ProcessConnectedGroup(const TSet<int32>& Group);
@@ -113,10 +112,13 @@ private:
 	void CreateAngularDimension(int32 Edge1, int32 Vertex, int32 Edge2);
 	void ConnectIslands(const TArray<TSet<int32>>& plans);
 	FVec2d FarPoint(int32 DimensionIndex, int32 VertexIndex, int32 ConnectionIndex) const;
+	static float GetEdgeAngle(const FGraph2DEdge* Edge, bool bFlippedEdge = false);
 	
-	TSharedPtr<FGraph2D> CutGraph;
 	TMap<int32, int32> GraphIDToObjID;
 	TMap<int32, int32> GraphIDToDimID;
+	TMap<int32, FGraph2DEdge> Edges;
+	TMap<int32, FGraph2DVertex> Vertices;
+
 	TArray<FModumateDimension> Dimensions;
 	TArray<FModumateAngularDimension> AngularDimensions;
 	

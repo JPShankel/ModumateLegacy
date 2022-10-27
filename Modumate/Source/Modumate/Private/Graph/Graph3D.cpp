@@ -1964,7 +1964,8 @@ bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, TSharedPt
 	return true;
 }
 
-bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TSharedPtr<FGraph2D> OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const
+bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
+	TSharedPtr<FGraph2D> OutGraph, TMap<int32, int32> &OutGraphIDToObjID, int32 NextID /*= 0*/) const
 {
 	if (!ensureAlways(OutGraph.IsValid()))
 	{
@@ -1972,7 +1973,6 @@ bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const
 	}
 	OutGraph->Reset();
 
-	int32 NextID = 0;
 	// TODO: unclear whether clipping needs to be done here or not.
 	// Currently, clipping is done here meaning that the graph returned fits inside of the view provided.
 	// However, the edges/vertices created may not map exactly to the objects in the scene.

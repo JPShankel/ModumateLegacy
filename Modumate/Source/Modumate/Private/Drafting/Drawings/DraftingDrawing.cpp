@@ -235,7 +235,7 @@ bool FDraftingDrawing::MakeWorldObjects()
 		planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
 		FModumateDimensions dimensionsCreator;
 
-		if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX))
+		if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX, &VisibleGroups))
 		{
 			if (!bHorizontalPlan)
 			{
