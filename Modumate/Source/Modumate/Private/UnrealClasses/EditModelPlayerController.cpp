@@ -4440,6 +4440,7 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 			EMPlayerPawn->SetActorLocationAndRotation(OriginalPlayerTransform.GetLocation(), OriginalPlayerTransform.GetRotation());
 			SkyActor->SetCurrentDateTime(OriginalDateTime);
 			EMPlayerPawn->ScreenshotTaker->bCaptureEveryFrame = false;
+			Document->NotifyWeb(ENotificationLevel::INFO, TEXT("3D Views Exported Successfully"));
 			//TODO: re-enable user input
 			return;
 		}

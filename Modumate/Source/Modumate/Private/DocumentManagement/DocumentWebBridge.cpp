@@ -917,6 +917,11 @@ void UModumateDocumentWebBridge::export_views(TArray<int32> CameraViewIDs)
 		controller->CaptureCameraView(filePath, cv);
 	}
 	controller->CaptureCameraViewsRayTracing(rayTracingEnabledViews, filePath);
+
+	if (rayTracingEnabledViews.Num() == 0)
+	{
+		Document->NotifyWeb(ENotificationLevel::INFO, TEXT("3D Views Exported Successfully"));	
+	}
 }
 
 void UModumateDocumentWebBridge::UpdateOrAddPreset(FBIMPresetInstance& Preset)
