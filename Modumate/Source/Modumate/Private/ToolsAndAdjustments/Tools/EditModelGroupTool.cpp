@@ -86,6 +86,7 @@ bool UGroupTool::Activate()
 		int32 nextID = doc->GetNextAvailableID();
 		int32 newGroupID = nextID++;
 
+		// Create new Group MOI
 		int32 oldGroupID = doc->GetActiveVolumeGraphID();
 		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, oldGroupID);
 		stateData.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
@@ -93,6 +94,8 @@ bool UGroupTool::Activate()
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 		deltas.Add(delta);
+
+		// Create corresponding Graph3d
 		FGraph3DDelta addGraph;
 		addGraph.DeltaType = EGraph3DDeltaType::Add;
 		addGraph.GraphID = newGroupID;
@@ -150,7 +153,8 @@ bool UGroupTool::Activate()
 		}
 
 		metaItemsToMove = metaItemsToMove.Difference(itemsToIgnore);
-		if (metaItemsToMove.Num() == 0)
+
+		if (metaItemsToMove.Num() + selectedGroups.Num() == 0)
 		{
 			Controller->ToolAbortUse();
 			return true;
@@ -195,6 +199,7 @@ bool UGroupTool::Activate()
 			deltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(createGraphDelta)) );
 		}
 
+		// Push down selected Groups into new Group.
 		for (auto& childGroup: selectedGroups)
 		{
 			FMOIStateData newState(childGroup->GetStateData());
