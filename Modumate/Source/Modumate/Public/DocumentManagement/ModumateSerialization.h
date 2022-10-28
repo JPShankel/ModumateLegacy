@@ -353,8 +353,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 24: Canonical Presets and their derivations. Cloud based importing.
 // Version 25: Fix missing pin sets
 // Version 26: Preset Custom Data upgrade, deprecating preset properties
-
-static constexpr int32 DocVersion = 26;
+// Version 27: Symbol Presets have multiple 3d graphs
+static constexpr int32 DocVersion = 27;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

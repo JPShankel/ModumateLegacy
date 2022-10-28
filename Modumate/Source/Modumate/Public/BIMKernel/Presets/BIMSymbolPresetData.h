@@ -17,7 +17,7 @@ struct MODUMATE_API FBIMSymbolPresetIDSet
 };
 
 USTRUCT()
-struct MODUMATE_API FBIMSymbolPresetData
+struct MODUMATE_API FBIMSymbolPresetDataV26
 {
 	GENERATED_BODY()
 
@@ -26,6 +26,27 @@ struct MODUMATE_API FBIMSymbolPresetData
 
 	UPROPERTY()
 	FGraph3DRecordV1 Graph3d;
+
+	UPROPERTY()
+	TMap<int32, FGraph2DRecord> SurfaceGraphs;
+
+	UPROPERTY()
+	TMap<int32, FBIMSymbolPresetIDSet> EquivalentIDs;
+
+	UPROPERTY()
+	FVector Anchor { ForceInit };
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMSymbolPresetData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TMap<int32, FMOIStateData> Members;
+
+	UPROPERTY()
+	TArray<FGraph3DRecordV1> Graphs;
 
 	UPROPERTY()
 	TMap<int32, FGraph2DRecord> SurfaceGraphs;

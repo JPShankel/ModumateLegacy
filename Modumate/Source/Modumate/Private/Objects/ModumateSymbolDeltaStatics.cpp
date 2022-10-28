@@ -247,7 +247,7 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* 
 		{
 			if (idMapping.Value.IDSet.Contains(vertId))
 			{
-				auto* symbolVert = symbolData.Graph3d.Vertices.Find(idMapping.Key);
+				auto* symbolVert = symbolData.Graphs[0].Vertices.Find(idMapping.Key);
 				if (ensure(symbolVert))
 				{
 					symbolVert->Position = thisTransformInverse.TransformPosition(toPosition);
@@ -469,6 +469,8 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 		return false;
 	}
 
+	OutPreset.Graphs.Empty();
+
 	TSet<AModumateObjectInstance*> groupMembers;
 	UModumateObjectStatics::GetObjectsInGroups(Doc, { group->ID }, groupMembers, true);
 	for (const auto* moi : groupMembers)
@@ -503,8 +505,8 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 	if (ensure(graph3d))
 	{
 		FTransform3d transform(Transform);
-		graph3d->Save(&OutPreset.Graph3d);
-		for (auto& vert : OutPreset.Graph3d.Vertices)
+		graph3d->Save(&OutPreset.Graphs.AddDefaulted_GetRef());
+		for (auto& vert : OutPreset.Graphs[0].Vertices)
 		{
 			vert.Value.Position = transform.TransformPosition(vert.Value.Position);
 		}
@@ -529,7 +531,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 
 	// Similar to FModumateObjectDeltaStatics::DuplicateGroups.
 	// Duplicate Preset Graph3d:
-	const FGraph3DRecordV1& graph = Preset.Graph3d;
+	const FGraph3DRecordV1& graph = Preset.Graphs[0];
 	auto newElementsDelta = MakeShared<FGraph3DDelta>();
 	newElementsDelta->GraphID = GroupID;
 	for (const auto& kvp : graph.Vertices)
@@ -843,16 +845,23 @@ bool FModumateSymbolDeltaStatics::RemoveGroupMembersFromSymbol(const TSet<int32>
 FVector FModumateSymbolDeltaStatics::SymbolAnchor(const FBIMSymbolPresetData& PresetData)
 {
 	FVec3d anchor;
-	if (PresetData.Graph3d.Vertices.Num() > 0)
+	bool bFirst = true;
+	for (const auto& graph : PresetData.Graphs)
 	{
-		anchor = PresetData.Graph3d.Vertices.CreateConstIterator()->Value.Position;
-	}
-	for (const auto& vert : PresetData.Graph3d.Vertices)
-	{
-		const auto& position = vert.Value.Position;
-		if ((position.X < anchor.X) ? true : (position.Y > anchor.Y) ? true : position.Z < anchor.Z)
+		const TMap<int32, FGraph3DVertexRecordV1>& vertices = graph.Vertices;
+
+		if (bFirst && vertices.Num() > 0)
 		{
-			anchor = position;
+			anchor = vertices.CreateConstIterator()->Value.Position;
+			bFirst = false;
+		}
+		for (const auto& vert : vertices)
+		{
+			const auto& position = vert.Value.Position;
+			if ((position.X < anchor.X) ? true : (position.Y > anchor.Y) ? true : position.Z < anchor.Z)
+			{
+				anchor = position;
+			}
 		}
 	}
 
