@@ -37,6 +37,7 @@ public:
 	virtual FTransform GetWorldTransform() const override;
 	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
 	virtual bool FromWebMOI(const FString& InJson) override;
+
 	virtual FVector GetCorner(int32 Index) const override;
 	virtual int32 GetNumCorners() const override { return CachedCorners.Num(); };
 	

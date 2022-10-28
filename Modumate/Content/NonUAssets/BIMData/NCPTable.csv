@@ -402,6 +402,7 @@ Assembly_1FlexDim2Fixed_LinearRig,Slot-Based,Slot-Based assemblies have a fixed 
 Assembly_1FlexDim2Fixed_LinearRig_HingeSet,Hinge Sets,,,,,Hinge Set,,AssemblyRigged,,,,,HingeSet,,,,,,,,,,,
 Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound,Compound Muntins,Compound Muntins have front and back surface-mounted muntins (and often a spacer between glass panes).,,,,Compound Muntin,,AssemblyRigged,,,,,MuntinCompound,,,,,,,,,,,
 Assembly_2FlexDims1Fixed,Planar (1 dimension set by Preset),"Planar assemblies stretch in 2 dimensions (e.g. layers, layered assemblies, doors).",,,,,,AssemblyRigged,,,2FlexDims1Fixed,,,,,,,,,,,,,
+Assembly_2FlexDims1Fixed_Layer0D,"Thickness-Based (""Layers"")",,,,,,X,Layer,,,,Layer0D,,,,,,,,,,,,
 Assembly_2FlexDims1Fixed_PlanarPattern,"Pattern-Based (""Layers"")",Layers are arrays of modules that repeat in 2 dimensions.,,,,Layer,X,Layer,,,,PlanarPattern,,,,,,,,,,"[Dimension.Thickness] [RawMaterial.Name], [Color.Nickname] #[Color.HEXValue], [Preset.ColloquialName]",Include [Preset.ColloquialName] value is not Standard,
 Assembly_2FlexDims1Fixed_2DPattern,Patterned Railings,,,,,Pattern,X,Layer,,,,2DPattern,,,,,,,,,,,,
 Assembly_2FlexDims1Fixed_PlanarGroup,Layer Groups,"Layer groups are multi-layered assemblies (e.g. walls, floors, roofs).",,,,,X,AssemblyLayered,,,,PlanarGroup,,,,,,,,,,,,

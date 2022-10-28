@@ -11,6 +11,9 @@
 #include "BIMKernel/AssemblySpec/BIMExtrusionSpec.h"
 
 #include "BIMKernel/Presets/BIMPresetPatternDefinition.h"
+#include "BIMKernel/Presets/CustomData/BIMDimensions.h"
+#include "BIMKernel/Presets/CustomData/BIMMeshRef.h"
+#include "BIMKernel/Presets/CustomData/BIMPart.h"
 
 #include "Database/ModumateDataCollection.h"
 
@@ -105,6 +108,15 @@ public:
 
 	UPROPERTY()
 	FBIMPattern PatternData;
+	
+	UPROPERTY()
+	FBIMPartConfig PartData;
+
+	UPROPERTY()
+	FBIMMeshRef MeshRef;
+
+	UPROPERTY()
+	FBIMDimensions PresetDimensions;
 
 	// Cabinets have material bindings at the assembly level
 	UPROPERTY()

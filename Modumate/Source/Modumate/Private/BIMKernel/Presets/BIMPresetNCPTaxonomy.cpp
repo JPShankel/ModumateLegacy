@@ -305,10 +305,15 @@ FBIMPresetForm FBIMPresetNCPTaxonomy::GetFormTemplate(const FBIMTagPath& TagPath
 		for (auto prop : props)
 		{
 			// Add properties that are visible to the bimdesigner
-			if (prop.Value.isBIMVisible)
-			{
-				form.AddPropertyElement(FText::FromString(prop.Value.name), FName(prop.Value.key), EBIMPresetEditorField::TextProperty);
-			}
+			TArray<FString> parts;
+	        prop.Key.ParseIntoArray(parts, TEXT("."));
+	        if (ensureAlways(parts.Num() == 2))
+	        {
+	        	if (prop.Value.isBIMVisible && prop.Value.isEditable && prop.Value.formElement != EBIMPresetEditorField::None)
+	        	{
+	        		form.AddPropertyElement(FText::FromString(prop.Value.name), FName(*parts[0]), FName(*parts[1]), prop.Value.formElement);
+	        	}
+	        }
 		}	
 	}
 

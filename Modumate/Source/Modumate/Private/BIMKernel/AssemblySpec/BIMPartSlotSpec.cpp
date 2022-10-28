@@ -4,6 +4,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "Algo/Transform.h"
+#include "BIMKernel/Presets/CustomData/BIMDimensions.h"
 
 TMap<FString, FPartNamedDimension> FBIMPartSlotSpec::NamedDimensionMap;
 
@@ -27,10 +28,9 @@ bool FBIMPartSlotSpec::TryGetDefaultNamedDimension(const FString& Name, FModumat
 
 void FBIMPartSlotSpec::GetNamedDimensionValuesFromPreset(const FBIMPresetInstance* Preset)
 {
-	Preset->Properties.ForEachProperty([this](const FBIMPropertyKey& PropKey, float Value) {
-		if (PropKey.Scope == EBIMValueScope::Dimension)
-		{
-			NamedDimensionValues.Add(PropKey.Name.ToString(), FModumateUnitValue::WorldCentimeters(Value));
-		}
+	FBIMDimensions presetDimensions;
+	Preset->TryGetCustomData(presetDimensions);
+	presetDimensions.ForEachDimension([this](const FBIMNameType& DimKey, float Value) {
+		NamedDimensionValues.Add(DimKey.ToString(), FModumateUnitValue::WorldCentimeters(Value));
 	});
 }

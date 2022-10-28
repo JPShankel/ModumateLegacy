@@ -379,7 +379,7 @@ EBIMResult FBIMPresetEditorNode::GetPresetForm(const UModumateDocument* InDocume
 			if (partDim != nullptr && partDim->UIType != EPartSlotDimensionUIType::Hidden)
 			{
 				FBIMPropertyKey propKey(EBIMValueScope::Dimension, *namedDim);
-				OutForm.AddPropertyElement(partDim->DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
+				//OutForm.AddPropertyElement(partDim->DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
 			}
 		}
 

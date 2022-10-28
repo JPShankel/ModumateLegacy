@@ -8,6 +8,8 @@
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
+#include "BIMKernel/Presets/CustomData/BIMDimensions.h"
+#include "BIMKernel/Presets/CustomData/BIMProfileRef.h"
 
 #include "ModumateCore/ExpressionEvaluator.h"
 
@@ -30,6 +32,12 @@ private:
 
 	UPROPERTY()
 	FBIMPropertySheet Properties;
+
+	UPROPERTY()
+	FBIMDimensions Dimensions;
+
+	UPROPERTY()
+	FBIMProfileRef ProfileRef;
 
 	EBIMResult BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection);
 

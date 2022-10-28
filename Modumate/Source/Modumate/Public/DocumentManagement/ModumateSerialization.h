@@ -352,7 +352,9 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 23: Truncated Preset Marketplace
 // Version 24: Canonical Presets and their derivations. Cloud based importing.
 // Version 25: Fix missing pin sets
-static constexpr int32 DocVersion = 25;
+// Version 26: Preset Custom Data upgrade, deprecating preset properties
+
+static constexpr int32 DocVersion = 26;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

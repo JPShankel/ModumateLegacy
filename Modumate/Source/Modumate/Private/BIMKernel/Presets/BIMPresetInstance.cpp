@@ -4,7 +4,21 @@
 
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
+#include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
+#include "BIMKernel/Presets/CustomData/BIMDimensions.h"
+#include "BIMKernel/Presets/CustomData/BIMIESProfile.h"
+#include "BIMKernel/Presets/CustomData/BIMMesh.h"
+#include "BIMKernel/Presets/CustomData/BIMNamedDimension.h"
+#include "BIMKernel/Presets/CustomData/BIMPart.h"
+#include "BIMKernel/Presets/CustomData/BIMPattern.h"
+#include "BIMKernel/Presets/CustomData/BIMPatternRef.h"
+#include "BIMKernel/Presets/CustomData/BIMPresetInfo.h"
+#include "BIMKernel/Presets/CustomData/BIMProfile.h"
+#include "BIMKernel/Presets/CustomData/BIMRawMaterial.h"
+#include "BIMKernel/Presets/CustomData/BIMSlot.h"
+#include "BIMKernel/Presets/CustomData/BIMSlotConfig.h"
 
 #include "ModumateCore/EnumHelpers.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -48,11 +62,6 @@ bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 	}
 
 	if (MyTagPath != RHS.MyTagPath)
-	{
-		return false;
-	}
-
-	if (Properties != RHS.Properties)
 	{
 		return false;
 	}
@@ -101,16 +110,6 @@ EBIMResult FBIMPresetInstance::SortChildPresets()
 		return LHS.ParentPinSetPosition < RHS.ParentPinSetPosition;
 	});
 	return EBIMResult::Success;
-}
-
-bool FBIMPresetInstance::HasProperty(const FBIMNameType& Name) const
-{
-	return Properties.HasProperty<float>(NodeScope, Name) || Properties.HasProperty<FString>(NodeScope, Name);
-}
-
-void FBIMPresetInstance::SetProperties(const FBIMPropertySheet& InProperties)
-{
-	Properties = InProperties;
 }
 
 bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
@@ -235,8 +234,8 @@ bool FBIMPresetInstance::ReplaceImmediateChildGuid(FGuid& OldGuid, FGuid& NewGui
 	}
 	
 	//Cannot modify collection while iterating
-	FBIMPropertySheet newProps = Properties;
-	Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
+	FBIMPropertySheet newProps = Properties_DEPRECATED;
+	Properties_DEPRECATED.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
 		FGuid guid;
 		if (FGuid::Parse(Value, guid) && guid.IsValid() && guid == OldGuid)
 		{
@@ -244,7 +243,7 @@ bool FBIMPresetInstance::ReplaceImmediateChildGuid(FGuid& OldGuid, FGuid& NewGui
 			newProps.SetProperty(PropKey.Scope, PropKey.Name, NewGuid.ToString());
 		}
 	});
-	Properties = newProps;
+	Properties_DEPRECATED = newProps;
 
 	FBIMPresetMaterialBindingSet materialBindingSet;
 	if (TryGetCustomData(materialBindingSet))
@@ -324,93 +323,6 @@ bool FBIMPresetInstance::EnsurePresetIsValidForUse() const
 	return true;
 }
 
-EBIMResult FBIMPresetInstance::HandleConstructionCostLaborDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FBIMConstructionCost constructionCost;
-	float newValue;
-
-	if (ensureAlways(TryGetCustomData(constructionCost) &&
-		LexTryParseString(newValue, *Delta.NewStringRepresentation)))
-	{
-		constructionCost.LaborCostRate = newValue;
-		SetCustomData(constructionCost);
-		return EBIMResult::Success;
-	}
-	return EBIMResult::Error;
-}
-
-EBIMResult FBIMPresetInstance::HandleConstructionCostMaterialDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FBIMConstructionCost constructionCost;
-	float newValue;
-
-	if (ensureAlways(TryGetCustomData(constructionCost) &&
-		LexTryParseString(newValue, *Delta.NewStringRepresentation)))
-	{
-		constructionCost.MaterialCostRate = newValue;
-		SetCustomData(constructionCost);
-		return EBIMResult::Success;
-	}
-	return EBIMResult::Error;
-}
-
-EBIMResult FBIMPresetInstance::HandleLightIsSpotDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FLightConfiguration lightConfig;
-	if (ensure(TryGetCustomData(lightConfig)))
-	{
-		lightConfig.bAsSpotLight = Delta.NewStringRepresentation.Equals(TEXT("true"));
-		SetCustomData(lightConfig);
-	}
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetInstance::HandleLightColorDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FLightConfiguration lightConfig;
-	if (ensure(TryGetCustomData(lightConfig)))
-	{
-		lightConfig.LightColor = FColor::FromHex(Delta.NewStringRepresentation);
-		SetCustomData(lightConfig);
-	}
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetInstance::HandleLightIntensityDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FLightConfiguration lightConfig;
-	if (ensure(TryGetCustomData(lightConfig)))
-	{
-		lightConfig.LightIntensity = FCString::Atof(*Delta.NewStringRepresentation);
-		SetCustomData(lightConfig);
-	}
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetInstance::HandleLightRadiusDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FLightConfiguration lightConfig;
-	if (ensure(TryGetCustomData(lightConfig)))
-	{
-		lightConfig.SourceRadius = FCString::Atof(*Delta.NewStringRepresentation);
-		SetCustomData(lightConfig);
-	}
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetInstance::HandleLightProfileDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FLightConfiguration lightConfig;
-	if (ensure(TryGetCustomData(lightConfig)))
-	{
-		FGuid::Parse(*Delta.NewStringRepresentation, lightConfig.IESProfileGUID);
-		SetCustomData(lightConfig);
-		
-		Properties.SetProperty(EBIMValueScope::IESProfile, BIMPropertyNames::AssetID, lightConfig.IESProfileGUID.ToString());
-	}
-	return EBIMResult::Success;
-}
-
 EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta)
 {
 	FBIMPresetMaterialBindingSet bindingSet;
@@ -420,7 +332,7 @@ EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditor
 	}
 	for (auto& binding : bindingSet.MaterialBindings)
 	{
-		if (binding.Channel.IsEqual(Delta.FieldName))
+		if (binding.Channel.IsEqual(FName(Delta.FieldName)))
 		{
 			switch (Delta.MaterialChannelSubField)
 			{
@@ -428,11 +340,6 @@ EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditor
 			{
 				FGuid::Parse(Delta.NewStringRepresentation, binding.InnerMaterialGUID);
 				SetCustomData(bindingSet);
-				//If we don't have a surface material, the inner material is visible
-				if (!binding.SurfaceMaterialGUID.IsValid())
-				{
-					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
-				}
 				return EBIMResult::Success;
 			}
 			break;
@@ -440,8 +347,6 @@ EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditor
 			case EMaterialChannelFields::SurfaceMaterial:
 			{
 				FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
-				// TODO: material and color properties still used in icon generation...remove when icongen is refactored
-				Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
 				SetCustomData(bindingSet);
 				return EBIMResult::Success;
 			}
@@ -450,8 +355,6 @@ EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditor
 			case EMaterialChannelFields::ColorTint:
 			{
 				binding.ColorHexValue = Delta.NewStringRepresentation;
-				// TODO: material and color properties still used in icon generation...remove when icongen is refactored
-				Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
 				SetCustomData(bindingSet);
 				return EBIMResult::Success;
 			}
@@ -472,80 +375,24 @@ EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditor
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FBIMPresetLayerPriority layerPriority;
-	int64 newValue;
-
-	if (ensureAlways(TryGetCustomData(layerPriority) && 
-		LexTryParseString(newValue,*Delta.NewStringRepresentation)) && 
-		static_cast<int64>(layerPriority.PriorityGroup) != newValue)
-	{
-		layerPriority.PriorityGroup = static_cast<EBIMPresetLayerPriorityGroup>(newValue);
-		SetCustomData(layerPriority);
-		return EBIMResult::Success;
-	}
-	return EBIMResult::Error;
-}
-
-EBIMResult FBIMPresetInstance::HandleLayerPriorityValueDelta(const FBIMPresetEditorDelta& Delta)
-{
-	FBIMPresetLayerPriority layerPriority;
-	if (TryGetCustomData(layerPriority) && LexTryParseString(layerPriority.PriorityValue, *Delta.NewStringRepresentation))
-	{
-		SetCustomData(layerPriority);
-		return EBIMResult::Success;
-	}
-	return EBIMResult::Error;
-}
-
 EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,const FBIMPresetEditorDelta& Delta)
 {
 	switch (Delta.FieldType)
 	{
-		case EBIMPresetEditorField::LayerPriorityGroup:
-		{
-			return HandleLayerPriorityGroupDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::LayerPriorityValue:
-		{
-			return HandleLayerPriorityValueDelta(Delta);
-		}
-
 		case EBIMPresetEditorField::MaterialBinding:
 		{
 			return HandleMaterialBindingDelta(Delta);
 		}
-
-		case EBIMPresetEditorField::ConstructionCostLabor:
+	
+		case EBIMPresetEditorField::NameProperty:
 		{
-			return HandleConstructionCostLaborDelta(Delta);
+			DisplayName = FText::FromString(Delta.NewStringRepresentation);
+			return EBIMResult::Success;
 		}
 
-		case EBIMPresetEditorField::ConstructionCostMaterial:
+		case EBIMPresetEditorField::AssetProperty:
 		{
-			return HandleConstructionCostMaterialDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::LightIntensity:
-		{
-			return HandleLightIntensityDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::LightColor:
-		{
-			return HandleLightColorDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::LightRadius:
-		{
-			return HandleLightRadiusDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::LightProfile:
-		{
-			auto rtn = HandleLightProfileDelta(Delta);
+			auto rtn = TrySetCustomDataString(Delta.CustomDataStructName, Delta.FieldName, Delta.NewStringRepresentation) ? EBIMResult::Success : EBIMResult::Error;	
 			FGuid guid;
 			if (ensure(FGuid::Parse(Delta.NewStringRepresentation, guid)))
 			{
@@ -555,15 +402,20 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 					lightConfig.IESProfileGUID = guid;
 					if (!InDocument)
 					{
-						break;
+						return EBIMResult::Error;
 					}
 					const FBIMPresetInstance* profilePreset = InDocument->GetPresetCollection().PresetFromGUID(lightConfig.IESProfileGUID);
-					FString assetPath = profilePreset->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
-					if (assetPath.IsEmpty())
+					FBIMIESProfile profileConfig;
+					if (!profilePreset->TryGetCustomData(profileConfig))
 					{
-						break;
+						return EBIMResult::Error;
 					}
-					FSoftObjectPath referencePath = FString(TEXT("TextureLightProfile'")).Append(assetPath).Append(TEXT("'"));
+					
+					if (profileConfig.AssetPath.IsEmpty())
+					{
+						return EBIMResult::Error;
+					}
+					FSoftObjectPath referencePath = FString(TEXT("TextureLightProfile'")).Append(profileConfig.AssetPath).Append(TEXT("'"));
 					TSharedPtr<FStreamableHandle> SyncStreamableHandle = UAssetManager::GetStreamableManager().RequestSyncLoad(referencePath);
 					if (SyncStreamableHandle)
 					{
@@ -578,63 +430,82 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 			}
 			return rtn;
 		}
-
-		case EBIMPresetEditorField::LightIsSpot:
-		{
-			return HandleLightIsSpotDelta(Delta);
-		}
-
-		case EBIMPresetEditorField::NameProperty:
-		{
-			DisplayName = FText::FromString(Delta.NewStringRepresentation);
-			return EBIMResult::Success;
-		}
-
-		case EBIMPresetEditorField::AssetProperty:
-		{
-			FBIMPropertyKey propKey(Delta.FieldName);
-			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
-			FGuid guid;
-			if (FGuid::Parse(Delta.NewStringRepresentation, guid))
-			{
-				SetMaterialChannelsForMesh(InDocument->GetPresetCollection(),guid);
-			}
-			return EBIMResult::Success;
-		}
-		break;
+	
 		case EBIMPresetEditorField::TextProperty:
 		{
-			FBIMPropertyKey propKey(Delta.FieldName);
-			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
-			return EBIMResult::Success;
+			if (TrySetCustomDataString(Delta.CustomDataStructName, Delta.FieldName, Delta.NewStringRepresentation))
+			{
+				return EBIMResult::Success;
+			}
+			
+			return EBIMResult::Error;
 		}
+		case EBIMPresetEditorField::DropdownProperty:
+			{
+				TArray<TPair<FText, int64>> enumValues;
+				GetEnumDisplayNamesAndValues(Delta.EnumClassName, enumValues);
+				auto value = enumValues.FindByPredicate([Delta](TPair<FText, int64>& p)
+				{
+					return FString::Printf(TEXT("%d"), static_cast<int32>(p.Value)) == Delta.NewStringRepresentation;
+				});
+				if (value != nullptr)
+				{
+					ensureAlways(TrySetCustomDataString(*Delta.CustomDataStructName, *Delta.FieldName, value->Key.ToString()));
+				}
+			}
 		break;
-
+		case EBIMPresetEditorField::ColorProperty:
+		{
+			if (TrySetCustomDataColor(Delta.CustomDataStructName, Delta.FieldName, Delta.NewStringRepresentation))
+			{
+				return EBIMResult::Success;
+			}
+		
+			return EBIMResult::Error;
+		}
 		case EBIMPresetEditorField::NumberProperty:
 		{
-			FBIMPropertyKey propKey(Delta.FieldName);
 			float v;
 			if (LexTryParseString(v, *Delta.NewStringRepresentation))
 			{
-				Properties.SetProperty(propKey.Scope, propKey.Name, v);
-				return EBIMResult::Success;
+				if (TrySetCustomDataNumber(Delta.CustomDataStructName, Delta.FieldName, v))
+				{
+					return EBIMResult::Success;
+				}
 			}
-		}
-		break;
 
+			return EBIMResult::Error;
+		}
+		case EBIMPresetEditorField::IntegerProperty:
+		{
+			int64 newValue;
+
+			if (LexTryParseString(newValue,*Delta.NewStringRepresentation))
+			{
+				if (TrySetCustomDataNumber(Delta.CustomDataStructName, Delta.FieldName, newValue))
+				{
+					return EBIMResult::Success;
+				}
+			}
+			return EBIMResult::Error;
+		}
 		case EBIMPresetEditorField::DimensionProperty:
 		{
-			FBIMPropertyKey propKey(Delta.FieldName);
 			const auto& settings = InDocument->GetCurrentSettings();
-			auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Delta.NewStringRepresentation, settings.DimensionType,settings.DimensionUnit);
+			auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Delta.NewStringRepresentation, settings.DimensionType, settings.DimensionUnit);
 			if (dimension.Format != EDimensionFormat::Error)
 			{
-				Properties.SetProperty(propKey.Scope, propKey.Name, static_cast<float>(dimension.Centimeters));
-				return EBIMResult::Success;
+				FBIMDimensions dimensions;
+				if (TryGetCustomData(dimensions))
+				{
+					dimensions.SetCustomDimension(FName(Delta.FieldName), dimension.Centimeters);
+					SetCustomData(dimensions);
+					return EBIMResult::Success;	
+				}
 			}
+				
+			return EBIMResult::Error;
 		}
-		break;
-
 		default: return EBIMResult::Error;
 	};
 
@@ -694,75 +565,45 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 	OutDelta.FieldType = FormElement.FieldType;
 	OutDelta.NewStringRepresentation = FormElement.StringRepresentation;
 	OutDelta.FieldName = *FormElement.FieldName;
+	OutDelta.EnumClassName = *FormElement.EnumClassName;
+	OutDelta.CustomDataStructName = *FormElement.CustomDataStructName;
 	OutDelta.MaterialChannelSubField = FormElement.MaterialChannelSubField;
 
 	switch (FormElement.FieldType)
 	{
-	case EBIMPresetEditorField::ConstructionCostLabor:
-		{
-			FBIMConstructionCost constructionCost;
-			if (ensure(TryGetCustomData(constructionCost)))
-			{
-				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"),constructionCost.LaborCostRate);
-				return EBIMResult::Success;
-			}
-		}
-		break;
-	case EBIMPresetEditorField::ConstructionCostMaterial:
-	{
-		FBIMConstructionCost constructionCost;
-		if (ensure(TryGetCustomData(constructionCost)))
-		{
-			OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), constructionCost.MaterialCostRate);
-			return EBIMResult::Success;
-		}
-	}
-	break;
-	case EBIMPresetEditorField::LayerPriorityGroup:
-		{
-			FBIMPresetLayerPriority layerPriority;
-
-			if (ensureAlways(TryGetCustomData(layerPriority)))
-			{
-				OutDelta.OldStringRepresentation = FString::FromInt(static_cast<int32>(layerPriority.PriorityGroup));
-				return EBIMResult::Success;
-			}
-		}
-		break;
-
-		case EBIMPresetEditorField::LayerPriorityValue:
-		{
-			FBIMPresetLayerPriority layerPriority;
-			if (TryGetCustomData(layerPriority))
-			{
-				OutDelta.OldStringRepresentation = FString::FromInt(layerPriority.PriorityValue);
-				return EBIMResult::Success;
-			}
-		}
-		break;
-
 		case EBIMPresetEditorField::MaterialBinding:
 		{
 			return MakeMaterialBindingDelta(FormElement, OutDelta);
 		}
 		case EBIMPresetEditorField::DimensionProperty:
 		{
-			float v;
-			FBIMPropertyKey propKey(*FormElement.FieldName);
-			if (ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, v)))
+			FBIMDimensions dimensions;
+			if (TryGetCustomData(dimensions) && dimensions.HasCustomDimension(FName(OutDelta.FieldName)))
 			{
+				float v;
+				dimensions.TryGetDimension(FName(OutDelta.FieldName), v);
 				OutDelta.OldStringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v).ToString();
-				return EBIMResult::Success;
+				return EBIMResult::Success;	
 			}
 		}
 		break;
 		case EBIMPresetEditorField::NumberProperty:
 		{
 			float v;
-			FBIMPropertyKey propKey(*FormElement.FieldName);
-			if (Properties.TryGetProperty(propKey.Scope, propKey.Name, v))
+			if (TryGetCustomDataNumber(*FormElement.CustomDataStructName, *FormElement.FieldName, v))
 			{
 				OutDelta.OldStringRepresentation = FString::SanitizeFloat(v);
+				return EBIMResult::Success;
+			}
+		}
+		break;
+		case EBIMPresetEditorField::IntegerProperty:
+		{
+			float v;
+			if (TryGetCustomDataNumber(*FormElement.CustomDataStructName, *FormElement.FieldName, v))
+			{
+				int64 integerValue = static_cast<int>(v);
+				OutDelta.OldStringRepresentation = FString::FromInt(integerValue);
 				return EBIMResult::Success;
 			}
 		}
@@ -770,59 +611,31 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 		case EBIMPresetEditorField::TextProperty:
 		case EBIMPresetEditorField::AssetProperty:
 		{
-			FBIMPropertyKey propKey(*FormElement.FieldName);
-			if (ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, OutDelta.OldStringRepresentation)))
+			if (ensureAlways(TryGetCustomDataString(*FormElement.CustomDataStructName, *FormElement.FieldName, OutDelta.OldStringRepresentation)))
 			{
 				return EBIMResult::Success;
 			}
 		}
-		break;
-		case EBIMPresetEditorField::LightColor:
+		case EBIMPresetEditorField::DropdownProperty:
 		{
-			FLightConfiguration lightConfig;
-			if (TryGetCustomData(lightConfig))
+			FString enumStringValue;
+			if (ensureAlways(TryGetCustomDataString(*FormElement.CustomDataStructName, *FormElement.FieldName, enumStringValue)))
 			{
-				OutDelta.OldStringRepresentation = lightConfig.LightColor.ToHex();
-				return EBIMResult::Success;
+				TArray<TPair<FText, int64>> enumValues;
+				GetEnumDisplayNamesAndValues(OutDelta.EnumClassName, enumValues);
+				auto value = enumValues.FindByPredicate([enumStringValue](TPair<FText, int64>& p) { return p.Key.ToString() == enumStringValue; });
+				if (value != nullptr)
+				{
+					OutDelta.OldStringRepresentation = FString::FromInt(value->Value);
+					return EBIMResult::Success;
+				}
 			}
 		}
 		break;
-		case EBIMPresetEditorField::LightIntensity:
+		case EBIMPresetEditorField::ColorProperty:
 		{
-			FLightConfiguration lightConfig;
-			if (TryGetCustomData(lightConfig))
+			if (ensureAlways(TryGetCustomDataColor(*FormElement.CustomDataStructName, *FormElement.FieldName, OutDelta.OldStringRepresentation)))
 			{
-				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), lightConfig.LightIntensity);
-				return EBIMResult::Success;
-			}
-		}
-		break;
-		case EBIMPresetEditorField::LightRadius:
-		{
-			FLightConfiguration lightConfig;
-			if (TryGetCustomData(lightConfig)) 
-			{
-				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), lightConfig.SourceRadius);
-				return EBIMResult::Success;
-			}
-		}
-		break;
-		case EBIMPresetEditorField::LightProfile:
-		{
-			FLightConfiguration lightConfig;
-			if (TryGetCustomData(lightConfig))
-			{
-				OutDelta.OldStringRepresentation = lightConfig.IESProfileGUID.ToString();
-				return EBIMResult::Success;
-			}
-		}
-		break;
-		case EBIMPresetEditorField::LightIsSpot:
-		{
-			FLightConfiguration lightConfig;
-			if (TryGetCustomData(lightConfig))
-			{
-				OutDelta.OldStringRepresentation = lightConfig.bAsSpotLight ? TEXT("true") : TEXT("false");
 				return EBIMResult::Success;
 			}
 		}
@@ -880,125 +693,71 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 
 		switch (element.FieldType)
 		{
-		case EBIMPresetEditorField::LightColor:
-		{
-			FLightConfiguration lightConfig;
-			if (ensure(TryGetCustomData(lightConfig)))
-			{
-				element.StringRepresentation = lightConfig.LightColor.ToHex();
-			}
-		}
-			break;
-		case EBIMPresetEditorField::LightIntensity:
-		{
-			FLightConfiguration lightConfig;
-			if (ensure(TryGetCustomData(lightConfig)))
-			{
-				element.StringRepresentation = FString::Printf(TEXT("%.2f"), lightConfig.LightIntensity);
-			}
-		}
-			break;
-		case EBIMPresetEditorField::LightRadius:
-		{
-			FLightConfiguration lightConfig;
-			if (ensure(TryGetCustomData(lightConfig)))
-			{
-				element.StringRepresentation = FString::Printf(TEXT("%.2f"), lightConfig.SourceRadius);
-			}
-		}
-		break;
-		case EBIMPresetEditorField::LightProfile:
-		{
-			FLightConfiguration lightConfig;
-			if (ensure(TryGetCustomData(lightConfig)))
-			{
-				element.StringRepresentation = lightConfig.IESProfileGUID.ToString();
-			}
-		}
-		break;
-		case EBIMPresetEditorField::LightIsSpot:
-		{
-			FLightConfiguration lightConfig;
-			if (ensure(TryGetCustomData(lightConfig)))
-			{
-				element.StringRepresentation = lightConfig.bAsSpotLight ? TEXT("true") : TEXT("false");
-			}
-		}
-		break;
 		case EBIMPresetEditorField::NameProperty:
-		{
-			element.StringRepresentation = DisplayName.ToString();
-		}
-		break;
-		case EBIMPresetEditorField::ConstructionCostMaterial:
-		{
-			FBIMConstructionCost constructionCost;
-			if (ensure(TryGetCustomData(constructionCost)))
 			{
-				element.StringRepresentation = FString::Printf(TEXT("%0.2f"), constructionCost.MaterialCostRate);
+				element.StringRepresentation = DisplayName.ToString();
 			}
-		}
-		break;
-		case EBIMPresetEditorField::ConstructionCostLabor:
-		{
-			FBIMConstructionCost constructionCost;
-			if (ensure(TryGetCustomData(constructionCost)))
-			{
-				element.StringRepresentation = FString::Printf(TEXT("%0.2f"), constructionCost.LaborCostRate);
-			}
-		}
-		break;
-		case EBIMPresetEditorField::LayerPriorityValue:
-		{
-			FBIMPresetLayerPriority layerPriority;
-			if (ensureAlways(TryGetCustomData(layerPriority)))
-			{
-				element.StringRepresentation = FString::FromInt(layerPriority.PriorityValue);
-			}
-		}
-		break;
-
-		case EBIMPresetEditorField::LayerPriorityGroup:
-		{
-			FBIMPresetLayerPriority layerPriority;
-			if (ensureAlways(TryGetCustomData(layerPriority)))
-			{
-				element.StringRepresentation = FString::FromInt(static_cast<int32>(layerPriority.PriorityGroup));
-			}
-		}
-		break;
+			break;
 
 		case EBIMPresetEditorField::DimensionProperty:
-		{
-			float v;
-			FBIMPropertyKey propKey(*element.FieldName);
-			if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 			{
-				const auto& settings = InDocument->GetCurrentSettings();				
-				element.StringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v,1, settings.DimensionType, settings.DimensionUnit).ToString();
+				FBIMDimensions dimensions;
+				if (TryGetCustomData(dimensions) && dimensions.HasCustomDimension(FName(element.FieldName)))
+				{
+					float v;
+					dimensions.TryGetDimension(FName(element.FieldName), v);
+					const auto& settings = InDocument->GetCurrentSettings();			
+					element.StringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v, 1, settings.DimensionType, settings.DimensionUnit).ToString();
+				}
 			}
-		}
-		break;
+			break;
 
 		case EBIMPresetEditorField::NumberProperty:
-		{
-			float v;
-			FBIMPropertyKey propKey(*element.FieldName);
-			if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 			{
-				element.StringRepresentation = FString::SanitizeFloat(v);
+				float v;
+				if (ensureAlways(TryGetCustomDataNumber(*element.CustomDataStructName, *element.FieldName, v)))
+				{
+					element.StringRepresentation = FString::SanitizeFloat(v);
+				}
 			}
-		}
-		break;
-
+			break;
+		case EBIMPresetEditorField::IntegerProperty:
+			{
+				float v;
+				if (TryGetCustomDataNumber(*element.CustomDataStructName, *element.FieldName, v))
+				{
+					int64 integerValue = static_cast<int>(v);
+					element.StringRepresentation = FString::FromInt(integerValue);
+				}
+			}
+			break;
+		case EBIMPresetEditorField::ColorProperty:
+			{
+				ensureAlways(TryGetCustomDataColor(*element.CustomDataStructName, *element.FieldName, element.StringRepresentation));
+			}
+			break;
+		case EBIMPresetEditorField::DropdownProperty:
+			{
+				FString enumStringValue;
+				if (ensureAlways(TryGetCustomDataString(*element.CustomDataStructName, *element.FieldName, enumStringValue)))
+				{
+					TArray<TPair<FText, int64>> enumValues;
+					GetEnumDisplayNamesAndValues(element.EnumClassName, enumValues);
+					auto value = enumValues.FindByPredicate([enumStringValue](TPair<FText, int64>& p) { return p.Key.ToString() == enumStringValue; });
+					if (value != nullptr)
+					{
+						element.StringRepresentation = FString::FromInt(value->Value);
+					}
+				}
+			}
+			break;
 		case EBIMPresetEditorField::TextProperty:
 		case EBIMPresetEditorField::AssetProperty:
 		default:
-		{
-			FBIMPropertyKey propKey(*element.FieldName);
-			ensureAlways(Properties.TryGetProperty<FString>(propKey.Scope, propKey.Name, element.StringRepresentation));
-		}
-		break;
+			{
+				ensureAlways(TryGetCustomDataString(*element.CustomDataStructName, *element.FieldName, element.StringRepresentation));
+			}
+			break;
 		};
 	}
 	return EBIMResult::Success;
@@ -1006,34 +765,52 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 
 EBIMResult FBIMPresetInstance::GetForm(const UModumateDocument* InDocument, FBIMPresetForm& OutForm) const
 {
-	// TODO: remove FormTemplate, given we get all the required information from the ncp taxonomy,
-	// should be able to just get elements from PresetForm, which should be dynamically genereated from
-	// web presets.
-	auto World = InDocument->GetWorld();
-	AEditModelGameState* gameState = World ? Cast<AEditModelGameState>(World->GetGameState()) : nullptr;
-	
+	AEditModelGameState* gameState = InDocument->GetWorld() ? Cast<AEditModelGameState>(InDocument->GetWorld()->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return EBIMResult::Error;
 	}
 	
 	FBIMPresetCollection collection = gameState->Document->GetPresetCollection();
-
+	
 	// Add a default DisplayName field, it should always be added first
-	FBIMPresetFormElement& nameElem = OutForm.Elements.AddDefaulted_GetRef();
-    nameElem.DisplayName = LOCTEXT("BIMPresetInstance","Name");
-    nameElem.FieldType = EBIMPresetEditorField::NameProperty;
-    nameElem.FieldName = TEXT("DisplayName");
-    nameElem.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+	OutForm.AddPropertyElement(LOCTEXT("BIMPresetInstance","Name"), TEXT("Preset"), TEXT("DisplayName"), EBIMPresetEditorField::NameProperty);
 
-	// Add the elements from the NCP,
-	// TODO: deprecate in favor of everything being custom data
+	// Add the elements from the NCP structure
 	OutForm.Elements.Append(collection.PresetTaxonomy.GetFormTemplate(MyTagPath).Elements);
 
-	// Add the PresetForm items from the preset itself
-	OutForm.Elements.Append(PresetForm.Elements);
+	// Custom Dimensions for presets are unique meaning we need to add them dynamically
+	TryGetCustomDimensionFormElements(OutForm);
+
+	// Material bindings are created based on how many material channels exist
+	// TODO: make the form dynamic based on how many values exist. Meaning if we have more than 1 value in the value array we need to add them dynamically
+	FBIMPresetMaterialBindingSet bindingSet;
+	if (TryGetCustomData(bindingSet))
+	{
+		bindingSet.SetFormElements(OutForm);
+	}
 	
 	return UpdateFormElements(InDocument,OutForm);
+}
+
+void FBIMPresetInstance::TryGetCustomDimensionFormElements(FBIMPresetForm& OutForm) const
+{
+	FBIMDimensions dims;
+	if (TryGetCustomData(dims))
+	{
+		dims.ForEachCustomDimension([&OutForm](const FBIMNameType& DimKey, float Value) {
+			FPartNamedDimension* namedDimension = FBIMPartSlotSpec::NamedDimensionMap.Find(DimKey.ToString());
+			if (namedDimension != nullptr)
+			{
+				OutForm.AddPropertyElement(
+					namedDimension->DisplayName,
+					FName(TEXT("Dimensions")),
+					DimKey,
+					EBIMPresetEditorField::DimensionProperty
+				);
+			}
+		});
+	}
 }
 
 /*
@@ -1095,7 +872,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FBIMPresetCollec
 
 	SetCustomData(bindingSet);
 
-	return bindingSet.SetFormElements(PresetForm);
+	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth, float& OutThickness) const
@@ -1107,11 +884,13 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 	static const FBIMTagPath gapModule2D(TEXT("Part_1FlexDim2Fixed_Gap2D"));
 	static const FBIMTagPath gapModule1D(TEXT("Part_1FlexDim2Fixed_Gap1D"));
 
-	if (!Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::BevelWidth, OutBevelWidth))
+	FBIMDimensions presetDimensions;
+	TryGetCustomData(presetDimensions);
+	if (!presetDimensions.TryGetDimension(BIMPropertyNames::BevelWidth, OutBevelWidth))
 	{
 		OutBevelWidth = 0.0f;
 	}
-
+	
 	// A preset is a Gap if it's in Gap scope or if it's one of the undimensioned gaps used for stud style walls
 	if (NodeScope == EBIMValueScope::Gap || gapModule2D.MatchesPartial(MyTagPath) || gapModule1D.MatchesPartial(MyTagPath))
 	{
@@ -1124,8 +903,8 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 		{
 			OutDimensions.Z = 0;
 			if (
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.X) &&
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Recess, OutDimensions.Y)
+				presetDimensions.TryGetDimension(BIMPropertyNames::Width, OutDimensions.X) &&
+				presetDimensions.TryGetDimension(BIMPropertyNames::Recess, OutDimensions.Y)
 				)
 			{
 				OutThickness = OutDimensions.Y;
@@ -1144,9 +923,9 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 	{
 		if (planarModule.MatchesPartial(MyTagPath))
 		{
-			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.X) &&
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutDimensions.Y) &&
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.Z))
+			if (presetDimensions.TryGetDimension(BIMPropertyNames::Length, OutDimensions.X) &&
+				presetDimensions.TryGetDimension(BIMPropertyNames::Thickness, OutDimensions.Y) &&
+				presetDimensions.TryGetDimension(BIMPropertyNames::Width, OutDimensions.Z))
 			{
 				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
@@ -1155,10 +934,10 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 		else if (studModule.MatchesPartial(MyTagPath))
 		{
 			OutDimensions.Y = 0.0f;
-			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.X))
+			if (presetDimensions.TryGetDimension(BIMPropertyNames::Width, OutDimensions.X))
 			{
-				if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.Z) ||
-					Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, OutDimensions.Z))
+				if (presetDimensions.TryGetDimension(BIMPropertyNames::Length, OutDimensions.Z) ||
+					presetDimensions.TryGetDimension(BIMPropertyNames::Depth, OutDimensions.Z))
 				{
 					OutThickness = OutDimensions.Z;
 					return EBIMResult::Success;
@@ -1167,9 +946,9 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 		}
 		else if (brickModule.MatchesPartial(MyTagPath))
 		{
-			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.X) &&
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.Y) &&
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, OutDimensions.Z))
+			if (presetDimensions.TryGetDimension(BIMPropertyNames::Length, OutDimensions.X) &&
+				presetDimensions.TryGetDimension(BIMPropertyNames::Width, OutDimensions.Y) &&
+				presetDimensions.TryGetDimension(BIMPropertyNames::Height, OutDimensions.Z))
 			{
 				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
@@ -1178,7 +957,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 		else if (continuousLayer.MatchesPartial(MyTagPath))
 		{
 			OutDimensions.X = OutDimensions.Z = 0;
-			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutDimensions.Y))
+			if (presetDimensions.TryGetDimension(BIMPropertyNames::Thickness, OutDimensions.Y))
 			{
 				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
@@ -1206,8 +985,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 			const FBIMPresetInstance* child = PresetCollection.PresetFromGUID(childPin.PresetGUID);
 			if (ensureAlways(child) && child->NodeScope == EBIMValueScope::Pattern)
 			{
-				Properties.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, child->GUID.ToString());
-				PresetForm.AddPropertyElement(LOCTEXT("BIMPattern", "Pattern"), FBIMPropertyKey(EBIMValueScope::Pattern, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+				Properties_DEPRECATED.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, child->GUID.ToString());
 				RemoveChildPreset(childPin.ParentPinSetIndex, childPin.ParentPinSetPosition);
 				break;
 			}
@@ -1223,11 +1001,11 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 		case EObjectType::OTStructureLine:
 		{
 			float extrusionWidth, extrusionDepth;
-			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionWidth) &&
-				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionDepth))
+			if (Properties_DEPRECATED.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionWidth) &&
+				Properties_DEPRECATED.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionDepth))
 			{
-				Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionDepth);
-				Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionWidth);
+				Properties_DEPRECATED.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionDepth);
+				Properties_DEPRECATED.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionWidth);
 			}
 			break;
 		}
@@ -1252,67 +1030,42 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 	if (InDocVersion < 20)
 	{
 		FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
-		Properties.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
-		PresetForm.AddPropertyElement(LOCTEXT("BIMMark", "Mark"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
+		Properties_DEPRECATED.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
 
 		propertyKey = FBIMPropertyKey(EBIMValueScope::Preset, BIMPropertyNames::Comments);
-		Properties.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
-		PresetForm.AddPropertyElement(LOCTEXT("BIMComments", "Comments"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
+		Properties_DEPRECATED.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
 	}
 	
 	// With version 24, Pattern->PatternRef etc. DisplayName is also a field, not a property
 	if (InDocVersion < 24)
 	{
 		FString patternVal;
-		if (Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternVal))
+		if (Properties_DEPRECATED.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternVal))
 		{
-			Properties.DeleteProperty<FString>(EBIMValueScope::Pattern, BIMPropertyNames::AssetID);
-			Properties.SetProperty<FString>(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternVal);
+			Properties_DEPRECATED.DeleteProperty<FString>(EBIMValueScope::Pattern, BIMPropertyNames::AssetID);
+			Properties_DEPRECATED.SetProperty<FString>(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternVal);
 		}
 
 		FString profileRef;
-		if (Properties.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, profileRef))
+		if (Properties_DEPRECATED.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, profileRef))
 		{
-			Properties.DeleteProperty<FString>(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
-			Properties.SetProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef);
+			Properties_DEPRECATED.DeleteProperty<FString>(EBIMValueScope::Profile, BIMPropertyNames::AssetID);
+			Properties_DEPRECATED.SetProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef);
 			
 		}
 
 		FString meshVal;
-		if (Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshVal))
+		if (Properties_DEPRECATED.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshVal))
 		{
-			Properties.DeleteProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
-			Properties.SetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshVal);
+			Properties_DEPRECATED.DeleteProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetID);
+			Properties_DEPRECATED.SetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshVal);
 		}
-
-		// We have deprecated the name property in the bim editor
-		for (auto& formElement : PresetForm.Elements)
-		{
-			if (formElement.FieldName == TEXT("Mesh.AssetID"))
-			{
-				formElement.FieldName = TEXT("MeshRef.AssetID");
-			}
-			else if (formElement.FieldName == TEXT("Profile.AssetID"))
-			{
-				formElement.FieldName = TEXT("ProfileRef.AssetID");
-			}
-			else if (formElement.FieldName == TEXT("Pattern.AssetID"))
-			{
-				formElement.FieldName = TEXT("PatternRef.AssetID");
-			}
-		}
-
-		// name property deprecated in the bim editor
-		PresetForm.Elements = PresetForm.Elements.FilterByPredicate([this](const FBIMPresetFormElement& elem)
-		{
-			return elem.FieldName != FBIMPropertyKey(NodeScope, FName(TEXT("Name"))).QN().ToString();
-		});
 
 		FString presetName;
-		if (Properties.TryGetProperty(NodeScope, FName(TEXT("Name")), presetName))
+		if (Properties_DEPRECATED.TryGetProperty(NodeScope, FName(TEXT("Name")), presetName))
 		{
 			DisplayName = FText::FromString(presetName);
-			Properties.DeleteProperty<FString>(NodeScope, FName(TEXT("Name")));
+			Properties_DEPRECATED.DeleteProperty<FString>(NodeScope, FName(TEXT("Name")));
 		}
 
 		// in the older csvs, two material bindings with same channels were added for some presets.
@@ -1335,12 +1088,98 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 			SetCustomData(bindings);
 		}
 	}
-
+		
 	// Add back missing pin-sets
 	if (InDocVersion < 25)
 	{
 		PinSets = PresetCollection.PresetTaxonomy.GetPinSets(MyTagPath);
 		PartSlots = PartSlots.FilterByPredicate([](const FBIMPresetPartSlot& self){return self.PartPresetGUID.IsValid();});
+	}
+		
+	if (InDocVersion < 26)
+	{
+		Properties_DEPRECATED.ForEachProperty([this](const FBIMPropertyKey& Key, const FString& Value)
+		{
+			if (Key.Scope == EBIMValueScope::MeshRef)
+			{
+				FBIMMeshRef meshRef;
+				FGuid::Parse(Value, meshRef.Source);
+				SetCustomData(meshRef);
+			}
+			else if (Key.Scope == EBIMValueScope::PatternRef)
+			{
+				FBIMPatternRef patternRef;
+				FGuid::Parse(Value, patternRef.Source);
+				SetCustomData(patternRef);
+			}
+			else if (Key.Scope == EBIMValueScope::ProfileRef)
+			{
+				FBIMProfileRef profileRef;
+				FGuid::Parse(Value, profileRef.Source);
+				SetCustomData(profileRef);
+			}
+			else if (Key.Scope == EBIMValueScope::Preset)
+            {
+                FBIMPresetInfo presetInfo;
+				if (Key.Name == TEXT("Mark"))
+				{
+					presetInfo.Mark = Value;	
+				}
+				else if (Key.Name == TEXT("Comments"))
+				{
+                  	presetInfo.Comments = Value;
+				}
+                SetCustomData(presetInfo);
+            }
+			else if (Key.Scope == EBIMValueScope::Part)
+            {
+                FBIMPartConfig partConfig;
+				if (Key.Name == TEXT("Normal"))
+				{
+					partConfig.Normal = Value;
+				}
+				else if (Key.Name == TEXT("Tangent"))
+				{
+                  	partConfig.Tangent = Value;
+				}
+				else if (Key.Name == TEXT("Zalign"))
+				{
+					FString rawVal = Value;
+					partConfig.Zalign = !rawVal.IsEmpty();
+				}
+                SetCustomData(partConfig);
+            }
+		});
+
+		FBIMDimensions dimensions;
+		int32 totalDimPropertyCount;
+		bool addDimensions = false;
+		Properties_DEPRECATED.ForEachProperty([this, &dimensions, &totalDimPropertyCount, &addDimensions](const FBIMPropertyKey& Key, const float Value)
+		{
+			if (Key.Scope == EBIMValueScope::Dimension)
+			{
+				addDimensions = true;
+				dimensions.SetCustomDimension(Key.Name, Value);
+				totalDimPropertyCount++;
+			}
+		});
+
+		if (addDimensions)
+		{
+			// In this version, we no longer store every dimension value, only custom values. We need to know whether something
+			// has default values though.
+			dimensions.bHasDefaults = totalDimPropertyCount > 100;
+			SetCustomData(dimensions);
+		}
+
+		FBIMTagPath OldTagPath(TEXT("Assembly_2FlexDims1Fixed_PlanarPattern"));
+		FBIMTagPath NewTagPath(TEXT("Assembly_2FlexDims1Fixed_Layer0D"));
+		if (MyTagPath == OldTagPath && !Properties_DEPRECATED.HasProperty<FString>(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID))
+		{
+			MyTagPath = NewTagPath;
+		}
+
+		FBIMPresetInstanceFactory::AddMissingCustomDataToPreset(*this, PresetCollection.PresetTaxonomy);
 	}
 
 	return EBIMResult::Success;
@@ -1375,41 +1214,15 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 	
 	// get the object type and node scope from ncp
 	collection.PresetTaxonomy.PopulateDefaults(*this);
+
+	// ets make sure that this preset has all the default information
+	FBIMPresetInstanceFactory::AddMissingCustomDataToPreset(*this, collection.PresetTaxonomy);
 	
 	// get the property definitions
 	TMap<FString, FBIMWebPresetPropertyDef> propTypes;
 	collection.PresetTaxonomy.GetPropertiesForTaxonomyNode(ncpNode.tagPath, propTypes);
 	
 	ConvertWebPropertiesToCustomData(InPreset, World);
-	
-	for (auto& property : InPreset.properties)
-	{
-		// we require a type definition for a property in order to understand it's type and other meta data
-		// if it does not exist, just skip it
-		FBIMWebPresetPropertyDef* typeDef = propTypes.Find(property.Key);
-		if (!typeDef)
-		{
-			continue;
-		}
-		
-		TArray<FString> splitKey;
-		property.Key.ParseIntoArray(splitKey, TEXT("."));
-		if (ensure(splitKey.Num() == 2))
-		{
-			EBIMValueScope scope;
-			if (FindEnumValueByString(splitKey[0],scope))
-			{
-				if (typeDef->type == EBIMWebPresetPropertyType::number)
-				{
-					SetScopedProperty(scope, *splitKey[1], FCString::Atof(*property.Value.value[0]));
-				}
-				else
-				{
-					SetScopedProperty(scope, *splitKey[1], property.Value.value[0]);
-				}
-			}
-		}
-	}
 
 	return EBIMResult::Success;
 }
@@ -1423,33 +1236,27 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.canonicalBase = CanonicalBase;
 	
 	TMap<FString, FBIMWebPresetProperty> properties;
-
-	// TODO: need scheme for identifying color properties
-	const static TMap<EJson, EBIMWebPresetPropertyType> typeMap =
-	{
-		{EJson::Boolean,EBIMWebPresetPropertyType::boolean},
-		{EJson::Number,EBIMWebPresetPropertyType::number},
-		{EJson::String,EBIMWebPresetPropertyType::string}
-	};
-
+	
 	for (auto& kvp : CustomDataByClassName)
 	{
 		TSharedPtr<FJsonObject> jsonObject;
 		kvp.Value.GetJsonObject(jsonObject);
 		for (auto& val : jsonObject->Values)
 		{
-			const EBIMWebPresetPropertyType* type = typeMap.Find(val.Value->Type);
-			if (type != nullptr)
+			if (val.Value->Type == EJson::String || val.Value->Type == EJson::Number)
 			{
+				// TODO: currently we are sending the properties with the class name instead of the property scope name
+				// ie. Instead of "Mesh.Source" we are sending "BIMMesh" because that is the name of the c++ type
+				// we need to fix this by toJSON and fromJson on the custom data
 				FBIMWebPresetProperty webProperty;
 				webProperty.key = kvp.Key.ToString() + TEXT(".") + val.Key;
 				webProperty.value.Add(val.Value->AsString());
-				properties.Add(webProperty.key, webProperty);
+				properties.Add(webProperty.key, webProperty);	
 			}
 		}
 	}
 
-	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
+	Properties_DEPRECATED.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
 		{
 			FBIMWebPresetProperty property;
 			property.key = Key.QN().ToString();
@@ -1458,7 +1265,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		}
 	);
 
-	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, float Value)
+	Properties_DEPRECATED.ForEachProperty([&properties](const FBIMPropertyKey& Key, float Value)
 		{
 			FBIMWebPresetProperty property;
 			property.key = Key.QN().ToString();
@@ -1498,7 +1305,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 
 	// typeMark is deprecated
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
-	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
+	const FString typeMark = Properties_DEPRECATED.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;
 
 	return EBIMResult::Success;
@@ -1520,8 +1327,6 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 				addedVal.LoadFromJson();
 		}
 	}
-
-
 	
 	TMap<EPresetPropertyMatrixNames, TMap<FString, TArray<FString>>> propertyMap;
 	
@@ -1551,84 +1356,133 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 	{
 		switch (presetProp.Key)
 		{
+		case EPresetPropertyMatrixNames::Preset:
+		{
+			FBIMPresetInfo presetInfo;
+			PopulateCustomDataFromProperties<FBIMPresetInfo>(presetProp.Value, presetInfo);
+			SetCustomData(presetInfo);
+		}
+		break;
+		case EPresetPropertyMatrixNames::Part:
+		{
+			FBIMPartConfig partConfig;
+			PopulateCustomDataFromProperties<FBIMPartConfig>(presetProp.Value, partConfig);
+			SetCustomData(partConfig);
+		}
+		break;
+		case EPresetPropertyMatrixNames::SlotConfig:
+		{
+			FBIMSlotConfig slotConfig;
+			PopulateCustomDataFromProperties<FBIMSlotConfig>(presetProp.Value, slotConfig);
+			SetCustomData(slotConfig);
+		}
+		break;
+		case EPresetPropertyMatrixNames::Pattern:
+		{
+			FBIMPatternConfig patternConfig;
+			PopulateCustomDataFromProperties<FBIMPatternConfig>(presetProp.Value, patternConfig);
+			SetCustomData(patternConfig);
+		}
+		break;
+		case EPresetPropertyMatrixNames::IESProfile:
+		{
+			FBIMIESProfile iesProfileConfig;
+			PopulateCustomDataFromProperties<FBIMIESProfile>(presetProp.Value, iesProfileConfig);
+			SetCustomData(iesProfileConfig);
+		}
+		break;
+		case EPresetPropertyMatrixNames::Slot:
+		{
+			FBIMSlot slotInfo;
+			PopulateCustomDataFromProperties<FBIMSlot>(presetProp.Value, slotInfo);
+			SetCustomData(slotInfo);
+		}
+		break;
+		case EPresetPropertyMatrixNames::Mesh:
+        {
+        	FBIMMesh meshConfig;
+        	PopulateCustomDataFromProperties<FBIMMesh>(presetProp.Value, meshConfig);
+        	SetCustomData(meshConfig);
+        }
+        break;
+		case EPresetPropertyMatrixNames::Profile:
+		{
+			FBIMProfile profileConfig;
+			PopulateCustomDataFromProperties<FBIMProfile>(presetProp.Value, profileConfig);
+			SetCustomData(profileConfig);
+		}
+		break;
+		case EPresetPropertyMatrixNames::RawMaterial:
+		{
+			FBIMRawMaterial rawMaterialConfig;
+			PopulateCustomDataFromProperties<FBIMRawMaterial>(presetProp.Value, rawMaterialConfig);
+			SetCustomData(rawMaterialConfig);
+		}
+		break;
+		case EPresetPropertyMatrixNames::Dimension:
+		{
+			FBIMNamedDimension namedDimension;
+			PopulateCustomDataFromProperties<FBIMNamedDimension>(presetProp.Value, namedDimension);
+			SetCustomData(namedDimension);
+		}
+		break;
 		case EPresetPropertyMatrixNames::IESLight:
 			{
 				FLightConfiguration lightConfig;
-
-				FGuid profileGuid;
-				FGuid::Parse(presetProp.Value[TEXT("IESProfile")][0], profileGuid);
-			
-				lightConfig.IESProfileGUID = profileGuid;
-				lightConfig.LightIntensity = FCString::Atof(*presetProp.Value[TEXT("Intensity")][0]);
-				lightConfig.LightColor = FColor::FromHex(presetProp.Value[TEXT("ColorTint")][0]);
-				lightConfig.Location.X = FCString::Atof(*presetProp.Value[TEXT("LocationX")][0]);
-				lightConfig.Location.Y = FCString::Atof(*presetProp.Value[TEXT("LocationY")][0]);
-				lightConfig.Location.Z = FCString::Atof(*presetProp.Value[TEXT("LocationZ")][0]);
-				lightConfig.Scale.X = FCString::Atof(*presetProp.Value[TEXT("ScaleX")][0]);
-				lightConfig.Scale.Y = FCString::Atof(*presetProp.Value[TEXT("ScaleY")][0]);
-				lightConfig.Scale.Z = FCString::Atof(*presetProp.Value[TEXT("ScaleZ")][0]);
-				lightConfig.Rotation.Roll = FCString::Atof(*presetProp.Value[TEXT("RotationX")][0]);
-				lightConfig.Rotation.Pitch = FCString::Atof(*presetProp.Value[TEXT("RotationY")][0]);
-				lightConfig.Rotation.Yaw = FCString::Atof(*presetProp.Value[TEXT("RotationZ")][0]);
-				lightConfig.SourceRadius = FCString::Atof(*presetProp.Value[TEXT("SourceRadius")][0]);
-
-				SetScopedProperty(EBIMValueScope::IESProfile, BIMPropertyNames::AssetID, profileGuid.ToString());
-				PresetForm.AddLightConfigElements();
+				PopulateCustomDataFromProperties<FLightConfiguration>(presetProp.Value, lightConfig);
 				SetCustomData(lightConfig);
 			}
 			break;
 		case EPresetPropertyMatrixNames::ConstructionCost:
 			{
 				FBIMConstructionCost constructionCost;
-				constructionCost.LaborCostRate = FCString::Atof(*presetProp.Value[TEXT("LaborCostRate")][0]);
-				constructionCost.MaterialCostRate = FCString::Atof(*presetProp.Value[TEXT("MaterialCostRate")][0]);
-				PresetForm.AddConstructionCostElements();
+				PopulateCustomDataFromProperties<FBIMConstructionCost>(presetProp.Value, constructionCost);
 				SetCustomData(constructionCost);
 			}
 			break;
 		case EPresetPropertyMatrixNames::MiterPriority:
 			{
 				FBIMPresetLayerPriority miterPriority;
-				FString group = presetProp.Value[TEXT("Function")][0];
-				FString priority = presetProp.Value[TEXT("Priority")][0];
+				FString group = presetProp.Value[TEXT("PriorityGroup")][0];
+				FString priority = presetProp.Value[TEXT("PriorityValue")][0];
 
 				if (FindEnumValueByString(group, miterPriority.PriorityGroup) && LexTryParseString(miterPriority.PriorityValue, *priority))
 				{
-					miterPriority.SetFormElements(PresetForm);
 					SetCustomData(miterPriority);
 				}
 			}
 			break;
 		case EPresetPropertyMatrixNames::PatternRef:
 			{
-				FString guid = presetProp.Value[TEXT("Source")][0];
-				if (!guid.IsEmpty())
+				FBIMPatternRef patternRef;
+				FGuid guid;
+				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
 				{
-					Properties.SetProperty(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, guid);
-					PresetForm.AddPropertyElement(LOCTEXT("BIMPattern","Pattern"), FBIMPropertyKey(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+					patternRef.Source = guid;
 				}
+				SetCustomData(patternRef);
 			}
 			break;
 		case EPresetPropertyMatrixNames::ProfileRef:
 			{
-				FString guid = presetProp.Value[TEXT("Source")][0];
-
-				if (!guid.IsEmpty())
+				FBIMProfileRef profileRef;
+				FGuid guid;
+				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
 				{
-					Properties.SetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, guid);
-					PresetForm.AddPropertyElement(LOCTEXT("BIMProfile","Profile"), FBIMPropertyKey(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+					profileRef.Source = guid;
 				}
+				SetCustomData(profileRef);
 			}
 			break;
 		case EPresetPropertyMatrixNames::MeshRef:
 			{
+				FBIMMeshRef meshRef;
 				FGuid guid;
-				
 				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
 				{
-					Properties.SetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, guid.ToString());
-					PresetForm.AddPropertyElement(FText::FromString(TEXT("Mesh")), FBIMPropertyKey(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+					meshRef.Source = guid;
 				}
+				SetCustomData(meshRef);
 			}
 			break;
 		case EPresetPropertyMatrixNames::Material:
@@ -1683,7 +1537,6 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 									FString hexValue = prop.Value[i];
 									if (!hexValue.IsEmpty())
 									{
-										Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
 										materialBinding.ColorHexValue = hexValue;
 									}
 								}
@@ -1706,17 +1559,6 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 						TryGetCustomData(bindingSet);
 						bindingSet.MaterialBindings.Add(materialBinding);
 						SetCustomData(bindingSet);
-
-						FGuid material = materialBinding.SurfaceMaterialGUID.IsValid() ? materialBinding.SurfaceMaterialGUID : materialBinding.InnerMaterialGUID;
-
-						// The RawMaterial.AssetID is used in the DynamicIconGenerator, otherwise it should be deprecated
-						if (ensure(material.IsValid()))
-						{
-							Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, material.ToString());
-						}
-						
-						Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, materialBinding.ColorHexValue.IsEmpty() ? FColor::White.ToHex() : materialBinding.ColorHexValue);
-						bindingSet.SetFormElements(PresetForm);
 					}
 				}
 			}
@@ -1725,6 +1567,8 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 			{
 				TArray<FString> dimensions = presetProp.Value["Dimension"];
 				TArray<FString> values = presetProp.Value["Value"];
+				
+				FBIMDimensions presetDimensions;
 
 				// Dimensions and values are a key-to-value pair and need to be the same size
 				if (ensure(dimensions.Num() == values.Num())) {
@@ -1733,11 +1577,12 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 						if (!dimensions[i].IsEmpty())
 						{
 							float value = FCString::Atof(*values[i]);
-							Properties.SetProperty(EBIMValueScope::Dimension, *dimensions[i], value);
-							PresetForm.AddPropertyElement(FText::FromString(dimensions[i]), FBIMPropertyKey(EBIMValueScope::Dimension, *dimensions[i]).QN(), EBIMPresetEditorField::DimensionProperty);		
+							presetDimensions.SetCustomDimension(*dimensions[i], value);
 						}
 					}
 				}
+
+				SetCustomData(presetDimensions);
 			}
 			break;
 		case EPresetPropertyMatrixNames::Slots:
@@ -1820,11 +1665,6 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 				}
 			}
 			break;
-		case EPresetPropertyMatrixNames::EdgeDetail:
-			// PRESET_INTEGRATION_TODO: Edge Detail does not even contain any data, lets move this out of custom data parsing and
-			// into a processing part. -NG
-			SetCustomData(FEdgeDetailData(FEdgeDetailData::CurrentVersion));
-			break;
 		}
 	}
 }
@@ -1872,7 +1712,12 @@ TSharedPtr<FJsonValue> FBIMPresetInstance::GetCustomDataValue(const FString& Dat
 	TSharedPtr<FJsonObject> jsonOb;
 	wrapper->GetJsonObject(jsonOb);
 
-	return jsonOb.Get()->TryGetField(FieldName);
+	// KLUDGE:
+	// In order to check against the JSON. we need to lowercase the first letter to match the UE JSON serialize standard.
+	FString FixedFieldName = FieldName;
+	FixedFieldName[0] = FChar::ToLower(FixedFieldName[0]);
+
+	return jsonOb.Get()->TryGetField(FixedFieldName);
 }
 
 bool FBIMPresetInstance::TryGetCustomDataString(const FString& DataStruct, const FString& FieldName, FString& OutStr) const
@@ -1883,6 +1728,27 @@ bool FBIMPresetInstance::TryGetCustomDataString(const FString& DataStruct, const
 	{
 		OutStr = value->AsString();
 		return true;
+	}
+
+	return false;
+}
+
+bool FBIMPresetInstance::TryGetCustomDataColor(const FString& DataStruct, const FString& FieldName, FString& OutStr) const
+{
+	TSharedPtr<FJsonValue> value = GetCustomDataValue(DataStruct, FieldName);
+
+	if (value != nullptr && value->Type == EJson::Object)
+	{
+		auto obj = value->AsObject();
+		if (obj->HasField("r") && obj->HasField("g") && obj->HasField("b") && obj->HasField("a"))
+		{
+			auto r = obj->GetIntegerField("r");
+			auto g = obj->GetIntegerField("g");
+			auto b = obj->GetIntegerField("b");
+			auto a = obj->GetIntegerField("a");
+			OutStr = FColor(r,g,b,a).ToHex();
+			return true;
+		}
 	}
 
 	return false;
@@ -1912,10 +1778,13 @@ bool FBIMPresetInstance::TrySetCustomDataString(const FString& DataStruct, const
 
 	TSharedPtr<FJsonObject> jsonOb;
 	wrapper->GetJsonObject(jsonOb);
+	// KLUDGE: In order to check against the JSON. we need to lowercase the first letter to match the UE JSON serialize standard.
+	FString FixedFieldName = FieldName;
+	FixedFieldName[0] = FChar::ToLower(FixedFieldName[0]);
 
-	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::String>(FieldName))
+	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::String>(FixedFieldName))
 	{
-		jsonOb.Get()->SetStringField(FieldName, InStr);
+		jsonOb.Get()->SetStringField(FixedFieldName, InStr);
 		wrapper->SetJsonObject(jsonOb);
 		return true;
 	}
@@ -1934,10 +1803,50 @@ bool FBIMPresetInstance::TrySetCustomDataNumber(const FString& DataStruct, const
 
 	TSharedPtr<FJsonObject> jsonOb;
 	wrapper->GetJsonObject(jsonOb);
-	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::Number>(FieldName))
+
+	// KLUDGE: In order to check against the JSON. we need to lowercase the first letter to match the UE JSON serialize standard.
+	FString FixedFieldName = FieldName;
+	FixedFieldName[0] = FChar::ToLower(FixedFieldName[0]);
+	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::Number>(FixedFieldName))
 	{
-		jsonOb.Get()->SetNumberField(FieldName, InNum);
+		jsonOb.Get()->SetNumberField(FixedFieldName, InNum);
 		wrapper->SetJsonObject(jsonOb);
+		return true;
+	}
+
+	return false;
+}
+
+bool FBIMPresetInstance::TrySetCustomDataColor(const FString& DataStruct, const FString& FieldName, const FString HexVal)
+{
+	FStructDataWrapper* wrapper = CustomDataByClassName.Find(*DataStruct);
+
+	if (!wrapper)
+	{
+		return false;
+	}
+
+	TSharedPtr<FJsonObject> jsonOb;
+	wrapper->GetJsonObject(jsonOb);
+	
+	// KLUDGE: In order to check against the JSON. we need to lowercase the first letter to match the UE JSON serialize standard.
+	FString FixedFieldName = FieldName;
+	FixedFieldName[0] = FChar::ToLower(FixedFieldName[0]);
+	
+	if (jsonOb.IsValid() && jsonOb.Get()->HasTypedField<EJson::Object>(FixedFieldName))
+	{
+		auto jsonColor = jsonOb.Get()->GetObjectField(FixedFieldName);
+		FColor color = FColor::FromHex(HexVal);
+		if (jsonColor->HasField("r") && jsonColor->HasField("g") && jsonColor->HasField("b") && jsonColor->HasField("a"))
+		{
+			jsonColor->SetNumberField("r", color.R);
+			jsonColor->SetNumberField("g", color.G);
+			jsonColor->SetNumberField("b", color.B);
+			jsonColor->SetNumberField("a", color.A);
+
+			jsonOb.Get()->SetObjectField(FixedFieldName, jsonColor);
+			wrapper->SetJsonObject(jsonOb);
+		}
 		return true;
 	}
 

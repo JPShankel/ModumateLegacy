@@ -286,10 +286,10 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		
 		FString profileRef;
-		if (preset.Properties.TryGetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef))
+		if (preset.Properties_DEPRECATED.TryGetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID, profileRef))
 		{
-			preset.Properties.DeleteProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID);
-			preset.Properties.SetProperty<FString>(EBIMValueScope::Roof, BIMPropertyNames::AssetID, profileRef);
+			preset.Properties_DEPRECATED.DeleteProperty<FString>(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID);
+			preset.Properties_DEPRECATED.SetProperty<FString>(EBIMValueScope::Roof, BIMPropertyNames::AssetID, profileRef);
 		}
 		
 		//Serialize and Then deserialize and compare
@@ -308,7 +308,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		
 		UE_LOG(LogTemp, Log, TEXT("****Before Serialize****"));
-		preset.Properties.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {
+		preset.Properties_DEPRECATED.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {
 			UE_LOG(LogTemp, Log, TEXT("%s = %s"), *Key.QN().ToString(), *Value);
 			});
 		
@@ -321,7 +321,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		FMemoryWriter totalBufferWriter(OutBuffer);
 		
 		FCborStructSerializerBackend headerSerializerBackend(totalBufferWriter, EStructSerializerBackendFlags::Default | EStructSerializerBackendFlags::WriteCborStandardEndianness);
-		FStructSerializer::Serialize(preset.Properties, headerSerializerBackend, policies);
+		FStructSerializer::Serialize(preset.Properties_DEPRECATED, headerSerializerBackend, policies);
 
 		FMemoryReader totalBufferReader(OutBuffer);
 		
@@ -330,10 +330,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		ECborEndianness endianness = ECborEndianness::StandardCompliant;
 
 		FCborStructDeserializerBackend headerDeserializerBackend(totalBufferReader, endianness);
-		FStructDeserializer::Deserialize(preset.Properties, headerDeserializerBackend, outPolicies);
+		FStructDeserializer::Deserialize(preset.Properties_DEPRECATED, headerDeserializerBackend, outPolicies);
 
 		UE_LOG(LogTemp, Log, TEXT("****After Deserialize****"));
-		preset.Properties.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {
+		preset.Properties_DEPRECATED.ForEachProperty([&](const FBIMPropertyKey& Key, const FString& Value) {
 			UE_LOG(LogTemp, Log, TEXT("%s = %s"), *Key.QN().ToString(), *Value);
 			});
 		

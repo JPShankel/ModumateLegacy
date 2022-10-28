@@ -25,23 +25,6 @@ struct FBIMPresetCollection;
 class FBIMPresetCollectionProxy;
 class UModumateDocument;
 
-UENUM()
-enum class EPresetPropertyMatrixNames : uint8
-{
-	IESLight,
-	ConstructionCost,
-	MiterPriority,
-	PatternRef,
-	ProfileRef,
-	MeshRef,
-	Material,
-	Dimensions,
-	Slots,
-	InputPins,
-	EdgeDetail,
-	Error = 255
-};
-
 USTRUCT()
 struct MODUMATE_API FBIMPresetPinAttachment
 {
@@ -102,12 +85,12 @@ struct MODUMATE_API FBIMPresetInstance
 	//Use the origination field instead
 	//@deprecated
 	bool bEdited = false;
+
+	UPROPERTY()
+	FBIMPresetForm PresetForm_DEPRECATED;
 	
 	UPROPERTY()
-	FBIMPresetForm PresetForm;
-	
-	UPROPERTY()
-	FBIMPropertySheet Properties;
+	FBIMPropertySheet Properties_DEPRECATED;
 
 	UPROPERTY()
 	FText CategoryTitle;
@@ -186,90 +169,70 @@ struct MODUMATE_API FBIMPresetInstance
 		return CustomDataByClassName.Contains(T::StaticStruct()->GetFName());
 	}
 
+	bool HasCustomDataByName(FName InName) const
+	{
+		return CustomDataByClassName.Contains(InName);
+	}
+
 	TSharedPtr<FJsonValue> GetCustomDataValue(const FString& DataStruct, const FString& FieldName) const;
 
-	bool TryGetCustomDataString(const FString& DataStruct, const FString& FieldName, FString& OutStr) const;
+    bool TryGetCustomDataString(const FString& DataStruct, const FString& FieldName, FString& OutStr) const;
+    template<class T>
+    bool TryGetCustomDataString(const FString& FieldName, FString& OutStr) const
+    {
+    	return TryGetCustomDataString(T::StaticStruct()->GetName(), FieldName, OutStr);
+    }
+
+	bool TryGetCustomDataColor(const FString& DataStruct, const FString& FieldName, FString& OutStr) const;
 	template<class T>
-	bool TryGetCustomDataString(const FString& FieldName, FString& OutStr) const
+	bool TryGetCustomDataColor(const FString& FieldName, FString& OutStr) const
 	{
 		return TryGetCustomDataString(T::StaticStruct()->GetName(), FieldName, OutStr);
 	}
 
-	bool TrySetCustomDataString(const FString& DataStruct, const FString& FieldName, const FString& InStr);
-	template<class T>
-	bool TrySetCustomDataString(const FString& FieldName, const FString& InStr)
-	{
-		return TrySetCustomDataString(T::StaticStruct()->GetName(), FieldName, InStr);
-	}
+    bool TrySetCustomDataString(const FString& DataStruct, const FString& FieldName, const FString& InStr);
+    template<class T>
+    bool TrySetCustomDataString(const FString& FieldName, const FString& InStr)
+    {
+    	return TrySetCustomDataString(T::StaticStruct()->GetName(), FieldName, InStr);
+    }
 
-	bool TryGetCustomDataNumber(const FString& DataStruct, const FString& FieldName, float& OutNum) const;
-	template<class T>
-	bool TryGetCustomDataNumber(const FString& FieldName, float& OutNum) const
-	{
-		return TryGetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, OutNum);
-	}
+    bool TryGetCustomDataNumber(const FString& DataStruct, const FString& FieldName, float& OutNum) const;
+    template<class T>
+    bool TryGetCustomDataNumber(const FString& FieldName, float& OutNum) const
+    {
+    	return TryGetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, OutNum);
+    }
 
-	bool TrySetCustomDataNumber(const FString& DataStruct, const FString& FieldName, const float InNum);
-	template<class T>
-	bool TrySetCustomDataNumber(const FString& FieldName, const float InNum)
-	{
-		return TrySetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, InNum);
-	}
+    bool TrySetCustomDataNumber(const FString& DataStruct, const FString& FieldName, const float InNum);
+    template<class T>
+    bool TrySetCustomDataNumber(const FString& FieldName, const float InNum)
+    {
+    	return TrySetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, InNum);
+    }
 
-	bool HasProperty(const FBIMNameType& Name) const;
-
-	template<class T>
-	T GetProperty(const FBIMNameType& Name) const
-	{
-		return Properties.GetProperty<T>(NodeScope, Name);
-	}
-	
-	template<class T>
-	T GetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name) const
-	{
-		return Properties.GetProperty<T>(Scope, Name);
-	}
-
-	template<class T>
-	void SetScopedProperty(const EBIMValueScope& Scope, const FBIMNameType& Name, const T& Value)
-	{
-		Properties.SetProperty(Scope, Name, Value);
-	}
-
-	void SetProperties(const FBIMPropertySheet& InProperties);
-
-	template <class T>
-	bool TryGetProperty(const FBIMNameType& Name,T& OutT) const
-	{
-		return Properties.TryGetProperty(NodeScope, Name, OutT);
-	}
+	bool TrySetCustomDataColor(const FString& DataStruct, const FString& FieldName, const FString InHex);
+    template<class T>
+    bool TrySetCustomDataColor(const FString& FieldName, const FString InHex)
+    {
+    	return TrySetCustomDataNumber(T::StaticStruct()->GetName(), FieldName, InHex);
+    }
 
 	EBIMResult GetForm(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const;
+	void TryGetCustomDimensionFormElements(FBIMPresetForm& OutForm) const;
 	EBIMResult UpdateFormElements(const UModumateDocument* InDocument, FBIMPresetForm& RefForm) const;
 	EBIMResult MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
 	EBIMResult ApplyDelta(const UModumateDocument* InDocument,const FBIMPresetEditorDelta& Delta);
-
 	EBIMResult HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLayerPriorityValueDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult MakeMaterialBindingDelta(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
-	EBIMResult HandleConstructionCostLaborDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleConstructionCostMaterialDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLightColorDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLightIntensityDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLightRadiusDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLightProfileDelta(const FBIMPresetEditorDelta& Delta);
-	EBIMResult HandleLightIsSpotDelta(const FBIMPresetEditorDelta& Delta);
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildPresets();
-
 	EBIMResult AddChildPreset(const FGuid& ChildPresetGUID, int32 PinSetIndex, int32 PinSetPosition);
 	EBIMResult RemoveChildPreset(int32 PinSetIndex, int32 PinSetPosition);
-
 	EBIMResult SetPartPreset(const FGuid& SlotPresetGUID, const FGuid& PartPresetGUID);
-	EBIMResult UpgradeData(FBIMPresetCollection& PresetCollection, int32 InDocVersion);
 	
+	EBIMResult UpgradeData(FBIMPresetCollection& PresetCollection, int32 InDocVersion);
 	bool ReplaceImmediateChildGuid(FGuid& OldGuid, FGuid& NewGuid);
 
 	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
@@ -287,6 +250,121 @@ struct MODUMATE_API FBIMPresetInstance
 	void ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World);
 	void ConvertCustomDataToWebProperties(FBIMWebPreset& OutPreset, UWorld* World) const;
 	void ConvertWebPropertiesFromChildPresets(FBIMWebPreset& OutPreset) const;
+
+	// TODO: deprecate this and change all custom data to inherit from a class that forces a ToJSON() and FromJSON() method
+template<class T>
+void PopulateCustomDataFromProperties(TMap<FString, TArray<FString>>& InProperties, T& OutCustomData)
+{
+	for (TFieldIterator<FProperty> It(OutCustomData.StaticStruct()); It; ++It)
+	{
+		FProperty* Property = *It;
+		auto type = Property->GetCPPType();
+		FString VariableName = Property->GetNameCPP();
+
+		// if the property is not received from the web, ignore it.
+		if (!InProperties.Contains(VariableName))
+		{
+			continue;
+		}
+
+		if (type == TEXT("FString"))
+		{
+				FString propVal = InProperties[VariableName][0];
+			if (!propVal.IsEmpty())
+			{
+				if (FStrProperty * ChildStringProp = CastField<FStrProperty>(Property))
+				{
+					ChildStringProp->SetPropertyValue_InContainer(&OutCustomData, propVal);
+				}
+			}	
+		} else if (type == TEXT("float"))
+		{
+			float propVal = FCString::Atof(*InProperties[VariableName][0]);
+			if (FFloatProperty * ChildFloatProp = CastField<FFloatProperty>(Property))
+			{
+				ChildFloatProp->SetPropertyValue_InContainer(&OutCustomData, propVal);
+			}
+		} else if (type == TEXT("bool"))
+		{
+			bool propVal = InProperties[VariableName][0] == TEXT("true");
+			if (FBoolProperty * ChildBoolProp = CastField<FBoolProperty>(Property))
+			{
+				ChildBoolProp->SetPropertyValue_InContainer(&OutCustomData, propVal);
+			}
+		} else if (type == TEXT("FColor"))
+		{
+			FColor propVal = FColor::FromHex(*InProperties[VariableName][0]);
+			if (FStructProperty * ChildStructProp = CastField<FStructProperty>(Property))
+			{
+				FColor *color = ChildStructProp->ContainerPtrToValuePtr<FColor>(&OutCustomData);
+				*color = propVal;
+			}
+		} else if (type == TEXT("FGuid"))
+		{
+			FGuid propVal;
+			FGuid::Parse(*InProperties[VariableName][0], propVal);
+			if (FStructProperty * ChildStructProp = CastField<FStructProperty>(Property))
+			{
+				FGuid *guid = ChildStructProp->ContainerPtrToValuePtr<FGuid>(&OutCustomData);
+				*guid = propVal;
+			}
+		} else if (type == TEXT("FVector"))
+		{
+			if (FStructProperty * ChildStructProp = CastField<FStructProperty>(Property))
+			{
+				FVector *vec = ChildStructProp->ContainerPtrToValuePtr<FVector>(&OutCustomData);
+				if (InProperties.Contains(VariableName + TEXT("X")))
+				{
+					vec->X = FCString::Atof(*InProperties[VariableName + TEXT("X")][0]);	
+				}
+
+				if (InProperties.Contains(VariableName + TEXT("Y")))
+				{
+					vec->Y = FCString::Atof(*InProperties[VariableName + TEXT("Y")][0]);	
+				}
+
+				if (InProperties.Contains(VariableName + TEXT("Z")))
+				{
+					vec->Z = FCString::Atof(*InProperties[VariableName + TEXT("Z")][0]);	
+				}
+			}
+		} else if (type == TEXT("FRotator"))
+		{
+			if (FStructProperty * ChildStructProp = CastField<FStructProperty>(Property))
+			{
+				FRotator *rot = ChildStructProp->ContainerPtrToValuePtr<FRotator>(&OutCustomData);
+				if (InProperties.Contains(VariableName + TEXT("X")))
+				{
+					rot->Roll = FCString::Atof(*InProperties[VariableName + TEXT("X")][0]);	
+				}
+
+				if (InProperties.Contains(VariableName + TEXT("Y")))
+				{
+					rot->Pitch = FCString::Atof(*InProperties[VariableName + TEXT("Y")][0]);	
+				}
+
+				if (InProperties.Contains(VariableName + TEXT("Z")))
+				{
+					rot->Yaw = FCString::Atof(*InProperties[VariableName + TEXT("Z")][0]);	
+				}
+			}
+		} else if (type == TEXT("TArray"))
+		{
+			if (FArrayProperty * ChildArrayProp = CastField<FArrayProperty>(Property))
+			{
+				if (InProperties.Contains(VariableName))
+				{
+					 TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(&OutCustomData);
+					*array = InProperties[VariableName];
+				}
+			}
+		} else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Count not find custom data type [%s] for property [%s]"), *type, *VariableName);
+		}
+	}
+}
+
 	
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;

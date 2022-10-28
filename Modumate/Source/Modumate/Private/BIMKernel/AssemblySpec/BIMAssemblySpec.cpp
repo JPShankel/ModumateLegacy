@@ -13,6 +13,9 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Algo/Reverse.h"
 #include "Algo/Accumulate.h"
+#include "BIMKernel/Presets/CustomData/BIMMeshRef.h"
+#include "BIMKernel/Presets/CustomData/BIMSlot.h"
+#include "BIMKernel/Presets/CustomData/BIMSlotConfig.h"
 #include "Containers/Queue.h"
 
 EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetGUID)
@@ -44,6 +47,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 		ELayerTarget Target = ELayerTarget::Assembly;
 		FBIMLayerSpec* TargetLayer = nullptr;
 		FBIMPropertySheet* TargetProperties = nullptr;
+		FBIMDimensions* Dimensions;
 	};
 
 	// We use a stack of iterators to perform a depth-first visitation of child presets
@@ -51,6 +55,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 	FPresetIterator rootIterator;
 	rootIterator.PresetGUID = PresetGUID;
 	rootIterator.TargetProperties = &RootProperties;
+	rootIterator.Dimensions = &PresetDimensions;
 	iteratorStack.Push(rootIterator);
 
 	// When we encounter a part hierarchy, we want to iterate breadth-first, so use a queue of part iterators
@@ -74,6 +79,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 	DisplayName = assemblyPreset->DisplayName.ToString();
 
 	assemblyPreset->TryGetCustomData(LightConfiguration);
+	assemblyPreset->TryGetCustomData(PartData);
+	assemblyPreset->TryGetCustomData(MeshRef);
 
 	switch (assemblyPreset->ObjectType)
 	{
@@ -96,8 +103,12 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 		const FBIMPresetInstance* slotConfigPreset = PresetCollection.PresetFromGUID(assemblyPreset->SlotConfigPresetGUID);
 		if (ensureAlways(slotConfigPreset != nullptr))
 		{
-			slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
-			SlotConfigTagPath = slotConfigPreset->MyTagPath;
+			FBIMSlotConfig slotConfig;
+			if (ensureAlways(slotConfigPreset->TryGetCustomData(slotConfig)))
+			{
+				SlotConfigConceptualSizeY = slotConfig.ConceptualSizeY;
+				SlotConfigTagPath = slotConfigPreset->MyTagPath;	
+			}
 		}
 	}
 
@@ -165,6 +176,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 			};
 
 			presetIterator.TargetProperties = nullptr;
+			presetIterator.Dimensions = nullptr;
 			presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 			presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 			// TODO: derive zone id from preset and pin, just a sequence for now
@@ -187,6 +199,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 		{
 			auto &extrusion = Extrusions.AddDefaulted_GetRef();
 			presetIterator.TargetProperties = &extrusion.Properties;
+			presetIterator.Dimensions = &extrusion.Dimensions;
+			presetIterator.Preset->TryGetCustomData(extrusion.ProfileRef);
 			extrusion.PresetGUID = presetIterator.PresetGUID;
 			presetIterator.Preset->TryGetCustomData(MaterialBindingSet);
 		}
@@ -201,7 +215,15 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 		}
 		else if (presetIterator.TargetProperties != nullptr)
 		{
-			presetIterator.TargetProperties->AddProperties(presetIterator.Preset->Properties);
+			FBIMDimensions presetDimensions;
+			if (presetIterator.Preset->TryGetCustomData(presetDimensions))
+			{
+				presetDimensions.ForEachDimension([this, presetIterator](const FName& InName, float Value)
+				{
+					presetIterator.Dimensions->SetCustomDimension(InName, Value);
+				});
+			}
+			presetIterator.TargetProperties->AddProperties(presetIterator.Preset->Properties_DEPRECATED);
 		}
 
 		// Add our own children to DFS stack
@@ -252,7 +274,11 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 				{
 					if (SlotConfigConceptualSizeY.IsEmpty())
 					{
-						slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
+						FBIMSlotConfig slotConfig;
+						if (ensure(slotConfigPreset->TryGetCustomData(slotConfig)))
+						{
+							SlotConfigConceptualSizeY = slotConfig.ConceptualSizeY;
+						}
 					}
 
 					if (SlotConfigTagPath.Tags.Num() == 0)
@@ -297,7 +323,12 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 			partSpec.NodeCategoryPath = partPreset->MyTagPath;
 			partSpec.MeasurementMethod = partPreset->MeasurementMethod;
 			partSpec.GetNamedDimensionValuesFromPreset(partPreset);
-			ensureAlways(slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, partSpec.SlotID));
+
+			FBIMSlot slotConfig;
+			if (ensureAlways(slotPreset->TryGetCustomData(slotConfig)))
+			{
+				partSpec.SlotID = slotConfig.ID;
+			}
 
 #if WITH_EDITOR //for debugging
 			partSpec.DEBUGNodeScope = partPreset->NodeScope;
@@ -305,11 +336,11 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 			partSpec.SlotGUID = partIterator.Slot.SlotPresetGUID;
 			partSpec.PresetGUID = partPreset->GUID;
 			partPreset->TryGetCustomData(partSpec.LightConfiguration);
-			// If this child has a mesh asset ID, this fetch the mesh and use it 
-			FGuid meshAsset;
-			if (partPreset->Properties.TryGetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshAsset))
+			// If this child has a mesh asset ID, this fetch the mesh and use it
+			FBIMMeshRef meshRef;
+			if (partPreset->TryGetCustomData(meshRef))
 			{
-				const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(meshAsset);
+				const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(meshRef.Source);
 				if (!ensureAlways(mesh != nullptr))
 				{
 					ret = EBIMResult::Error;
@@ -343,26 +374,29 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 						break;
 					}
 
-					// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
-					partSpec.Translation = FVectorExpression(
-						childSlotPreset->GetProperty<FString>(TEXT("LocationX")),
-						childSlotPreset->GetProperty<FString>(TEXT("LocationY")),
-						childSlotPreset->GetProperty<FString>(TEXT("LocationZ")));
+					FBIMSlot slotInfo;
+					if (ensureAlways(childSlotPreset->TryGetCustomData(slotInfo)))
+					{
+						// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
+						partSpec.Translation = FVectorExpression(
+							slotInfo.LocationX,
+							slotInfo.LocationY,
+							slotInfo.LocationZ);
 
-					partSpec.Orientation = FVectorExpression(
-						childSlotPreset->GetProperty<FString>(TEXT("RotationX")),
-						childSlotPreset->GetProperty<FString>(TEXT("RotationY")),
-						childSlotPreset->GetProperty<FString>(TEXT("RotationZ")));
+						partSpec.Orientation = FVectorExpression(
+							slotInfo.RotationX,
+							slotInfo.RotationY,
+							slotInfo.RotationZ);
 
-					partSpec.Size = FVectorExpression(
-						childSlotPreset->GetProperty<FString>(TEXT("SizeX")),
-						childSlotPreset->GetProperty<FString>(TEXT("SizeY")),
-						childSlotPreset->GetProperty<FString>(TEXT("SizeZ")));
+						partSpec.Size = FVectorExpression(
+							slotInfo.SizeX,
+							slotInfo.SizeY,
+							slotInfo.SizeZ);
 
-					partSpec.Flip[0] = !childSlotPreset->GetProperty<FString>(TEXT("FlipX")).IsEmpty();
-					partSpec.Flip[1] = !childSlotPreset->GetProperty<FString>(TEXT("FlipY")).IsEmpty();
-					partSpec.Flip[2] = !childSlotPreset->GetProperty<FString>(TEXT("FlipZ")).IsEmpty();
-
+						partSpec.Flip[0] = slotInfo.FlipX;
+						partSpec.Flip[1] = slotInfo.FlipY;
+						partSpec.Flip[2] = slotInfo.FlipZ;
+					}
 					break;
 				}
 			}
@@ -423,15 +457,15 @@ FVector FBIMAssemblySpec::GetCompoundAssemblyNativeSize() const
 		ObjectType == EObjectType::OTEdgeHosted ||
 		ObjectType == EObjectType::OTFaceHosted)
 	{
-		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeX), nativeSize.X);
-		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeY), nativeSize.Y);
-		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeZ), nativeSize.Z);
+		PresetDimensions.TryGetDimension(FBIMNameType(FBIMPartLayout::PartSizeX), nativeSize.X);
+		PresetDimensions.TryGetDimension(FBIMNameType(FBIMPartLayout::PartSizeY), nativeSize.Y);
+		PresetDimensions.TryGetDimension(FBIMNameType(FBIMPartLayout::PartSizeZ), nativeSize.Z);
 		return nativeSize;
 	}
 	else
 	{
-		RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, nativeSize.X);
-		RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, nativeSize.Z);
+		PresetDimensions.TryGetDimension(BIMPropertyNames::Width, nativeSize.X);
+		PresetDimensions.TryGetDimension(BIMPropertyNames::Height, nativeSize.Z);
 	}
 
 	return nativeSize;
@@ -439,19 +473,19 @@ FVector FBIMAssemblySpec::GetCompoundAssemblyNativeSize() const
 
 EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FBIMPresetCollectionProxy& PresetCollection)
 {
-	FModumateUnitValue dimension;
-	if (RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickDepth, dimension))
+	float dimension;
+	if (PresetDimensions.TryGetDimension(BIMPropertyNames::ToeKickDepth, dimension))
 	{
-		ToeKickDepthCentimeters = dimension.AsWorldCentimeters();
+		ToeKickDepthCentimeters = dimension;
 	}
 	else
 	{
 		ToeKickDepthCentimeters = 0.0f;
 	}
 
-	if (RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickHeight, dimension))
+	if (PresetDimensions.TryGetDimension(BIMPropertyNames::ToeKickHeight, dimension))
 	{
-		ToeKickHeightCentimeters = dimension.AsWorldCentimeters();
+		ToeKickHeightCentimeters = dimension;
 	}
 	else
 	{
@@ -483,8 +517,6 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy&
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
 	if (Parts.Num() == 0)
 	{
-		FGuid meshKey;
-
 		auto stringToAxis = [](const FString& InStr, FVector& OutVector,const FVector& InDefault)
 		{
 			if (InStr.Len() == 2)
@@ -503,28 +535,25 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy&
 		};
 
 		// Normal and Tangent have default values set in class def
-		FString vectorStr;
-		if (RootProperties.TryGetProperty(EBIMValueScope::Part, BIMPropertyNames::Normal, vectorStr))
+		if (!PartData.Normal.IsEmpty())
 		{
-			ensureAlways(stringToAxis(vectorStr, Normal, Normal));
+			ensureAlways(stringToAxis(PartData.Normal, Normal, Normal));
 		}
 
-		if (RootProperties.TryGetProperty(EBIMValueScope::Part, BIMPropertyNames::Tangent, vectorStr))
+		if (!PartData.Tangent.IsEmpty())
 		{
-			ensureAlways(stringToAxis(vectorStr, Tangent, Tangent));
+			ensureAlways(stringToAxis(PartData.Tangent, Tangent, Tangent));
 		}
-
-		if (RootProperties.TryGetProperty(EBIMValueScope::Part, BIMPropertyNames::Zalign, vectorStr))
-		{
-			bZalign = !vectorStr.IsEmpty();
-		}
-
-		if (!RootProperties.TryGetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, meshKey))
+		
+		bZalign = PartData.Zalign;
+		
+		if (!MeshRef.Source.IsValid())
 		{
 			return EBIMResult::Error;
 		}
 
-		const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(meshKey);
+		
+		const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(MeshRef.Source);
 		if (mesh == nullptr)
 		{
 			return EBIMResult::Error;
@@ -642,11 +671,7 @@ FModumateUnitValue FBIMAssemblySpec::CalculateThickness() const
 
 EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& PresetCollection)
 {
-	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments, Comments);
-	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code, CodeName);
-
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
-	EBIMResult result = EBIMResult::Error;
 	switch (ObjectType)
 	{
 	case EObjectType::OTTrim:
@@ -666,10 +691,10 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& Pre
 
 	case EObjectType::OTStaircase:
 	{
-		FModumateUnitValue dimension;
-		if (ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::TreadDepthIdeal, dimension) && dimension.AsWorldCentimeters() > 0.0f))
+		float dimension;
+		if (ensureAlways(PresetDimensions.TryGetDimension(BIMPropertyNames::TreadDepthIdeal, dimension) && dimension > 0.0f))
 		{
-			TreadDepthCentimeters = dimension.AsWorldCentimeters();
+			TreadDepthCentimeters = dimension;
 		}
 		else
 		{

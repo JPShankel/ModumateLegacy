@@ -124,7 +124,7 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult ProcessAllNamedDimensions();
 	EBIMResult ProcessMeshReferences(FBIMPresetInstance& Preset);
 	EBIMResult ProcessAllMeshReferences();
-	EBIMResult ProcessAllAssembies();
+	EBIMResult ProcessAllAssemblies();
 	EBIMResult ProcessAssemblyForPreset(FBIMPresetInstance& Preset);
 	EBIMResult SetPartSizesFromMeshes(FBIMPresetInstance& Preset);
 	EBIMResult SetAllPartSizesFromMeshes();
@@ -222,6 +222,8 @@ private:
 	static void PopulateInitialCanonicalPresetsFromCloudSync(FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
 	static bool PopulateMissingCanonicalPresetsFromCloudSync(const TSet<FGuid> Presets, FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
 	static void ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> JsonObject, FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance);
+	
+	static void GetAllChildGuidsFromJsonObject(TSharedPtr<FJsonObject>& InJsonObject, TArray<FGuid>& OutGuids);
 };
 
 class MODUMATE_API FBIMPresetCollectionProxy

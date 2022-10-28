@@ -17,6 +17,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Algo/ForEach.h"
 #include "TransformTypes.h"
+#include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
 #include "Objects/FFE.h"
 
 void FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas)
@@ -414,7 +415,11 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 		
 		FBIMPresetInstance newSymbolPreset;
 
-		presets.GetBlankPresetForNCP(tagPath, newSymbolPreset);
+		if (!ensure(FBIMPresetInstanceFactory::CreateBlankPreset(tagPath, presets.PresetTaxonomy, newSymbolPreset)))
+		{
+			return false;
+		}
+
 		newSymbolPreset.DisplayName = FText::FromString(TEXT("New Symbol"));
 
 		int32 idNumber = 1;

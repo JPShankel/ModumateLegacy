@@ -3,6 +3,7 @@
 #include "UI/Properties/InstPropWidgetEdgeDetail.h"
 
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MetaEdge.h"
@@ -200,7 +201,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 	{
 		FBIMPresetInstance newDetailPreset;
 		FBIMTagPath edgeDetalNCP = FBIMTagPath(TEXT("Property_Spatiality_ConnectionDetail_Edge"));
-		if (!ensure((presetCollection.GetBlankPresetForNCP(edgeDetalNCP, newDetailPreset) == EBIMResult::Success) &&
+		if (!ensure((FBIMPresetInstanceFactory::CreateBlankPreset(edgeDetalNCP, presetCollection.PresetTaxonomy, newDetailPreset)) &&
 			newDetailPreset.SetCustomData(newDetailData)==EBIMResult::Success))
 		{
 			return false;

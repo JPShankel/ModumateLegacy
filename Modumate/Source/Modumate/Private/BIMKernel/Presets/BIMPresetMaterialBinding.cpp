@@ -9,12 +9,6 @@
 
 EBIMResult FBIMPresetMaterialBindingSet::SetFormElements(FBIMPresetForm& RefForm) const
 {
-	RefForm.Elements = RefForm.Elements.FilterByPredicate(
-		[](const FBIMPresetFormElement& Element)
-	{
-		return Element.FieldType != EBIMPresetEditorField::MaterialBinding;
-	});
-
 	for (int32 i=0;i<MaterialBindings.Num();++i)
 	{
 		auto& binding = MaterialBindings[i];

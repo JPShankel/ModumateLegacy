@@ -60,34 +60,6 @@ bool UModumateRoomStatics::GetRoomConfig(const AModumateObjectInstance *RoomObj,
 	// TODO: expose these BIM values directly to Blueprint and delete FRoomConfigurationBlueprint, by using a strongly-typed InstanceData USTRUCT instead
 	bool bSuccess = true;
 	OutRoomConfig.ObjectID = RoomObj->ID;
-#if 0
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, OutRoomConfig.Key) && bSuccess;
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Number, OutRoomConfig.RoomNumber) && bSuccess;
-
-	FString colorString;
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Color, colorString) && bSuccess;
-	OutRoomConfig.RoomColor = FColor::FromHex(colorString);
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, OutRoomConfig.Area) && bSuccess;
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Code, OutRoomConfig.UseGroupCode) && bSuccess;
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::UseGroupType, OutRoomConfig.UseGroupType) && bSuccess;
-
-	// removed in deprecation of the Name property, should get it from the preset->DisplayName now
-	// bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, OutRoomConfig.DisplayName) && bSuccess;
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, OutRoomConfig.OccupantsNumber) && bSuccess;
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, OutRoomConfig.OccupantLoadFactor) && bSuccess;
-
-	FString areaTypeString;
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, areaTypeString) &&
-		FindEnumValueByString(areaTypeString, OutRoomConfig.AreaType) && bSuccess;
-
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, OutRoomConfig.LoadFactorSpecialCalc) && bSuccess;
-#endif
 
 	return bSuccess;
 }
@@ -150,27 +122,6 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(AModumateObjectInstance *
 	{
 		return;
 	}
-
-	// Store the room area in ft^2, since that's how everyone will display it and use it in calculations
-	// TODO: differentiate between gross and net area
-	// TODO: use strongly-typed InstanceData instead of BIM properties
-#if 0
-	float roomAreaValueCM2 = roomMesh->GetBaseArea();
-	float cm2Toft2 = FMath::Pow(InchesPerFoot * InchesToCentimeters, 2);
-	float roomAreaValueFT2 = FMath::RoundHalfFromZero(roomAreaValueCM2 / cm2Toft2);
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, roomAreaValueFT2);
-
-	// Calculate number of occupants
-	float occupantsNumValue = 0;
-	float occupantLoadFactor = 0.0f;
-	if (RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, occupantLoadFactor) &&
-		(occupantLoadFactor > 0.0f))
-	{
-		occupantsNumValue = FMath::RoundHalfFromZero(roomAreaValueFT2 / occupantLoadFactor);
-	}
-
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, occupantsNumValue);
-#endif
 }
 
 bool UModumateRoomStatics::CanRoomContainFace(const UModumateDocument *Document, FGraphSignedID FaceID)

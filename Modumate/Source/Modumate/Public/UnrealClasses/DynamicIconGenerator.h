@@ -151,6 +151,9 @@ private:
 	int32 StairLayerRiserAssemblyPartIndex = -2;
 
 	UMaterialInterface* CreateMaterialForIconTexture(UTexture2D* InTexture);
+
+	void GetRawMaterialAndColorFromPreset(const FBIMPresetInstance& InPreset, FColor& OutColor, FGuid& OutRawMaterial);
+
 	TMap<FGuid, FString> WebCache;
 
 public:

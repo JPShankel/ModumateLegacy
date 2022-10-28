@@ -19,40 +19,33 @@ enum class EBIMPresetEditorField : uint8
 {
 	None = 0,
 	TextProperty,
+	IntegerProperty,
 	NumberProperty,
 	AssetProperty,
 	NameProperty,
+	ColorProperty,
 	DimensionProperty,
+	DropdownProperty,
+	
 	MaterialBinding,
-	LayerPriorityGroup,
-	LayerPriorityValue,
-	ConstructionCostLabor,
-	ConstructionCostMaterial,
-	LightIntensity,
-	LightColor,
-	LightRadius,
-	LightIsSpot,
-	LightProfile
 };
-
-/* 
-Note: FBIMPresetForm is to be retired with the UMG BIM editor
-*/
 
 // BIM deltas are not serialized
 struct MODUMATE_API FBIMPresetEditorDelta
 {
 	EBIMPresetEditorField FieldType = EBIMPresetEditorField::None;
 
-	FName FieldName;
+	FString FieldName;
+	
+	FString CustomDataStructName;
 
 	FString NewStringRepresentation;
 
 	FString OldStringRepresentation;
+	
+	FString EnumClassName;
 
 	EMaterialChannelFields MaterialChannelSubField = EMaterialChannelFields::None;
-
-	EBIMPresetLayerPriorityGroup LayerPriorityGroup = EBIMPresetLayerPriorityGroup::Other;
 
 	FBIMPresetEditorDelta Inverted() const;
 };
@@ -80,6 +73,9 @@ struct MODUMATE_API FBIMPresetFormElement
 
 	UPROPERTY()
 	FString FieldName;
+	
+	UPROPERTY()
+	FString CustomDataStructName;
 
 	UPROPERTY()
 	FString EnumClassName;
@@ -89,8 +85,7 @@ struct MODUMATE_API FBIMPresetFormElement
 
 	UPROPERTY()
 	EBIMFormElementWidget FormElementWidgetType = EBIMFormElementWidget::None;
-
-	// Form values are not serialized, only used to create BIM deltas
+	
 	FString StringRepresentation;
 };
 
@@ -98,45 +93,13 @@ USTRUCT()
 struct MODUMATE_API FBIMPresetForm
 {
 	GENERATED_BODY()
-
-	UPROPERTY()
+	
 	TArray<FBIMPresetFormElement> Elements;
 
-	EBIMResult AddPropertyElement(const FText& DisplayName, const FName& FieldName, EBIMPresetEditorField FieldType);
+	EBIMResult AddPropertyElement(const FText& DisplayName, const FName& DataStruct, const FName& FieldName, EBIMPresetEditorField FieldType);
 	EBIMResult AddMaterialBindingElement(const FText& DisplayName, const FName& ChannelName, EMaterialChannelFields MaterialSubField);
-	EBIMResult AddLayerPriorityGroupElement();
-	EBIMResult AddLayerPriorityValueElement();
-	EBIMResult AddConstructionCostElements();
-	EBIMResult AddLightConfigElements();
-
 	bool HasField(const FName& Field) const;
 
 	bool operator==(const FBIMPresetForm& RHS) const;
 	bool operator!=(const FBIMPresetForm& RHS) const;
-};
-
-USTRUCT()
-struct FBIMWebPresetFormElement
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FString DisplayName;
-
-	UPROPERTY()
-	FString FieldName;
-
-	UPROPERTY()
-	FString StringRepresentation;
-};
-
-USTRUCT()
-struct FBIMWebPresetForm
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<FBIMWebPresetFormElement> Elements;
-
-	EBIMResult AddPropertyElement(const FString& DisplayName, const FString& FieldName);
 };

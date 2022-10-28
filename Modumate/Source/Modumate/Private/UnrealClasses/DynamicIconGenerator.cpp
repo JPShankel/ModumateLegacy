@@ -24,6 +24,8 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Objects/LayeredObjectInterface.h"
 #include "ImageUtils.h"
+#include "BIMKernel/Presets/CustomData/BIMIESProfile.h"
+#include "BIMKernel/Presets/CustomData/BIMSlot.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
 
@@ -219,7 +221,11 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMPresetCollection
 				if (partSlots[i].SlotPresetGUID == nodeInst->MyParentPartSlot)
 				{
 					const FBIMPresetInstance* slotPreset = PresetCollection.PresetFromGUID(partSlots[i].SlotPresetGUID);
-					slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, slotID);
+					FBIMSlot slotConfig;
+					if (slotPreset->TryGetCustomData(slotConfig))
+					{
+						slotID = slotConfig.ID;
+					}
 					break;
 				}
 			}
@@ -909,8 +915,9 @@ bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMate
 
 bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Preset, UMaterialInterface*& OutMaterial)
 {
-	FString iconPath = Preset->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::CraftingIconAssetFilePath);
-	FSoftObjectPath iconReferencePath = FString(TEXT("Texture2D'")).Append(iconPath).Append(TEXT("'"));
+	FBIMIESProfile iesProfileConfig;
+	ensure(Preset->TryGetCustomData(iesProfileConfig));
+	FSoftObjectPath iconReferencePath = FString(TEXT("Texture2D'")).Append(iesProfileConfig.CraftingIconAssetFilePath).Append(TEXT("'"));
 	TSharedPtr<FStreamableHandle> SyncStreamableHandleIcon = UAssetManager::GetStreamableManager().RequestSyncLoad(iconReferencePath);
 	UTexture2D* IESProfileIcon;
 	if (SyncStreamableHandleIcon)
@@ -1038,15 +1045,15 @@ bool ADynamicIconGenerator::SetIconMeshForPart(const FBIMPresetCollectionProxy& 
 {
 	// Step 1: Get params needed to make parts
 	FGuid rawMaterialKey;
-	FString colorHexValue = TEXT("FFFFFF");
+	FColor color;
+	
 	FGuid meshKey;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
 		const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(PresetID);
-		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		GetRawMaterialAndColorFromPreset(*preset, color, rawMaterialKey);
 		// Get mesh key from child preset
 		for (const auto& curChild : preset->ChildPresets)
 		{
@@ -1060,8 +1067,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(const FBIMPresetCollectionProxy& 
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		GetRawMaterialAndColorFromPreset(inst->Preset, color, rawMaterialKey);
 		// Get mesh key from child node
 		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 		inst->GatherAllChildNodes(childrenNodes);
@@ -1090,7 +1096,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(const FBIMPresetCollectionProxy& 
 		// Override material
 		// TODO: Meshes that have multiple material channels
 		auto* dynMat = IconStaticMesh->CreateDynamicMaterialInstance(0, aMat->EngineMaterial.Get());
-		dynMat->SetVectorParameterValue(MaterialColorParamName, FColor::FromHex(colorHexValue));
+		dynMat->SetVectorParameterValue(MaterialColorParamName, color);
 		for (int32 i = 0; i < IconStaticMesh->GetNumMaterials(); ++i)
 		{
 			IconStaticMesh->OverrideMaterials.Add(dynMat);
@@ -1122,20 +1128,18 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMPresetCollectionPro
 {
 	// Step 1: Get params needed to make material icon
 	FGuid rawMaterialKey;
-	FString colorHexValue = TEXT("FFFFFF");
+	FColor color;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
 		const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(PresetID);
-		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		GetRawMaterialAndColorFromPreset(*preset, color, rawMaterialKey);
 	}
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		GetRawMaterialAndColorFromPreset(inst->Preset, color, rawMaterialKey);
 	}
 
 	// Step 3: Get assets from key
@@ -1145,7 +1149,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMPresetCollectionPro
 	if (aMat != nullptr)
 	{
 		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, aMat->EngineMaterial.Get());
-		dynMat->SetVectorParameterValue(MaterialColorParamName, FColor::FromHex(colorHexValue));
+		dynMat->SetVectorParameterValue(MaterialColorParamName, color);
 		IconSphereMesh->SetMaterial(0, dynMat);
 
 		// Step 5: Capture icon
@@ -1166,7 +1170,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 {
 	// Step 1: Get params needed to make module icon
 	FGuid rawMaterialKey;
-	FString colorHexValue = TEXT("FFFFFF");
+	FColor color;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	FVector vSize = FVector::ZeroVector;
@@ -1178,8 +1182,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		{
 			return false;
 		}
-		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		GetRawMaterialAndColorFromPreset(*preset, color, rawMaterialKey);
 	}
 	else
 	{
@@ -1188,8 +1191,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		{
 			return false;
 		}
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		GetRawMaterialAndColorFromPreset(inst->Preset, color, rawMaterialKey);
 	}
 
 	// Step 3: Get assets from key, and size from dimension
@@ -1215,7 +1217,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 	if (aMat != nullptr)
 	{
 		auto* dynMat = IconCubeMesh->CreateDynamicMaterialInstance(0, aMat->EngineMaterial.Get());
-		dynMat->SetVectorParameterValue(MaterialColorParamName, FColor::FromHex(colorHexValue));
+		dynMat->SetVectorParameterValue(MaterialColorParamName, color);
 		IconCubeMesh->SetMaterial(0, dynMat);
 		FVector normalizedSize = vSize.GetSafeNormal() * 0.5f;
 		IconCubeMesh->SetWorldScale3D(normalizedSize);
@@ -1475,4 +1477,21 @@ void ADynamicIconGenerator::DrawTextureSampleToRenderTarget(UTexture2D* InTextur
 	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconRenderSampleMaterial, this);
 	dynMat->SetTextureParameterValue(MaterialIconTextureParamName, InTextureSample);
 	UKismetRenderingLibrary::DrawMaterialToRenderTarget(this, InRenderTarget, dynMat);
+}
+
+void ADynamicIconGenerator::GetRawMaterialAndColorFromPreset(const FBIMPresetInstance& InPreset, FColor& OutColor, FGuid& OutRawMaterial)
+{
+	FBIMPresetMaterialBindingSet bindings;
+	InPreset.TryGetCustomData(bindings);
+	
+	if (bindings.MaterialBindings.Num() > 0)
+	{
+		OutColor = FColor::FromHex(bindings.MaterialBindings.Last().ColorHexValue);
+		OutRawMaterial = bindings.MaterialBindings.Last().SurfaceMaterialGUID.IsValid()
+			? bindings.MaterialBindings.Last().SurfaceMaterialGUID
+			: bindings.MaterialBindings.Last().InnerMaterialGUID;
+	} else
+	{
+		OutColor = FColor::FromHex(TEXT("FFFFFF"));
+	}
 }

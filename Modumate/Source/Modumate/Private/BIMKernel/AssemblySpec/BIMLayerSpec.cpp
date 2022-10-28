@@ -4,6 +4,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "BIMKernel/Presets/CustomData/BIMPatternRef.h"
 
 
 EBIMResult FBIMLayerSpec::BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection)
@@ -90,11 +91,10 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProx
 	/*
 	* If we have a pattern, grab it
 	*/
-	FString patternGuidString;
-	FGuid patternGuid;
-	if (Preset.Properties.TryGetProperty(EBIMValueScope::PatternRef, BIMPropertyNames::AssetID, patternGuidString) && FGuid::Parse(patternGuidString, patternGuid))
+	FBIMPatternRef patternRef;
+	if (Preset.TryGetCustomData(patternRef))
 	{
-		const FLayerPattern* pattern = PresetCollection.GetPatternByGUID(patternGuid);
+		const FLayerPattern* pattern = PresetCollection.GetPatternByGUID(patternRef.Source);
 		if (ensure(pattern != nullptr))
 		{
 			Pattern = *pattern;

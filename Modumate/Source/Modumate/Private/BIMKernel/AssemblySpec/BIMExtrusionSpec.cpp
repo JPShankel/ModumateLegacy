@@ -2,25 +2,27 @@
 
 #include "BIMKernel/AssemblySpec/BIMExtrusionSpec.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "BIMKernel/Presets/CustomData/BIMDimensions.h"
+#include "BIMKernel/Presets/CustomData/BIMProfileRef.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 
 EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection)
 {
-	FModumateUnitValue xDim, yDim;
-	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, xDim))
+	float xDim, yDim;
+	if (Dimensions.TryGetDimension(BIMPropertyNames::Diameter, xDim))
 	{
 		yDim = xDim;
 	}
 	else
 	{
-		Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, xDim);
-		Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, yDim);
+		Dimensions.TryGetDimension(BIMPropertyNames::Width, xDim);
+		Dimensions.TryGetDimension(BIMPropertyNames::Depth, yDim);
 	}
-
-	FGuid profileKey;
-	if (ensureAlways(Properties.TryGetProperty(EBIMValueScope::ProfileRef, BIMPropertyNames::AssetID,profileKey) && profileKey.IsValid()))
+	
+	
+	if (ensureAlways(ProfileRef.Source.IsValid()))
 	{
-		const FSimpleMeshRef* trimMesh = PresetCollection.GetSimpleMeshByGUID(profileKey);
+		const FSimpleMeshRef* trimMesh = PresetCollection.GetSimpleMeshByGUID(ProfileRef.Source);
 
 		if (ensureAlways(trimMesh != nullptr))
 		{
@@ -29,7 +31,7 @@ EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FBIMPresetCollectionProx
 	}
 
 	// TODO: re-orient column meshes so width is along X instead of depth
-	FVector profileSize(xDim.AsWorldCentimeters(), yDim.AsWorldCentimeters(), 1);
+	FVector profileSize(xDim, yDim, 1);
 
 	if (ensureAlways(SimpleMeshes.Num() > 0 && SimpleMeshes[0].Asset.Get()->Polygons.Num() > 0))
 	{

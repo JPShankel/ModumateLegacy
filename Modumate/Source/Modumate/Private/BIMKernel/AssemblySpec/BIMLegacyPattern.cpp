@@ -3,6 +3,7 @@
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "Algo/Transform.h"
+#include "BIMKernel/Presets/CustomData/BIMPattern.h"
 
 
 FPatternModuleTemplate::FPatternModuleTemplate(const FString &DimensionStringsCombined)
@@ -30,24 +31,22 @@ FPatternModuleTemplate::FPatternModuleTemplate(const FString &DimensionStringsCo
 void FLayerPattern::InitFromCraftingPreset(const FBIMPresetInstance& Preset)
 {
 	Key = Preset.GUID;
-	
 	DisplayName = Preset.DisplayName;
 
-	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::ModuleCount, ModuleCount));
-	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Extents, ParameterizedExtents));
-	ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Thickness, ThicknessDimensionPropertyName));
-
-	int32 moduleIndex = 1;
-	FString modString = FString::Printf(TEXT("Module%dDimensions"), moduleIndex);
-	FString dimParam;
-	while (Preset.TryGetProperty(*modString, dimParam))
+	FBIMPatternConfig patternConfig;
+	if (ensureAlways(Preset.TryGetCustomData(patternConfig)))
 	{
-		if (!dimParam.IsEmpty())
+		ModuleCount = patternConfig.ModuleCount;
+		ParameterizedExtents = patternConfig.Extents;
+		ThicknessDimensionPropertyName = FName(patternConfig.Thickness);
+
+		for (auto moduleDimension : patternConfig.ModuleDimensions)
 		{
-			ParameterizedModuleDimensions.Add(FPatternModuleTemplate(dimParam));
+			if (!moduleDimension.IsEmpty())
+			{
+				ParameterizedModuleDimensions.Add(FPatternModuleTemplate(moduleDimension));	
+			}
 		}
-		++moduleIndex;
-		modString = FString::Printf(TEXT("Module%dDimensions"), moduleIndex);
 	}
 }
 

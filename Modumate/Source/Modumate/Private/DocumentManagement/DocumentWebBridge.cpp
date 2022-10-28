@@ -22,6 +22,7 @@
 #include "Drafting/DraftingManager.h"
 #include "Drafting/ModumateDraftingView.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
 #include "DrawingDesigner/DrawingDesignerAutomation.h"
 #include "Objects/CameraView.h"
 #include "Objects/CutPlane.h"
@@ -650,7 +651,7 @@ void UModumateDocumentWebBridge::create_or_swap_edge_detail(TArray<int32> Select
 	{
 		FBIMPresetInstance newDetailPreset;
 		FBIMTagPath edgeDetalNCP = FBIMTagPath(TEXT("Property_Spatiality_ConnectionDetail_Edge"));
-		if (!ensure((presetCollection.GetBlankPresetForNCP(edgeDetalNCP, newDetailPreset) == EBIMResult::Success) &&
+		if (!ensure((FBIMPresetInstanceFactory::CreateBlankPreset(edgeDetalNCP, presetCollection.PresetTaxonomy, newDetailPreset)) &&
 			newDetailPreset.SetCustomData(newDetailData) == EBIMResult::Success))
 		{
 			return;

@@ -31,8 +31,6 @@ struct MODUMATE_API FBIMPresetLayerPriority
 
 	UPROPERTY()
 	int32 PriorityValue = 0;
-
-	EBIMResult SetFormElements(FBIMPresetForm& OutForm) const;
 };
 
 bool operator==(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);

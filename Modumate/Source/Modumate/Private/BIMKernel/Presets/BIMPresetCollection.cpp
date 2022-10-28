@@ -10,6 +10,15 @@
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
+#include "BIMKernel/Presets/CustomData/BIMDimensions.h"
+#include "BIMKernel/Presets/CustomData/BIMIESProfile.h"
+#include "BIMKernel/Presets/CustomData/BIMMesh.h"
+#include "BIMKernel/Presets/CustomData/BIMMeshRef.h"
+#include "BIMKernel/Presets/CustomData/BIMNamedDimension.h"
+#include "BIMKernel/Presets/CustomData/BIMPattern.h"
+#include "BIMKernel/Presets/CustomData/BIMProfile.h"
+#include "BIMKernel/Presets/CustomData/BIMRawMaterial.h"
+#include "BIMKernel/Presets/CustomData/BIMSlot.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "Objects/ModumateObjectStatics.h"
@@ -60,8 +69,8 @@ EBIMResult FBIMPresetCollection::GetDirectCanonicalDescendents(const FGuid& Pres
 			OutCanonicals.Add(part.SlotPresetGUID);
 		}
 	}
-
-	preset->Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
+	
+	preset->Properties_DEPRECATED.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
 		FGuid guid;
 		if (!Value.IsEmpty() && FGuid::Parse(Value, guid) && guid.IsValid())
 		{
@@ -139,7 +148,7 @@ EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, 
 			}
 		}
 
-		preset->Properties.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
+		preset->Properties_DEPRECATED.ForEachProperty([&](const FBIMPropertyKey& PropKey,const FString& Value) {
 			FGuid guid;
 			if (!Value.IsEmpty() && FGuid::Parse(Value, guid) && guid.IsValid())
 			{
@@ -163,8 +172,38 @@ EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, 
 			}
 		}
 
+		for (auto& kvp : preset->CustomDataByClassName)
+		{
+			TSharedPtr<FJsonObject> jsonObject;
+			kvp.Value.GetJsonObject(jsonObject);
+			GetAllChildGuidsFromJsonObject(jsonObject, presetStack);
+		}
+
 	}
 	return EBIMResult::Success;
+}
+
+void FBIMPresetCollection::GetAllChildGuidsFromJsonObject(TSharedPtr<FJsonObject>& InJsonObject, TArray<FGuid>& OutGuids)
+{
+	for (auto& val : InJsonObject->Values)
+	{
+		if (val.Value->Type == EJson::String)
+		{
+			FGuid guid;
+			if (!val.Value->AsString().IsEmpty() && FGuid::Parse(val.Value->AsString(), guid) && guid.IsValid())
+			{
+				OutGuids.Push(guid);
+			}
+		}
+		else if (val.Value->Type == EJson::Object)
+		{
+			auto object = val.Value->AsObject();
+			if (object.IsValid())
+			{
+				GetAllChildGuidsFromJsonObject(object, OutGuids);
+			}
+		}
+	}
 }
 
 /*
@@ -256,11 +295,11 @@ EBIMResult FBIMPresetCollection::GetPresetsForSlot(const FGuid& SlotPresetGUID, 
 		return EBIMResult::Error;
 	}
 
-	FString slotPathNCP;
-	if (slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::SupportedNCPs, slotPathNCP))
+	FBIMSlot slotConfig;
+	if (slotPreset->TryGetCustomData(slotConfig))
 	{
 		FBIMTagPath tagPath;
-		EBIMResult res = tagPath.FromString(slotPathNCP);
+		EBIMResult res = tagPath.FromString(slotConfig.SupportedNCPs);
 		if (res == EBIMResult::Success)
 		{
 			return GetPresetsByPredicate([tagPath](const FBIMPresetInstance& Preset)
@@ -332,19 +371,19 @@ EBIMResult FBIMPresetCollection::PostLoad()
 
 EBIMResult FBIMPresetCollection::ProcessNamedDimensions(FBIMPresetInstance& Preset)
 {
-	EBIMResult rtn = EBIMResult::Success;
-	if(Preset.NodeScope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid())
+	if (Preset.NodeScope != EBIMValueScope::Part && !Preset.SlotConfigPresetGUID.IsValid())
 	{
-		for (auto& kvp : FBIMPartSlotSpec::NamedDimensionMap)
-		{
-			FBIMPropertyKey propKey(EBIMValueScope::Dimension, *kvp.Key);
-			if (!Preset.Properties.HasProperty<float>(propKey.Scope, propKey.Name))
-			{
-				Preset.Properties.SetProperty(propKey.Scope, propKey.Name, kvp.Value.DefaultValue.AsWorldCentimeters());
-			}
-		}
+		return EBIMResult::Success;
 	}
-	return rtn;
+	
+	FBIMDimensions dims;
+	if (Preset.TryGetCustomData(dims))
+	{
+		dims.bHasDefaults = true;
+		Preset.SetCustomData(dims);
+	}
+	
+	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetCollection::ProcessAllNamedDimensions()
@@ -363,48 +402,15 @@ EBIMResult FBIMPresetCollection::ProcessAllNamedDimensions()
 
 			if (ensureAlways(preset != nullptr))
 			{
-				FString dimensionKey;
-				if(preset->TryGetProperty(BIMPropertyNames::DimensionKey, dimensionKey))
+				FBIMNamedDimension namedDimension;
+				if (preset->TryGetCustomData(namedDimension) && !namedDimension.DimensionKey.IsEmpty())
 				{
-					FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(dimensionKey);
+					FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(namedDimension.DimensionKey);
 
-					float numProp;
-					if (preset->TryGetProperty(BIMPropertyNames::DefaultValue, numProp))
-					{
-						dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(numProp);
-					}
-					else
-					{
-						res = EBIMResult::Error;
-					}
-
-					FString stringProp;
-					if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::UIGroup, stringProp)))
-					{
-						dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(stringProp);
-					}
-					else
-					{
-						res = EBIMResult::Error;
-					}
-
-					if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::DisplayName, stringProp)))
-					{
-						dimension.DisplayName = FText::FromString(stringProp);
-					}
-					else
-					{
-						res = EBIMResult::Error;
-					}
-
-					if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::Description, stringProp)))
-					{
-						dimension.Description = FText::FromString(stringProp);
-					}
-					else
-					{
-						res = EBIMResult::Error;
-					}
+					dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(namedDimension.DefaultValue);
+					dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(namedDimension.UIGroup);
+					dimension.DisplayName = FText::FromString(namedDimension.DisplayName);
+					dimension.Description =  FText::FromString(namedDimension.Description);
 				}
 				else
 				{
@@ -428,7 +434,6 @@ EBIMResult FBIMPresetCollection::ProcessAllNamedDimensions()
 		return Preset.NodeScope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid();
 	}
 	, dimensionedPresets);
-
 	for (auto& dimPreset : dimensionedPresets)
 	{
 		FBIMPresetInstance* preset = PresetFromGUID(dimPreset);
@@ -443,29 +448,36 @@ EBIMResult FBIMPresetCollection::ProcessAllNamedDimensions()
 
 EBIMResult FBIMPresetCollection::ProcessMeshReferences(FBIMPresetInstance& Preset)
 {
-	EBIMResult rtn =  EBIMResult::Success;;
-	if(Preset.Properties.HasProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID))
+	EBIMResult rtn =  EBIMResult::Success;
+	
+	FBIMMeshRef meshRef;
+	if(Preset.TryGetCustomData(meshRef))
 	{
-		FString meshGuidStr = Preset.Properties.GetProperty<FString>(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID);
-		FGuid meshGuid;
-		FGuid::Parse(meshGuidStr, meshGuid);
-			
-		const FBIMPresetInstance* meshPreset = PresetFromGUID(meshGuid);
+		const FBIMPresetInstance* meshPreset = PresetFromGUID(meshRef.Source);
 			
 		if (ensure(meshPreset != nullptr))
 		{
-			meshPreset->Properties.ForEachProperty([&](const FBIMPropertyKey& Key, float Value) {
-				if (Key.Scope == EBIMValueScope::Dimension && !Preset.Properties.HasProperty<float>(EBIMValueScope::Dimension,Key.Name))
-				{
-					Preset.Properties.SetProperty(Key.Scope, Key.Name, Value);
-				}
-			});
+			FBIMDimensions meshDimensions;
+			if (meshPreset->TryGetCustomData(meshDimensions))
+			{
+				FBIMDimensions presetDimensions;
+				Preset.TryGetCustomData(presetDimensions);
+				meshDimensions.ForEachDimension([&presetDimensions](const FName& DimKey, float Value) {
+					// if we are not overriding the mesh dims on the preset, set it
+					if (!presetDimensions.HasCustomDimension(DimKey))
+					{
+						presetDimensions.SetCustomDimension(DimKey, Value);
+					}
+				});
+				Preset.SetCustomData(presetDimensions);
+			}
 		}
 		else
 		{
 			rtn = EBIMResult::Error;
 		}
-	}	
+	}
+	
 	return rtn;
 }
 
@@ -485,7 +497,7 @@ EBIMResult FBIMPresetCollection::ProcessAllMeshReferences()
 	return rtn;
 }
 
-EBIMResult FBIMPresetCollection::ProcessAllAssembies()
+EBIMResult FBIMPresetCollection::ProcessAllAssemblies()
 {
 	EBIMResult rtn = EBIMResult::Success;
 	for(auto& presetKVP : PresetsByGUID)
@@ -1027,7 +1039,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, FMOI
 	ProcessAllMeshReferences();
 	ProcessAllNamedDimensions();
 	SetAllPartSizesFromMeshes();
-	ProcessAllAssembies();
+	ProcessAllAssemblies();
 	UE_LOG(LogTemp, Log, TEXT("Done reading presets for document"));
 	return PostLoad() == EBIMResult::Success;
 }
@@ -1247,25 +1259,6 @@ EBIMResult FBIMPresetCollection::GetBlankPresetForNCP(FBIMTagPath TagPath, FBIMP
 	{
 		return EBIMResult::Error;
 	}
-
-	// TODO: we need a way to set custom data based on the NCP, maybe a factory?
-	// Populate the default properties
-	TMap<FString, FBIMWebPresetPropertyDef> propertiesByKey;
-	PresetTaxonomy.GetPropertiesForTaxonomyNode(TagPath, propertiesByKey);
-	
-	for (auto prop : propertiesByKey)
-	{
-		FBIMPropertyKey key(FName(prop.Key));
-		if (prop.Value.type == EBIMWebPresetPropertyType::number)
-		{
-			float val = 0.0f;
-			OutPreset.Properties.SetProperty<float>(key.Scope, key.Name, val);
-		} else if (prop.Value.type == EBIMWebPresetPropertyType::string)
-		{
-			FString val = TEXT("");
-			OutPreset.Properties.SetProperty<FString>(key.Scope, key.Name, val);
-		}
-	}
 	
 	return EBIMResult::Success;
 }
@@ -1327,7 +1320,10 @@ EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FString& NewPr
 
 	FBIMPresetInstance NewPreset = *original;
 	NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Datasmith from {0}"), FText::FromString(NewPresetName));
-	NewPreset.Properties.SetProperty(EBIMValueScope::MeshRef, BIMPropertyNames::AssetID, ArchitecturalMeshID.ToString());
+	
+	FBIMMeshRef meshRef;
+	meshRef.Source = ArchitecturalMeshID;
+	NewPreset.SetCustomData(meshRef);
 
 	if (OutPresetID.IsValid())
 	{
@@ -1414,37 +1410,46 @@ EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FGuid&
 
 EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes(FBIMPresetInstance& Preset)
 {
-	auto checkPartSize = [](FBIMPresetInstance& Preset, const FBIMPresetInstance& MeshPreset, const FBIMNameType& PartField, const FBIMNameType& MeshField, const FText& DisplayName)
+	auto checkPartSize = [](FBIMPresetInstance& Preset, const FBIMNameType& PartField, const float NativeSize)
 	{
 		float v = 0.0f;
-		Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, PartField, v);
+			
+		FBIMDimensions presetDimensions;
+		if (Preset.TryGetCustomData(presetDimensions))
+		{
+			presetDimensions.TryGetDimension(PartField, v);	
+		}
 
 		// The property will always be present but will be 0 if it hasn't been set
 		if (v == 0.0f)
 		{
-			MeshPreset.Properties.TryGetProperty(EBIMValueScope::Mesh, MeshField, v);
-			Preset.Properties.SetProperty(EBIMValueScope::Dimension, PartField, v);
-			FBIMPropertyKey propKey(EBIMValueScope::Dimension, PartField);
-			// If size dimensions are specified in the part table, the form will already be built, otherwise build it here
-			if (!Preset.PresetForm.HasField(propKey.QN()))
-			{
-				Preset.PresetForm.AddPropertyElement(DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
-			}
+			v = NativeSize;
+			presetDimensions.SetCustomDimension(PartField, v);
+			Preset.SetCustomData(presetDimensions);
 		}
 	};
 	
-	FGuid assetGUID;
-	if (Preset.Properties.TryGetProperty(EBIMValueScope::MeshRef, TEXT("AssetID"), assetGUID))
+	FBIMMeshRef meshRef;
+	if (!Preset.TryGetCustomData(meshRef))
 	{
-		auto* meshPreset = PresetFromGUID(assetGUID);
-		if (meshPreset)
-		{
-			checkPartSize(Preset, *meshPreset, FBIMNameType(FBIMPartLayout::PartSizeX), FBIMNameType(FBIMPartLayout::NativeSizeX), FText::FromString(TEXT("Part Size X")));
-			checkPartSize(Preset, *meshPreset, FBIMNameType(FBIMPartLayout::PartSizeY), FBIMNameType(FBIMPartLayout::NativeSizeY), FText::FromString(TEXT("Part Size Y")));
-			checkPartSize(Preset, *meshPreset, FBIMNameType(FBIMPartLayout::PartSizeZ), FBIMNameType(FBIMPartLayout::NativeSizeZ), FText::FromString(TEXT("Part Size Z")));
-		}
+		return EBIMResult::Success;
+	}
+	auto* meshPreset = PresetFromGUID(meshRef.Source);
+	if (!meshPreset)
+	{
+		return EBIMResult::Error;
 	}
 
+	FBIMMesh meshConfig;
+	if (!meshPreset->TryGetCustomData(meshConfig))
+	{
+		return EBIMResult::Error;
+	}
+
+	checkPartSize(Preset, FBIMNameType(FBIMPartLayout::PartSizeX), meshConfig.NativeSizeX);
+	checkPartSize(Preset, FBIMNameType(FBIMPartLayout::PartSizeY), meshConfig.NativeSizeY);
+	checkPartSize(Preset, FBIMNameType(FBIMPartLayout::PartSizeZ), meshConfig.NativeSizeZ);
+	
 	return EBIMResult::Success;
 }
 
@@ -1460,8 +1465,11 @@ EBIMResult FBIMPresetCollection::SetAllPartSizesFromMeshes()
 	{
 		for (auto guid : partPresets)
 		{
-			auto* preset = PresetFromGUID(guid);
-			SetPartSizesFromMeshes(*preset);
+			auto preset = PresetFromGUID(guid);
+			if (preset != nullptr)
+			{
+				SetPartSizesFromMeshes(*preset);
+			}
 		}
 	}	
 	return EBIMResult::Success;
@@ -1482,41 +1490,26 @@ EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPrese
 
 bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset) const
 {
-	FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+	FBIMMesh meshConfig;
 
-	if (ensureAlways(assetPath.Len() > 0))
+	if (ensureAlways(Preset.TryGetCustomData(meshConfig)) && ensureAlways(meshConfig.AssetPath.Len() > 0))
 	{
-		FVector meshNativeSize(ForceInitToZero);
-		FBox meshNineSlice(ForceInitToZero);
+		FVector presetNativeSize(meshConfig.NativeSizeX, meshConfig.NativeSizeY, meshConfig.NativeSizeZ);
+		FVector meshNativeSize = presetNativeSize * UModumateDimensionStatics::CentimetersToInches;
 
-		FVector presetNativeSize(ForceInitToZero);
-		if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeX"), presetNativeSize.X) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeY"), presetNativeSize.Y) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeZ"), presetNativeSize.Z))
-		{
-			meshNativeSize = presetNativeSize * UModumateDimensionStatics::CentimetersToInches;
-		}
-
-		FVector presetNineSliceMin(ForceInitToZero), presetNineSliceMax(ForceInitToZero);
-		if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX1"), presetNineSliceMin.X) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY1"), presetNineSliceMin.Y) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ1"), presetNineSliceMin.Z) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX2"), presetNineSliceMax.X) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY2"), presetNineSliceMax.Y) &&
-			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ2"), presetNineSliceMax.Z))
-		{
-			meshNineSlice = FBox(
-				presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
-				presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
-		}
+		FVector presetNineSliceMin(meshConfig.SliceX1, meshConfig.SliceY1, meshConfig.SliceZ1);
+		FVector presetNineSliceMax(meshConfig.SliceX2, meshConfig.SliceY2, meshConfig.SliceZ2);
+		FBox meshNineSlice = FBox(
+			presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
+			presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
 		
-		if (assetPath.StartsWith(TEXT("http")))
+		if (meshConfig.AssetPath.StartsWith(TEXT("http")))
 		{
-			AddArchitecturalMeshFromDatasmith(assetPath, Preset.GUID);
+			AddArchitecturalMeshFromDatasmith(meshConfig.AssetPath, Preset.GUID);
 		}
 		else
 		{
-			AddArchitecturalMesh(Preset.GUID, Preset.DisplayName.ToString(), meshNativeSize, meshNineSlice, assetPath);
+			AddArchitecturalMesh(Preset.GUID, Preset.DisplayName.ToString(), meshNativeSize, meshNineSlice, meshConfig.AssetPath);
 		}
 	}
 	return true;
@@ -1524,11 +1517,10 @@ bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset) c
 
 bool FBIMPresetCollection::AddRawMaterialFromPreset(const FBIMPresetInstance& Preset) const
 {
-	FString assetPath;
-	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
-	if (ensure(assetPath.Len() != 0))
+	FBIMRawMaterial rawMaterialData;
+	if (ensure(Preset.TryGetCustomData(rawMaterialData)) && ensure(rawMaterialData.AssetPath.Len() != 0))
 	{
-		AddArchitecturalMaterial(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
+		AddArchitecturalMaterial(Preset.GUID, Preset.DisplayName.ToString(), rawMaterialData.AssetPath);
 		return true;
 	}
 	return false;
@@ -1555,11 +1547,10 @@ bool FBIMPresetCollection::AddMaterialFromPreset(const FBIMPresetInstance& Prese
 		const FBIMPresetInstance* preset = PresetFromGUID(rawMaterial);
 		if (preset != nullptr)
 		{
-			FString assetPath;
-			if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath)
-				&& !Preset.DisplayName.IsEmpty()))
+			FBIMRawMaterial rawMaterialConfig;
+			if (ensure(Preset.TryGetCustomData(rawMaterialConfig)) && !Preset.DisplayName.IsEmpty())
 			{
-				AddArchitecturalMaterial(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
+				AddArchitecturalMaterial(Preset.GUID, Preset.DisplayName.ToString(), rawMaterialConfig.AssetPath);
 				return true;
 			}
 		}
@@ -1572,26 +1563,29 @@ bool FBIMPresetCollection::AddLightFromPreset(const FBIMPresetInstance& Preset) 
 	FArchitecturalLight light;
 	light.Key = Preset.GUID;
 	light.DisplayName = Preset.DisplayName;
-	
-	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, light.IconPath);
-	Preset.TryGetProperty(BIMPropertyNames::AssetPath, light.ProfilePath);
-	//fetch IES resource from profile path
-	//fill in light configuration
-	Lights.AddData(light);
+
+	FBIMIESProfile iesProfileConfig;
+	if (ensure(Preset.TryGetCustomData(iesProfileConfig)))
+	{
+		light.IconPath = FName(iesProfileConfig.CraftingIconAssetFilePath);
+		light.ProfilePath = FName(iesProfileConfig.AssetPath);
+		//fetch IES resource from profile path
+		//fill in light configuration
+		Lights.AddData(light);	
+	}
 
 	return true;
 }
 
 bool FBIMPresetCollection::AddProfileFromPreset(const FBIMPresetInstance& Preset) const
 {
-	FString assetPath;
-	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
-	if (assetPath.Len() != 0)
+	FBIMProfile profileConfig;
+	if (ensure(Preset.TryGetCustomData(profileConfig)))
 	{
-		if (ensureAlways(!Preset.DisplayName.IsEmpty()))
+		if (profileConfig.AssetPath.Len() != 0 && ensure(!Preset.DisplayName.IsEmpty()))
 		{
-			AddSimpleMesh(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
-			return true;
+			AddSimpleMesh(Preset.GUID, Preset.DisplayName.ToString(), profileConfig.AssetPath);
+            return true;
 		}
 	}
 	return false;
@@ -1603,11 +1597,10 @@ bool FBIMPresetCollection::AddPatternFromPreset(const FBIMPresetInstance& Preset
 	newPattern.InitFromCraftingPreset(Preset);
 	Patterns.AddData(newPattern);
 
-	FString assetPath;
-	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, assetPath);
-	if (assetPath.Len() > 0)
+	FBIMPatternConfig patterneConfig;
+	if (Preset.TryGetCustomData(patterneConfig) && !patterneConfig.CraftingIconAssetFilePath.IsEmpty())
 	{
-		AddStaticIconTexture(Preset.GUID, Preset.DisplayName.ToString(), assetPath);
+		AddStaticIconTexture(Preset.GUID, Preset.DisplayName.ToString(), patterneConfig.CraftingIconAssetFilePath);
 		return true;
 	}
 	return false;

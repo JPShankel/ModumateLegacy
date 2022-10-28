@@ -359,7 +359,7 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMEditorNodeIDT
 		if (inst->ParentInstance == nullptr)
 		{
 			assemblyPreset.ObjectType = inst->Preset.ObjectType;
-			assemblyPreset.Properties.AddProperties(inst->Preset.Properties);
+			assemblyPreset.Properties_DEPRECATED.AddProperties(inst->Preset.Properties_DEPRECATED);
 			break;
 		}
 	}

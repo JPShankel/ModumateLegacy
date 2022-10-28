@@ -3,6 +3,8 @@
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
 #include "BIMKernel/Presets/BIMPresetInstance.h"
+#include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
+#include "ModumateCore/EnumHelpers.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetEditorForm"
 
@@ -59,19 +61,30 @@ bool FBIMPresetForm::HasField(const FName& Field) const
 	return false;
 }
 
-EBIMResult FBIMPresetForm::AddPropertyElement(const FText& DisplayName, const FName& FieldName, EBIMPresetEditorField FieldType)
+EBIMResult FBIMPresetForm::AddPropertyElement(const FText& DisplayName, const FName& MatrixName, const FName& FieldName, EBIMPresetEditorField FieldType)
 {
 	if (ensureAlways(!DisplayName.IsEmpty() && !FieldName.IsNone()))
 	{
+		EPresetPropertyMatrixNames matrixNameEnum;
+		ensure(FindEnumValueByName(MatrixName, matrixNameEnum));
+		const UStruct* dataStruct = FBIMPresetInstanceFactory::GetPresetMatrixStruct(matrixNameEnum);
+		if (dataStruct == nullptr)
+		{
+			return EBIMResult::Error;
+		}
+
 		FBIMPresetFormElement& elem = Elements.AddDefaulted_GetRef();
 		elem.DisplayName = DisplayName;
 		elem.FieldType = FieldType;
 		elem.FieldName = FieldName.ToString();
+		elem.CustomDataStructName = dataStruct->GetName();
 
 		switch (FieldType)
 		{
 		case EBIMPresetEditorField::TextProperty:
 		case EBIMPresetEditorField::NumberProperty:
+		case EBIMPresetEditorField::IntegerProperty:
+		case EBIMPresetEditorField::NameProperty:
 		case EBIMPresetEditorField::DimensionProperty:
 			elem.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
 			break;
@@ -79,7 +92,19 @@ EBIMResult FBIMPresetForm::AddPropertyElement(const FText& DisplayName, const FN
 		case EBIMPresetEditorField::AssetProperty:
 			elem.FormElementWidgetType = EBIMFormElementWidget::GUIDSwap;
 			break;
+		case EBIMPresetEditorField::ColorProperty:
+			elem.FormElementWidgetType = EBIMFormElementWidget::ColorPicker;
+			break;
+		case EBIMPresetEditorField::DropdownProperty:
+		{
+			elem.FormElementWidgetType = EBIMFormElementWidget::EnumSelect;
 
+			// TODO: Currently it is hardcoded that a Dropdown property is for layer priority, this needs to dynamically
+			// find the enum class name based on the type in custom data struct
+			UEnum* enumClass = StaticEnum<EBIMPresetLayerPriorityGroup>();
+			elem.EnumClassName = enumClass->CppType;
+			break;	
+		}
 		default: ensureAlways(false); return EBIMResult::Error;
 		};
 
@@ -129,91 +154,5 @@ EBIMResult FBIMPresetForm::AddMaterialBindingElement(const FText& DisplayName, c
 	}
 	return EBIMResult::Error;
 }
-
-EBIMResult FBIMPresetForm::AddLayerPriorityGroupElement()
-{
-	FBIMPresetFormElement& newElement = Elements.AddDefaulted_GetRef();
-	newElement.DisplayName = LOCTEXT("MiterGroup","Miter Group");
-	newElement.FieldType = EBIMPresetEditorField::LayerPriorityGroup;
-	newElement.FieldName = TEXT("MiterGroup");
-	newElement.FormElementWidgetType = EBIMFormElementWidget::EnumSelect;
-
-	UEnum* enumClass = StaticEnum<EBIMPresetLayerPriorityGroup>();
-	newElement.EnumClassName = enumClass->CppType;
-
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetForm::AddLayerPriorityValueElement()
-{
-	FBIMPresetFormElement& newElement = Elements.AddDefaulted_GetRef();
-	newElement.DisplayName = LOCTEXT("MiterPriority","Miter Priority");
-	newElement.FieldType = EBIMPresetEditorField::LayerPriorityValue;
-	newElement.FieldName = TEXT("MiterPriority");
-	newElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
- 	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetForm::AddConstructionCostElements()
-{
-	FBIMPresetFormElement& materialElement = Elements.AddDefaulted_GetRef();
-	materialElement.DisplayName = LOCTEXT("ConstructionCostMaterial", "Material Cost");
-	materialElement.FieldType = EBIMPresetEditorField::ConstructionCostMaterial;
-	materialElement.FieldName = TEXT("MaterialCost");
-	materialElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
-
-	FBIMPresetFormElement& laborElement = Elements.AddDefaulted_GetRef();
-	laborElement.DisplayName = LOCTEXT("ConstructionCostLabor", "Labor Cost");
-	laborElement.FieldType = EBIMPresetEditorField::ConstructionCostLabor;
-	laborElement.FieldName = TEXT("LaborCost");
-	laborElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
-
-	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetForm::AddLightConfigElements()
-{
-	FBIMPresetFormElement& elem = Elements.AddDefaulted_GetRef();
-	elem.DisplayName = LOCTEXT("LightDisplayColor", "Color");
-	elem.FieldName = TEXT("Color");
-	elem.FieldType = EBIMPresetEditorField::LightColor;
-	elem.FormElementWidgetType = EBIMFormElementWidget::ColorPicker;
-
-	FBIMPresetFormElement& intensity = Elements.AddDefaulted_GetRef();
-	intensity.DisplayName = LOCTEXT("LightIntensity", "Intensity");
-	intensity.FieldName = TEXT("Intensity");
-	intensity.FieldType = EBIMPresetEditorField::LightIntensity;
-	intensity.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
-
-	FBIMPresetFormElement& radius = Elements.AddDefaulted_GetRef();
-	radius.DisplayName = LOCTEXT("LightRadius", "Radius");
-	radius.FieldName = TEXT("Radius");
-	radius.FieldType = EBIMPresetEditorField::LightRadius;
-	radius.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
-
-	FBIMPresetFormElement& profile = Elements.AddDefaulted_GetRef();
-	profile.DisplayName = LOCTEXT("IESProfile","IES Profile");
-	profile.FieldName = TEXT("IESProfile.AssetID");
-	profile.FieldType = EBIMPresetEditorField::LightProfile;
-	profile.FormElementWidgetType = EBIMFormElementWidget::GUIDSwap;
-	
-	return EBIMResult::Success;
-}
-
-
-EBIMResult FBIMWebPresetForm::AddPropertyElement(const FString& DisplayName, const FString& FieldName)
-{
-	if (ensureAlways(!DisplayName.IsEmpty() && !FieldName.IsEmpty()))
-	{
-		FBIMWebPresetFormElement& elem = Elements.AddDefaulted_GetRef();
-		elem.DisplayName = DisplayName;
-		elem.FieldName = FieldName;
-		
-		return EBIMResult::Success;
-	}
-
-	return EBIMResult::Error;
-}
-
 
 #undef LOCTEXT_NAMESPACE

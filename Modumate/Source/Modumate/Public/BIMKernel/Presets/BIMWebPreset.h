@@ -46,6 +46,9 @@ struct MODUMATE_API FBIMWebPresetPropertyDef
 
 	UPROPERTY()
 	EBIMValueType role = EBIMValueType::None;
+
+	UPROPERTY()
+	EBIMPresetEditorField formElement = EBIMPresetEditorField::None;
 	
 	UPROPERTY()
 	bool isEditable = false;
@@ -68,6 +71,12 @@ struct MODUMATE_API FBIMWebPresetPropertyDef
 		{
 			FindEnumValueByName(*JsonObject->Values["role"]->AsString(), this->role);
 		}
+
+		if (!JsonObject->Values["formElement"]->IsNull())
+		{
+			FindEnumValueByName(*JsonObject->Values["formElement"]->AsString(), this->formElement);
+		}
+
 		this->isEditable = JsonObject->Values["isEditable"]->AsBool();
 		this->isBIMVisible = JsonObject->Values["isBIMVisible"]->AsBool();
 		this->isMarketplaceVisible = JsonObject->Values["isMarketplaceVisible"]->AsBool();
