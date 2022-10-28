@@ -4795,6 +4795,7 @@ void UModumateDocument::OnCameraViewSelected(int32 ID)
 	}
 
 	UpdateWebMOIs(EObjectType::OTDesignOption); // TODO: visibility of design options should be moved to the player state
+	UpdateWebMOIs(EObjectType::OTCutPlane);
 }
 
 void UModumateDocument::BeginDestroy()
