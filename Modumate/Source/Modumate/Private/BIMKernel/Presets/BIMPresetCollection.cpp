@@ -1808,7 +1808,11 @@ void FBIMPresetCollection::PopulateTaxonomyFromCloudSync(FBIMPresetCollection& C
 	const UModumateGameInstance* GameInstance)
 {
 	auto cloud = GameInstance->GetCloudConnection();
-	FString endpoint = TEXT("/assets/ncps");
+	
+	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+	FString currentVersion = projectSettings->ProjectVersion;
+	
+	FString endpoint = TEXT("/assets/ncps?version=") + currentVersion;
 	cloud->RequestEndpoint(endpoint, FModumateCloudConnection::Get,
 		//Customizer
 		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
