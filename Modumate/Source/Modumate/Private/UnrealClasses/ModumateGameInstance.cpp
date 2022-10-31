@@ -4,8 +4,6 @@
 
 #include "Algo/Transform.h"
 #include "BIMKernel/Core/BIMProperties.h"
-//#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
-//#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 
 #include "StructDeserializer.h"
 #include "StructSerializer.h"
@@ -441,6 +439,26 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		GetDocument()->DeleteObjects(obs, bIncludeConnected);
 		return true;
+	});
+
+	RegisterCommand(kConvertMDMB, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output) {
+		FString filepath;
+		if (!FModumatePlatform::GetOpenFilename(filepath, nullptr, false))
+		{
+			return false;
+		}
+
+		FModumateDocumentHeader header;
+		FMOIDocumentRecord docRecord;
+
+		if (FModumateSerializationStatics::TryReadModumateDocumentRecord(filepath, header, docRecord))
+		{
+			filepath += TEXT(".mdmt");
+			UModumateDocument::SaveRecords(filepath, header, docRecord);
+			return true;
+		}
+
+		return false;
 	});
 
 	RegisterCommand(kDebug, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {

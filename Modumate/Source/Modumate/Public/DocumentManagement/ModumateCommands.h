@@ -61,6 +61,9 @@ namespace ModumateCommands
 
 	// Export
 	MODUMATE_COMMAND(kExport, "export");
+
+	// Debug
+	MODUMATE_COMMAND(kConvertMDMB, "convert_mdmb");
 }
 
 namespace ModumateParameters
