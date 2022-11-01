@@ -173,10 +173,11 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	}
 
 	TArray<const FGraph3DFace* > memberFaces;
-	Algo::Transform(InstanceData.GraphMembers, memberFaces,
+	Algo::TransformIf(InstanceData.GraphMembers, memberFaces,
+		[graph](int32 FaceID) {return graph->FindFace(FaceID) != nullptr; },
 		[graph](int32 FaceID) {return graph->FindFace(FaceID); });
 
-	if (memberFaces.Num() == 0)
+	if (memberFaces.Num() == 0 || !ensure(memberFaces[0]!=nullptr))
 	{
 		return true;
 	}
