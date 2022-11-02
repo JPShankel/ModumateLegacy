@@ -70,35 +70,37 @@ void AMOIFFE::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TA
 
 	if (cma && UModumateObjectStatics::GetFFEBoxSidePoints(cma, assemblyNormal, boxSidePoints))
 	{
-		// For any structure line computation, we want the points and lines projected on the plane of the actor's origin
-		FVector actorLoc = cma->GetActorLocation();
-		FQuat actorRot = cma->GetActorQuat();
-		FVector curObjectNormal = actorRot.RotateVector(assemblyNormal);
-
-		for (const FVector &boxSidePoint : boxSidePoints)
+		if (bForSnapping)
 		{
-			FVector projectedBoxPoint = FVector::PointPlaneProject(boxSidePoint, actorLoc, curObjectNormal);
-			outPoints.Add(FStructurePoint(projectedBoxPoint, FVector::ZeroVector, -1));
+			// For any structure line computation, we want the points and lines projected on the plane of the actor's origin
+			FVector actorLoc = cma->GetActorLocation();
+			FQuat actorRot = cma->GetActorQuat();
+			FVector curObjectNormal = actorRot.RotateVector(assemblyNormal);
+
+			for (const FVector& boxSidePoint : boxSidePoints)
+			{
+				FVector projectedBoxPoint = FVector::PointPlaneProject(boxSidePoint, actorLoc, curObjectNormal);
+				outPoints.Add(FStructurePoint(projectedBoxPoint, FVector::ZeroVector, -1));
+			}
+
+			int32 numPlanePoints = outPoints.Num();
+			for (int32 pointIdx = 0; pointIdx < numPlanePoints; ++pointIdx)
+			{
+				const FVector& curPlanePoint = outPoints[pointIdx].Point;
+				const FVector& nextPlanePoint = outPoints[(pointIdx + 1) % numPlanePoints].Point;
+
+				outLines.Add(FStructureLine(curPlanePoint, nextPlanePoint, -1, -1));
+			}
 		}
-
-		int32 numPlanePoints = outPoints.Num();
-		for (int32 pointIdx = 0; pointIdx < numPlanePoints; ++pointIdx)
-		{
-			const FVector &curPlanePoint = outPoints[pointIdx].Point;
-			const FVector &nextPlanePoint = outPoints[(pointIdx + 1) % numPlanePoints].Point;
-
-			outLines.Add(FStructureLine(curPlanePoint, nextPlanePoint, -1, -1));
-		}
-
 		// And for selection/bounds calculation, we also want the true bounding box
-		if (!bForSnapping)
+		else
 		{
 			FVector cmaOrigin, cmaBoxExtent;
-			cma->GetActorBounds(false, cmaOrigin, cmaBoxExtent);
+			cma->GetActorBounds(true, cmaOrigin, cmaBoxExtent);
 			FQuat rot = GetRotation();
 
 			// This calculates the extent more accurately since it's unaffected by actor rotation
-			cmaBoxExtent = cma->CalculateComponentsBoundingBoxInLocalSpace(true).GetSize() * 0.5f;
+			cmaBoxExtent = cma->CalculateComponentsBoundingBoxInLocalSpace(false).GetSize() * 0.5f;
 
 			FModumateSnappingView::GetBoundingBoxPointsAndLines(cmaOrigin, rot, cmaBoxExtent, outPoints, outLines);
 		}
