@@ -2,7 +2,7 @@
 
 #include "Objects/CameraView.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateBrowserStatics.h"
+#include "ModumateCore/ModumateCameraViewStatics.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/AxesActor.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
@@ -169,7 +169,7 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 			if (cameraComp)
 			{
 				const FDateTime dateTime = controller->SkyActor->GetCurrentDateTime();
-				UModumateBrowserStatics::UpdateCameraViewAsMoi(this, cameraComp, ID, dateTime);
+				UModumateCameraViewStatics::UpdateCameraViewAsMoi(this, cameraComp, ID, dateTime);
 			}
 		}
 		

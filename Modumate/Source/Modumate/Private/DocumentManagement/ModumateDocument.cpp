@@ -65,7 +65,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/EnumHelpers.h"
-#include "ModumateCore/ModumateBrowserStatics.h"
+#include "ModumateCore/ModumateCameraViewStatics.h"
 #include "ModumateCore/ModumateStats.h"
 #include "Objects/EdgeDetailObj.h"
 

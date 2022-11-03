@@ -56,6 +56,7 @@
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/ModumateMacSettings.h"
 #include "ModumateCore/PrettyJSONWriter.h"
+#include "ModumateCore/ModumateCameraViewStatics.h"
 
 
 
@@ -1571,19 +1572,7 @@ void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
 	{
 		return;
 	}
-	UModumateDocument* doc = gameState->Document;
-	TArray<AModumateObjectInstance*> mois = doc->GetObjectsOfType(EObjectType::OTFurniture);
-	for (AModumateObjectInstance* moi : mois)
-	{
-		if (moi != nullptr)
-		{
-			const FBIMPresetInstance* preset = doc->GetPresetCollection().PresetFromGUID(moi->GetStateData().AssemblyGUID);
-			if (preset && preset->HasCustomData<FLightConfiguration>())
-			{
-				moi->MarkDirty(EObjectDirtyFlags::Structure);
-			}
-		}
-	}
+	UModumateCameraViewStatics::DirtyLightMOIs(GetWorld());
 }
 
 void UModumateGameInstance::AutoDetectAndSaveModumateUserSettings()

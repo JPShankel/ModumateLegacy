@@ -5,11 +5,11 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
 #include "Objects/CameraView.h"
-#include "ModumateBrowserStatics.generated.h"
+#include "ModumateCameraViewStatics.generated.h"
 
 // Helper functions for accessing / editing browser menu related data.
 UCLASS(BlueprintType)
-class MODUMATE_API UModumateBrowserStatics : public UBlueprintFunctionLibrary
+class MODUMATE_API UModumateCameraViewStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -30,4 +30,9 @@ public:
 
 	UFUNCTION()
 	static bool UpdateCameraViewData(UObject* WorldContextObject, UCameraComponent* CameraComp, FMOICameraViewData& CameraViewData, const FDateTime& TimeOfDay);
+
+	UFUNCTION()
+	static bool ActivateCameraView(UObject* WorldContextObject, FMOICameraViewData CameraView);
+
+	static void DirtyLightMOIs(UObject* WorldContextObject);
 };
