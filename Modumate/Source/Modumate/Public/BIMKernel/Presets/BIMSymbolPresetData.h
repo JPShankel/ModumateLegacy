@@ -46,7 +46,7 @@ struct MODUMATE_API FBIMSymbolPresetData
 	TMap<int32, FMOIStateData> Members;
 
 	UPROPERTY()
-	TArray<FGraph3DRecordV1> Graphs;
+	TMap<int32, FGraph3DRecordV1> Graphs;
 
 	UPROPERTY()
 	TMap<int32, FGraph2DRecord> SurfaceGraphs;
@@ -56,4 +56,7 @@ struct MODUMATE_API FBIMSymbolPresetData
 
 	UPROPERTY()
 	FVector Anchor { ForceInit };
+
+	UPROPERTY()
+	int32 RootGraph { MOD_ID_NONE };
 };

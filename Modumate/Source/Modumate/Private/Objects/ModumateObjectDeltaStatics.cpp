@@ -924,12 +924,13 @@ void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3D
 void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID,
 	TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType, FDeltaPtr>>& OutDeltas)
 {
-	TMap<int32, int32> newGroupIDMap;
+	TMap<int32, int32> oldIDToNewID;
+	oldIDToNewID.Add(MOD_ID_NONE, MOD_ID_NONE);
 
 	// Create new group IDs first to be able to preserve hierarchy.
 	for (int32 id : GroupIDs)
 	{
-		newGroupIDMap.Add(id, NextID++);
+		oldIDToNewID.Add(id, NextID++);
 	}
 
 	// Create map of existing mapping from group to its design option, if any.
@@ -967,10 +968,10 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			return;
 		}
 
-		int32 newGroupID = newGroupIDMap[groupID];
-		if (newGroupIDMap.Contains(parentID))
+		int32 newGroupID = oldIDToNewID[groupID];
+		if (oldIDToNewID.Contains(parentID))
 		{
-			parentID = newGroupIDMap[parentID];
+			parentID = oldIDToNewID[parentID];
 		}
 
 		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, parentID);
@@ -986,9 +987,6 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		addGraph->DeltaType = EGraph3DDeltaType::Add;
 		addGraph->GraphID = newGroupID;
 		OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, addGraph);
-
-		TMap<int32, int32> oldIDToNewID;
-		oldIDToNewID.Add(MOD_ID_NONE, MOD_ID_NONE);
 
 		TArray<const AModumateObjectInstance*> objects;
 		for (const auto& moiKvp : graph->GetAllObjects())
@@ -1160,8 +1158,22 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			}
 		}
 
-		// Handle Symbol Groups:
+		if (moiDelta->IsValid())
+		{
+			OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, moiDelta);
+		}
+		if (ffeDelta->IsValid())
+		{
+			OutDeltas.Emplace(FSelectedObjectToolMixin::kFfe, ffeDelta);
+		}
+	}
+
+	// Update EquivalentIDs in any Symbol Presets:
+	for (int32 groupID : GroupIDs)
+	{
+		const AMOIMetaGraph* graphObject = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupID));
 		const FGuid& symbolID = graphObject->GetStateData().AssemblyGUID;
+
 		if (symbolID.IsValid())
 		{
 			const FBIMPresetCollection& presets = Doc->GetPresetCollection();
@@ -1170,29 +1182,17 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			if (ensure(symbolPreset) && symbolPreset->TryGetCustomData(symbolPresetData))
 			{
 				FBIMPresetInstance newSymbolPreset = *symbolPreset;
-				for (const auto& idMapping : oldIDToNewID)
+				for (auto& IdMap : symbolPresetData.EquivalentIDs)
 				{
-					if (idMapping.Key == MOD_ID_NONE)
+					for (int32 id : IdMap.Value.IDSet)
 					{
-						continue;
-					}
-
-					bool bFound = false;
-					for (auto& IdMap : symbolPresetData.EquivalentIDs)
-					{
-						if (IdMap.Value.IDSet.Contains(idMapping.Key))
+						const auto* oldID = oldIDToNewID.Find(id);
+						if (oldID)
 						{
-							IdMap.Value.IDSet.Add(idMapping.Value);
-							bFound = true;
+							IdMap.Value.IDSet.Add(*oldID);
 							break;
 						}
 					}
-
-					if (!ensure(bFound))
-					{   // Newly-copied Symbols might not have the base mapping for some objects (eg. spans).
-						symbolPresetData.EquivalentIDs.Add(idMapping.Key).IDSet.Append({ idMapping.Key, idMapping.Value });
-					}
-
 				}
 
 				newSymbolPreset.SetCustomData(symbolPresetData);
@@ -1200,15 +1200,6 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 
 				OutDeltas.Emplace(FSelectedObjectToolMixin::kPreset, presetDelta);
 			}
-		}
-
-		if (moiDelta->IsValid())
-		{
-			OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, moiDelta);
-		}
-		if (ffeDelta->IsValid())
-		{
-			OutDeltas.Emplace(FSelectedObjectToolMixin::kFfe, ffeDelta);
 		}
 	}
 
@@ -1485,6 +1476,21 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 				deleteMetaGraph->AddCreateDestroyState(Doc->GetObjectById(GraphID)->GetStateData(), EMOIDeltaType::Destroy);
 				OutDeltas.Add(deleteMetaGraph);
 			}
+		}
+	}
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForGraphDeleteRecursive(const UModumateDocument* Doc, int32 GraphID,
+	TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi /*= true*/)
+{
+	auto* groupObject = Doc->GetObjectById(GraphID);
+	if (groupObject)
+	{
+		TArray<const AModumateObjectInstance*> descendants = groupObject->GetAllDescendents();
+		GetDeltasForGraphDelete(Doc, GraphID, OutDeltas, bDeleteGraphMoi);
+		for (const auto* subObject: descendants)
+		{
+			GetDeltasForGraphDelete(Doc, subObject->ID, OutDeltas, true);
 		}
 	}
 }

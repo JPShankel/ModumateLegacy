@@ -195,11 +195,13 @@ bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
 {
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
-		const FGuid& symbolID = StateData.AssemblyGUID;
+		FGuid symbolID;
+		UModumateObjectStatics::IsObjectInSymbol(Document, ID, &symbolID);
 		const FWebMOIProperty* formPropUpdateSymbolGuid = WebProperties.Find(TEXT("SymbolGuid"));
 		FWebMOIProperty webPropSymbolGuid = *formPropUpdateSymbolGuid;
 		webPropSymbolGuid.valueArray.Empty();
 		webPropSymbolGuid.valueArray.Add(symbolID.ToString());
+		OutMOI.presetId = symbolID;
 		OutMOI.properties.Add(TEXT("SymbolGuid"), webPropSymbolGuid);
 
 		return true;

@@ -1182,7 +1182,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 		FBIMPresetInstanceFactory::AddMissingCustomDataToPreset(*this, PresetCollection.PresetTaxonomy);
 	}
 
-	// Single graph -> array of graphs for Symbol Presets
+	// Single graph -> multiple graphs for Symbol Presets
 	if (InDocVersion < 27 && NodeScope == EBIMValueScope::Symbol)
 	{
 		auto* customData = CustomDataByClassName.Find(TEXT("BIMSymbolPresetData"));
@@ -1193,11 +1193,18 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 			FBIMSymbolPresetDataV26 symbolData26;
 			FJsonObjectConverter::JsonObjectToUStruct(jsonObject.ToSharedRef(), &symbolData26);
 			FBIMSymbolPresetData symbolData;
-			symbolData.Members = MoveTemp(symbolData26.Members);
-			symbolData.Graphs.Add(MoveTemp(symbolData26.Graph3d));
-			symbolData.SurfaceGraphs = MoveTemp(symbolData26.SurfaceGraphs);
-			symbolData.EquivalentIDs = MoveTemp(symbolData26.EquivalentIDs);
-			symbolData.Anchor = symbolData26.Anchor;
+ 			symbolData.Members = MoveTemp(symbolData26.Members);
+			int32 maxID = 0;
+			for (auto& member : symbolData.EquivalentIDs)
+			{
+				maxID = FMath::Max(maxID, member.Key);
+			}
+			int32 groupID = maxID + 1;
+ 			symbolData.Graphs.Add(groupID, MoveTemp(symbolData26.Graph3d));
+			symbolData.RootGraph = groupID;
+ 			symbolData.SurfaceGraphs = MoveTemp(symbolData26.SurfaceGraphs);
+ 			symbolData.EquivalentIDs = MoveTemp(symbolData26.EquivalentIDs);
+ 			symbolData.Anchor = symbolData26.Anchor;
 
 			customData->SaveStructData(symbolData, true);
 		}

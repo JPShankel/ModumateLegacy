@@ -1314,6 +1314,48 @@ int32 UModumateObjectStatics::GetGroupIdForObject(const UModumateDocument* Doc, 
 	return volumeGraph ? volumeGraph->GraphID : MOD_ID_NONE;
 }
 
+// Walk up group heirarchy looking for first non-zero Symbol GUID, if any.
+bool UModumateObjectStatics::IsObjectInSymbol(const UModumateDocument* Doc, int32 MoiId, FGuid* OutSymbolId /*= nullptr*/,
+	int32* OutGroupId /*= nullptr*/)
+{
+	const AModumateObjectInstance* object = Doc->GetObjectById(MoiId);
+	if (object == nullptr)
+	{
+		return false;
+	}
+	if (object->GetObjectType() != EObjectType::OTMetaGraph)
+	{
+		MoiId = GetGroupIdForObject(Doc, MoiId);
+		object = Doc->GetObjectById(MoiId);
+		if (object == nullptr)
+		{
+			check(false);
+			return false;
+		}
+	}
+
+	do
+	{
+		if (object->GetStateData().AssemblyGUID.IsValid())
+		{
+			if (OutSymbolId)
+			{
+				*OutSymbolId = object->GetStateData().AssemblyGUID;
+			}
+			if (OutGroupId)
+			{
+				*OutGroupId = MoiId;
+			}
+			return true;
+		}
+
+		MoiId = object->GetParentID();
+		object = Doc->GetObjectById(MoiId);
+	} while (object != nullptr);
+
+	return false;
+}
+
 bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 ActiveGroup,
 	int32& OutSubgroup, bool& bOutIsInGroup)
 {

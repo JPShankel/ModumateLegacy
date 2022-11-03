@@ -134,6 +134,8 @@ public:
 	static void GetObjectsInGroupRecursive(UModumateDocument* Doc, int32 GroupID, TSet<AModumateObjectInstance*>& OutObjects);
 	static void HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide=true);
 	static int32 GetGroupIdForObject(const UModumateDocument* Doc, int32 MoiId);
+	// Symbols
+	static bool IsObjectInSymbol(const UModumateDocument* Doc, int32 MoiId, FGuid* OutSymbolId = nullptr, int32* OutGroupId = nullptr);
 
 	static void GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs);
 	static void UpdateDesignOptionVisibility(UModumateDocument* Doc);

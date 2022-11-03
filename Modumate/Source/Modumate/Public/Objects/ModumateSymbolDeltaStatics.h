@@ -32,4 +32,7 @@ public:
 
 	static bool RemoveGroupMembersFromSymbol(const TSet<int32> GroupMembers, FBIMSymbolPresetData& SymbolData);
 	static FVector SymbolAnchor(const FBIMSymbolPresetData& PresetData);
+
+private:
+	static TSet<int32> GetAllRootGroupsForSymbol(const UModumateDocument* Doc, const FBIMSymbolPresetData& SymbolData);
 };

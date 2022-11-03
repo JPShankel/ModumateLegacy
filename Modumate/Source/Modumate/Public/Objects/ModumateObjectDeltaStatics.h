@@ -54,6 +54,7 @@ public:
 
 	// Create deltas for wholesale deletion of graph and its contents.
 	static void GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi = true);
+	static void GetDeltasForGraphDeleteRecursive(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi = true);
 
 	static void GetDeltasForFaceSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);
 	static void GetDeltasForEdgeSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);

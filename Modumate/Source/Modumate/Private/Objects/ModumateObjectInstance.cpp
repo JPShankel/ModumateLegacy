@@ -562,7 +562,7 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 
 		// If this object has a parent assigned, then it needs to have been created and cleaned, and contain this object, before it can clean itself.
 		// NOTE: this is expected if we try to clean children before parents, like during loading, or undoing deletion of parented objects.
-		if (GetParentID() != MOD_ID_NONE && GetObjectType() != EObjectType::OTMetaGraph)
+		if (GetParentID() != MOD_ID_NONE)
 		{
 			AModumateObjectInstance *parentObj = Document->GetObjectById(GetParentID());
 			if (parentObj == nullptr)
@@ -577,7 +577,7 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 					bValidObjectToClean = false;
 				}
 
-				if (parentObj->IsDirty(DirtyFlag))
+				if (parentObj->IsDirty(DirtyFlag) && GetObjectType() != EObjectType::OTMetaGraph)
 				{
 					bValidObjectToClean = false;
 				}
@@ -1459,6 +1459,7 @@ void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController* 
 void AModumateObjectInstance::OnAssemblyChanged()
 {
 	CachedAssembly.Reset();
+	CachedAssembly.ObjectType = StateData.ObjectType;  // Should always be valid.
 	MarkDirty(EObjectDirtyFlags::Structure);
 }
 
