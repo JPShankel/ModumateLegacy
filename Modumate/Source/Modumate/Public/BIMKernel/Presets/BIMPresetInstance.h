@@ -150,7 +150,7 @@ struct MODUMATE_API FBIMPresetInstance
 		}
 		return false;
 	}
-
+	
 	template<class T>
 	EBIMResult SetCustomData(const T& InData)
 	{

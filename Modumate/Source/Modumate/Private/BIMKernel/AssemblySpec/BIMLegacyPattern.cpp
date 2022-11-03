@@ -50,4 +50,9 @@ void FLayerPattern::InitFromCraftingPreset(const FBIMPresetInstance& Preset)
 	}
 }
 
+UStruct* FLightConfiguration::VirtualizedStaticStruct()
+{
+	return FLightConfiguration::StaticStruct();
+}
+
 

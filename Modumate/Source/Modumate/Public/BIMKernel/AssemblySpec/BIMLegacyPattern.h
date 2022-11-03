@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "BIMKernel/Core/BIMProperties.h"
@@ -11,6 +10,7 @@
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "Engine/TextureLightProfile.h"
+#include "BIMKernel/Presets/CustomData/CustomDataWebConvertable.h"
 #include "BIMLegacyPattern.generated.h"
 
 struct FBIMPresetInstance;
@@ -147,7 +147,7 @@ struct MODUMATE_API FLayerPattern
 
 // TODO: add to BIM lighting kernel when it exists 
 USTRUCT()
-struct FLightConfiguration
+struct FLightConfiguration : public FCustomDataWebConvertable
 {
 	GENERATED_BODY()
 
@@ -168,7 +168,7 @@ struct FLightConfiguration
 
 	UPROPERTY()
 	bool bAsSpotLight = false;
-
+	
 	UPROPERTY()
 	FString Name;
 
@@ -185,4 +185,31 @@ struct FLightConfiguration
 	float SourceRadius = 0.0f;
 
 	FGuid UniqueKey() const { return IESProfileGUID; }
+
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::IESLight);
+	};
+
+	friend bool operator==(const FLightConfiguration& Lhs, const FLightConfiguration& RHS)
+	{
+		return Lhs.IESProfileGUID == RHS.IESProfileGUID
+			&& Lhs.LightIntensity == RHS.LightIntensity
+			&& Lhs.LightColor == RHS.LightColor
+			&& Lhs.bAsSpotLight == RHS.bAsSpotLight
+			&& Lhs.Name == RHS.Name
+			&& Lhs.Location == RHS.Location
+			&& Lhs.Scale == RHS.Scale
+			&& Lhs.Rotation == RHS.Rotation
+			&& Lhs.SourceRadius == RHS.SourceRadius;
+	}
+
+	friend bool operator!=(const FLightConfiguration& Lhs, const FLightConfiguration& RHS)
+	{
+		return !(Lhs == RHS);
+	}
+
+
+protected:
+	virtual UStruct* VirtualizedStaticStruct() override;
 };

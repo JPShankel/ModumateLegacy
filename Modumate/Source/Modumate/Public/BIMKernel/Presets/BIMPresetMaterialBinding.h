@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/Core/BIMEnums.h"
+#include "CustomData/CustomDataWebConvertable.h"
 
 #include "BIMPresetMaterialBinding.generated.h"
 
@@ -51,12 +52,32 @@ struct MODUMATE_API FBIMPresetMaterialBinding
 
 struct FBIMPresetForm;
 USTRUCT()
-struct MODUMATE_API FBIMPresetMaterialBindingSet
+struct MODUMATE_API FBIMPresetMaterialBindingSet : public FCustomDataWebConvertable
 {
 	GENERATED_BODY()
+	friend bool operator==(const FBIMPresetMaterialBindingSet& Lhs, const FBIMPresetMaterialBindingSet& RHS)
+	{
+		return Lhs.MaterialBindings == RHS.MaterialBindings;
+	}
+
+	friend bool operator!=(const FBIMPresetMaterialBindingSet& Lhs, const FBIMPresetMaterialBindingSet& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 
 	UPROPERTY()
 	TArray<FBIMPresetMaterialBinding> MaterialBindings;
 
 	EBIMResult SetFormElements(FBIMPresetForm& RefForm) const;
+
+	virtual void ConvertToWebPreset(FBIMWebPreset& OutPreset) override;
+	virtual void ConvertFromWebPreset(const FBIMWebPreset& InPreset) override;
+
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::Material);
+	}
+
+protected:
+	virtual UStruct* VirtualizedStaticStruct() override;
 };

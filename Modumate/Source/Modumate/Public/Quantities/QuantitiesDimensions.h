@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/Presets/CustomData/CustomDataWebConvertable.h"
 #include "QuantitiesDimensions.generated.h"
 
 UENUM()
@@ -15,7 +16,7 @@ enum class EQuantitiesDimensions
 };
 
 USTRUCT()
-struct MODUMATE_API FBIMConstructionCost
+struct MODUMATE_API FBIMConstructionCost : public FCustomDataWebConvertable
 {
 	GENERATED_BODY()
 
@@ -24,4 +25,16 @@ struct MODUMATE_API FBIMConstructionCost
 
 	UPROPERTY()
 	float LaborCostRate = 0.0f;
+
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::ConstructionCost);
+	};
+
+protected:
+
+	virtual UStruct* VirtualizedStaticStruct() override
+	{
+		return FBIMConstructionCost::StaticStruct();
+	}
 };

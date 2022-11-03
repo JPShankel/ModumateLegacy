@@ -158,6 +158,18 @@ struct MODUMATE_API FBIMPropertyKey
 };
 
 USTRUCT()
+struct MODUMATE_API FBIMWebPresetProperty
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString key;
+	
+	UPROPERTY()
+	TArray<FString> value;
+};
+
+USTRUCT()
 struct MODUMATE_API FBIMPropertySheet
 {
 	GENERATED_BODY()

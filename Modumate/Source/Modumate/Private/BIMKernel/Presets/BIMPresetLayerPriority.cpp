@@ -2,6 +2,32 @@
 
 #include "BIMKernel/Presets/BIMPresetLayerPriority.h"
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
+#include "BIMKernel/Presets/BIMWebPreset.h"
+
+void FBIMPresetLayerPriority::ConvertToWebPreset(FBIMWebPreset& OutPreset)
+{
+	const FString PropertyKey = GetEnumValueString(EPresetPropertyMatrixNames::MiterPriority);
+	const FString GroupKey = PropertyKey + TEXT(".") + TEXT("PriorityGroup");
+	const FString PriorityKey = PropertyKey + TEXT(".") + TEXT("PriorityValue");
+	
+	FString group = GetEnumValueString(PriorityGroup);
+	FString priority = FString::FromInt(PriorityValue);
+	
+	OutPreset.properties[GroupKey].value.Add(group);
+	OutPreset.properties[PriorityKey].value.Add(priority);
+}
+
+void FBIMPresetLayerPriority::ConvertFromWebPreset(const FBIMWebPreset& InPreset)
+{
+	const FString PropertyKey = GetEnumValueString(EPresetPropertyMatrixNames::MiterPriority);
+	const FString GroupKey = PropertyKey + TEXT(".") + TEXT("PriorityGroup");
+	const FString PriorityKey = PropertyKey + TEXT(".") + TEXT("PriorityValue");
+	
+	FString group = InPreset.properties[GroupKey].value[0];
+	FString priority = InPreset.properties[PriorityKey].value[0];
+
+	ensure(FindEnumValueByString(group, PriorityGroup) && LexTryParseString(PriorityValue, *priority));
+}
 
 bool operator==(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS)
 {

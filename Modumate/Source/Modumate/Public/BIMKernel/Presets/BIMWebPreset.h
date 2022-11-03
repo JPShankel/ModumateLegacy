@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/Core/BIMEnums.h"
+#include "BIMKernel/Presets/BIMPresetEditorForm.h"
 #include "BIMKernel/Core/BIMTagPath.h"
 #include "BIMKernel/Presets/PresetOrigination.h"
 #include "ModumateCore/EnumHelpers.h"
-
+#include "BIMKernel/Core/BIMProperties.h"
+#include "Json.h"
 #include "BIMWebPreset.generated.h"
 
 UENUM()
@@ -16,18 +19,6 @@ enum class EBIMWebPresetPropertyType : uint8
 	string,
 	number,
 	boolean,
-};
-
-USTRUCT()
-struct MODUMATE_API FBIMWebPresetProperty
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FString key;
-	
-	UPROPERTY()
-	TArray<FString> value;
 };
 
 USTRUCT()

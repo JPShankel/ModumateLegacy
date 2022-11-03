@@ -1,9 +1,14 @@
 #include "BIMKernel/Presets/CustomData/BIMDimensions.h"
 
 #include "BIMKernel/AssemblySpec/BIMPartSlotSpec.h"
+#include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
+#include "BIMKernel/Presets/BIMWebPreset.h"
 
 
-
+UStruct* FBIMDimensions::VirtualizedStaticStruct()
+{
+	return FBIMDimensions::StaticStruct();
+}
 
 bool FBIMDimensions::HasCustomDimension(const FName& InDimensionName) const
 {
@@ -63,4 +68,56 @@ void FBIMDimensions::ForEachCustomDimension(const TFunction<void(const FName& Na
 	{
 		InFunc(kvp.Key, kvp.Value);
 	}
+}
+const FString DimensionsKey = TEXT("Dimension");
+const FString ValuesKey = TEXT("Value");
+
+void FBIMDimensions::ConvertToWebPreset(FBIMWebPreset& OutPreset)
+{
+	const FString PropertyKey = GetEnumValueString(EPresetPropertyMatrixNames::Dimensions) + TEXT(".");
+	const FString DimensionsEntry = PropertyKey + DimensionsKey;
+	const FString ValuesEntry = PropertyKey + ValuesKey;
+	
+
+	if(!OutPreset.properties.Contains(DimensionsEntry))
+		OutPreset.properties.Add(DimensionsEntry, {});
+
+	if(!OutPreset.properties.Contains(ValuesEntry))
+		OutPreset.properties.Add(ValuesEntry, {});
+	
+	TArray<FString>& dimensions = OutPreset.properties[DimensionsEntry].value;
+	TArray<FString>& values = OutPreset.properties[ValuesEntry].value;
+	
+	for(auto& kvp : CustomMap)
+	{
+		dimensions.Add(kvp.Key.ToString());
+		values.Add(FString::SanitizeFloat(kvp.Value));
+	}
+}
+
+void FBIMDimensions::ConvertFromWebPreset(const FBIMWebPreset& InPreset)
+{
+	const FString PropertyKey = GetEnumValueString(EPresetPropertyMatrixNames::Dimensions) + TEXT(".");
+	const FString DimensionsEntry = PropertyKey + DimensionsKey;
+	const FString ValuesEntry = PropertyKey + ValuesKey;
+	
+	TArray<FString> dimensions = InPreset.properties[DimensionsEntry].value;
+	TArray<FString> values = InPreset.properties[ValuesEntry].value;
+	
+	// Dimensions and values are a key-to-value pair and need to be the same size
+	if (ensure(dimensions.Num() == values.Num())) {
+		for (int i = 0; i < dimensions.Num(); i++)
+		{
+			if (!dimensions[i].IsEmpty())
+			{
+				float value = FCString::Atof(*values[i]);
+				SetCustomDimension(*dimensions[i], value);
+			}
+		}
+	}
+}
+
+bool FBIMDimensions::operator==(const FBIMDimensions& Other)
+{
+	return CustomMap.OrderIndependentCompareEqual(Other.CustomMap);
 }

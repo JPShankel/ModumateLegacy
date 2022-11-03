@@ -67,17 +67,19 @@ EBIMResult FBIMPresetForm::AddPropertyElement(const FText& DisplayName, const FN
 	{
 		EPresetPropertyMatrixNames matrixNameEnum;
 		ensure(FindEnumValueByName(MatrixName, matrixNameEnum));
-		const UStruct* dataStruct = FBIMPresetInstanceFactory::GetPresetMatrixStruct(matrixNameEnum);
-		if (dataStruct == nullptr)
+		
+		UStruct* CData;
+		if (!FBIMPresetInstanceFactory::GetCustomDataStaticStruct(matrixNameEnum, CData))
 		{
 			return EBIMResult::Error;
 		}
+		
 
 		FBIMPresetFormElement& elem = Elements.AddDefaulted_GetRef();
 		elem.DisplayName = DisplayName;
 		elem.FieldType = FieldType;
 		elem.FieldName = FieldName.ToString();
-		elem.CustomDataStructName = dataStruct->GetName();
+		elem.CustomDataStructName = CData->GetName();
 
 		switch (FieldType)
 		{

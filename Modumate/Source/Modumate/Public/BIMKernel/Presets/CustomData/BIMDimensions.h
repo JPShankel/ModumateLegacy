@@ -1,11 +1,10 @@
 #pragma once
-#include "BIMKernel/Core/BIMEnums.h"
-
+#include "CustomDataWebConvertable.h"
 #include "BIMDimensions.generated.h"
 
 
 USTRUCT()
-struct FBIMDimensions
+struct FBIMDimensions : public FCustomDataWebConvertable
 {
 	GENERATED_BODY()
 
@@ -19,6 +18,9 @@ private:
 	 */
 	UPROPERTY()
 	TMap<FName, float> CustomMap;
+
+protected:
+	virtual UStruct* VirtualizedStaticStruct() override;
 
 public:
 
@@ -37,4 +39,14 @@ public:
 	
 	void ForEachDimension(const TFunction<void(const FName& Name, float Value)>& InFunc) const;
 	void ForEachCustomDimension(const TFunction<void(const FName& Name, float Value)>& InFunc) const;
+
+	virtual void ConvertToWebPreset(FBIMWebPreset& OutPreset) override;
+	virtual void ConvertFromWebPreset(const FBIMWebPreset& InPreset) override;
+	
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::Dimensions);
+	};
+
+	bool operator==(const FBIMDimensions& Other);
 };

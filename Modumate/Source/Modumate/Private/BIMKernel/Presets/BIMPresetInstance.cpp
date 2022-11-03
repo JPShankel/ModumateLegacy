@@ -1382,317 +1382,95 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 
 	for (auto& presetProp : propertyMap)
 	{
-		switch (presetProp.Key)
+		if(!FBIMPresetInstanceFactory::DeserializeCustomData(presetProp.Key, *this, InPreset))
 		{
-		case EPresetPropertyMatrixNames::Preset:
-		{
-			FBIMPresetInfo presetInfo;
-			PopulateCustomDataFromProperties<FBIMPresetInfo>(presetProp.Value, presetInfo);
-			SetCustomData(presetInfo);
-		}
-		break;
-		case EPresetPropertyMatrixNames::Part:
-		{
-			FBIMPartConfig partConfig;
-			PopulateCustomDataFromProperties<FBIMPartConfig>(presetProp.Value, partConfig);
-			SetCustomData(partConfig);
-		}
-		break;
-		case EPresetPropertyMatrixNames::SlotConfig:
-		{
-			FBIMSlotConfig slotConfig;
-			PopulateCustomDataFromProperties<FBIMSlotConfig>(presetProp.Value, slotConfig);
-			SetCustomData(slotConfig);
-		}
-		break;
-		case EPresetPropertyMatrixNames::Pattern:
-		{
-			FBIMPatternConfig patternConfig;
-			PopulateCustomDataFromProperties<FBIMPatternConfig>(presetProp.Value, patternConfig);
-			SetCustomData(patternConfig);
-		}
-		break;
-		case EPresetPropertyMatrixNames::IESProfile:
-		{
-			FBIMIESProfile iesProfileConfig;
-			PopulateCustomDataFromProperties<FBIMIESProfile>(presetProp.Value, iesProfileConfig);
-			SetCustomData(iesProfileConfig);
-		}
-		break;
-		case EPresetPropertyMatrixNames::Slot:
-		{
-			FBIMSlot slotInfo;
-			PopulateCustomDataFromProperties<FBIMSlot>(presetProp.Value, slotInfo);
-			SetCustomData(slotInfo);
-		}
-		break;
-		case EPresetPropertyMatrixNames::Mesh:
-        {
-        	FBIMMesh meshConfig;
-        	PopulateCustomDataFromProperties<FBIMMesh>(presetProp.Value, meshConfig);
-        	SetCustomData(meshConfig);
-        }
-        break;
-		case EPresetPropertyMatrixNames::Profile:
-		{
-			FBIMProfile profileConfig;
-			PopulateCustomDataFromProperties<FBIMProfile>(presetProp.Value, profileConfig);
-			SetCustomData(profileConfig);
-		}
-		break;
-		case EPresetPropertyMatrixNames::RawMaterial:
-		{
-			FBIMRawMaterial rawMaterialConfig;
-			PopulateCustomDataFromProperties<FBIMRawMaterial>(presetProp.Value, rawMaterialConfig);
-			SetCustomData(rawMaterialConfig);
-		}
-		break;
-		case EPresetPropertyMatrixNames::Dimension:
-		{
-			FBIMNamedDimension namedDimension;
-			PopulateCustomDataFromProperties<FBIMNamedDimension>(presetProp.Value, namedDimension);
-			SetCustomData(namedDimension);
-		}
-		break;
-		case EPresetPropertyMatrixNames::IESLight:
+			//It's not custom data
+			switch (presetProp.Key)
 			{
-				FLightConfiguration lightConfig;
-				PopulateCustomDataFromProperties<FLightConfiguration>(presetProp.Value, lightConfig);
-				SetCustomData(lightConfig);
-			}
-			break;
-		case EPresetPropertyMatrixNames::ConstructionCost:
-			{
-				FBIMConstructionCost constructionCost;
-				PopulateCustomDataFromProperties<FBIMConstructionCost>(presetProp.Value, constructionCost);
-				SetCustomData(constructionCost);
-			}
-			break;
-		case EPresetPropertyMatrixNames::MiterPriority:
-			{
-				FBIMPresetLayerPriority miterPriority;
-				FString group = presetProp.Value[TEXT("PriorityGroup")][0];
-				FString priority = presetProp.Value[TEXT("PriorityValue")][0];
+				case EPresetPropertyMatrixNames::Slots:
+				{
+					// Get slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
+					FString SlotConfigPropertyName = TEXT("Slots.SlotConfig");
+					FString PartPresetPropertyName = TEXT("Slots.PartPreset");
+					FString SlotNamePropertyName = TEXT("Slots.SlotName");
 
-				if (FindEnumValueByString(group, miterPriority.PriorityGroup) && LexTryParseString(miterPriority.PriorityValue, *priority))
-				{
-					SetCustomData(miterPriority);
+					if (InPreset.properties.Contains(SlotConfigPropertyName))
+					{
+						FBIMWebPresetProperty slotConfigProperty = InPreset.properties[SlotConfigPropertyName];
+						FGuid slotConfigGuid;
+						FGuid::Parse(slotConfigProperty.value[0], slotConfigGuid);
+						SlotConfigPresetGUID = slotConfigGuid;
+					}
+
+					if (InPreset.properties.Contains(PartPresetPropertyName) && InPreset.properties.Contains(SlotNamePropertyName))
+					{
+						FBIMWebPresetProperty slotNamesProperty = InPreset.properties[SlotNamePropertyName];
+						FBIMWebPresetProperty partPresetsProperty = InPreset.properties[PartPresetPropertyName];
+			
+						for (int i = 0; i < partPresetsProperty.value.Num(); i++)
+						{
+							FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
+
+							FGuid slotPresetGuid, partPresetGuid;
+							if (FGuid::Parse(partPresetsProperty.value[i], partPresetGuid) && FGuid::Parse(slotNamesProperty.value[i], slotPresetGuid))
+							{
+								partSlot.PartPresetGUID = partPresetGuid;
+								partSlot.SlotPresetGUID = slotPresetGuid;
+							}
+						}
+					}
 				}
-			}
-			break;
-		case EPresetPropertyMatrixNames::PatternRef:
-			{
-				FBIMPatternRef patternRef;
-				FGuid guid;
-				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
+				break;
+				case EPresetPropertyMatrixNames::InputPins:
 				{
-					patternRef.Source = guid;
-				}
-				SetCustomData(patternRef);
-			}
-			break;
-		case EPresetPropertyMatrixNames::ProfileRef:
-			{
-				FBIMProfileRef profileRef;
-				FGuid guid;
-				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
-				{
-					profileRef.Source = guid;
-				}
-				SetCustomData(profileRef);
-			}
-			break;
-		case EPresetPropertyMatrixNames::MeshRef:
-			{
-				FBIMMeshRef meshRef;
-				FGuid guid;
-				if (FGuid::Parse(presetProp.Value[TEXT("Source")][0], guid))
-				{
-					meshRef.Source = guid;
-				}
-				SetCustomData(meshRef);
-			}
-			break;
-		case EPresetPropertyMatrixNames::Material:
-			{
-				TArray<FString> channels;
-				// Check how many channels, to see how many materials we need to add
-				if (presetProp.Value.Contains(TEXT("AppliesToChannel")))
-				{
-					channels.Append(presetProp.Value[TEXT("AppliesToChannel")]);	
-				}
-				
-				// loop through the channels and add the material binding for each
-				for (int32 i = 0; i < channels.Num(); ++i)
-				{
-					FBIMPresetMaterialBinding materialBinding;
 					for (auto prop : presetProp.Value)
 					{
-						EMaterialChannelFields fieldEnum = GetEnumValueByString<EMaterialChannelFields>(prop.Key);
-						switch (fieldEnum)
+						FName pinName = FName(prop.Key);
+						bool found = false;
+						
+						for (auto propValue : prop.Value)
 						{
-						case EMaterialChannelFields::AppliesToChannel:
-							materialBinding.Channel = FName(prop.Value[i]);
-							break;
-						case EMaterialChannelFields::InnerMaterial:
+							if (propValue.IsEmpty())
 							{
-								if (prop.Value.Num() > i)
-								{
-									FGuid guid;
-                                	if (FGuid::Parse(prop.Value[i], guid))
-                                	{
-                                		materialBinding.InnerMaterialGUID = guid;
-                                	}	
-								}
+								continue;;
 							}
-							break;
-						case EMaterialChannelFields::SurfaceMaterial:
-							{
-								if (prop.Value.Num() > i)
-								{
-									FGuid guid;
-									if (FGuid::Parse(prop.Value[i], guid))
-									{
-										materialBinding.SurfaceMaterialGUID = guid;
-									}
-								}
-							}
-							break;
-						case EMaterialChannelFields::ColorTint:
-							{
-								if (prop.Value.Num() > i)
-								{
-									FString hexValue = prop.Value[i];
-									if (!hexValue.IsEmpty())
-									{
-										materialBinding.ColorHexValue = hexValue;
-									}
-								}
-							}
-							break;
-						case EMaterialChannelFields::ColorTintVariation:
-							if (prop.Value.Num() > i)
-							{
-								LexTryParseString(materialBinding.ColorTintVariationPercent, *prop.Value[i]);
-							}
-							break;
-						default:
-							ensure(false);
-						}
-					}
-
-					if (!materialBinding.Channel.IsNone())
-					{
-						FBIMPresetMaterialBindingSet bindingSet;
-						TryGetCustomData(bindingSet);
-						bindingSet.MaterialBindings.Add(materialBinding);
-						SetCustomData(bindingSet);
-					}
-				}
-			}
-			break;
-		case EPresetPropertyMatrixNames::Dimensions:
-			{
-				TArray<FString> dimensions = presetProp.Value["Dimension"];
-				TArray<FString> values = presetProp.Value["Value"];
-				
-				FBIMDimensions presetDimensions;
-
-				// Dimensions and values are a key-to-value pair and need to be the same size
-				if (ensure(dimensions.Num() == values.Num())) {
-					for (int i = 0; i < dimensions.Num(); i++)
-					{
-						if (!dimensions[i].IsEmpty())
-						{
-							float value = FCString::Atof(*values[i]);
-							presetDimensions.SetCustomDimension(*dimensions[i], value);
-						}
-					}
-				}
-
-				SetCustomData(presetDimensions);
-			}
-			break;
-		case EPresetPropertyMatrixNames::Slots:
-			{
-				// Get slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
-				FString SlotConfigPropertyName = TEXT("Slots.SlotConfig");
-				FString PartPresetPropertyName = TEXT("Slots.PartPreset");
-				FString SlotNamePropertyName = TEXT("Slots.SlotName");
-
-				if (InPreset.properties.Contains(SlotConfigPropertyName))
-				{
-					FBIMWebPresetProperty slotConfigProperty = InPreset.properties[SlotConfigPropertyName];
-					FGuid slotConfigGuid;
-					FGuid::Parse(slotConfigProperty.value[0], slotConfigGuid);
-					SlotConfigPresetGUID = slotConfigGuid;
-				}
-
-				if (InPreset.properties.Contains(PartPresetPropertyName) && InPreset.properties.Contains(SlotNamePropertyName))
-				{
-					FBIMWebPresetProperty slotNamesProperty = InPreset.properties[SlotNamePropertyName];
-					FBIMWebPresetProperty partPresetsProperty = InPreset.properties[PartPresetPropertyName];
-		
-					for (int i = 0; i < partPresetsProperty.value.Num(); i++)
-					{
-						FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
-
-						FGuid slotPresetGuid, partPresetGuid;
-						if (FGuid::Parse(partPresetsProperty.value[i], partPresetGuid) && FGuid::Parse(slotNamesProperty.value[i], slotPresetGuid))
-						{
-							partSlot.PartPresetGUID = partPresetGuid;
-							partSlot.SlotPresetGUID = slotPresetGuid;
-						}
-					}
-				}
-			}
-			break;
-		case EPresetPropertyMatrixNames::InputPins:
-			{
-				for (auto prop : presetProp.Value)
-				{
-					FName pinName = FName(prop.Key);
-					bool found = false;
 					
-					for (auto propValue : prop.Value)
-					{
-						if (propValue.IsEmpty())
-						{
-							continue;;
-						}
-				
-						for (int32 setIndex = 0; setIndex < PinSets.Num(); ++setIndex)
-						{
-							if (PinSets[setIndex].SetName == pinName)
+							for (int32 setIndex = 0; setIndex < PinSets.Num(); ++setIndex)
 							{
-								int32 setPosition = 0;
-								for (auto& cap : ChildPresets)
+								if (PinSets[setIndex].SetName == pinName)
 								{
-									if (cap.ParentPinSetIndex == setIndex)
+									int32 setPosition = 0;
+									for (auto& cap : ChildPresets)
 									{
-										setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
+										if (cap.ParentPinSetIndex == setIndex)
+										{
+											setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
+										}
 									}
-								}
 
-								FGuid guid;
-								if (ensure(FGuid::Parse(propValue, guid)))
-								{
-									AddChildPreset(guid, setIndex, setPosition);
+									FGuid guid;
+									if (ensure(FGuid::Parse(propValue, guid)))
+									{
+										AddChildPreset(guid, setIndex, setPosition);
+									}
+									
+									found = true;
 								}
-								
-								found = true;
 							}
 						}
-					}
-				
-					if (!found)
-					{
-						//PRESET_INTEGRATION_TODO: Validate that any missed pins have a -1 in the taxonomy for that pin
-						UE_LOG(LogTemp, Warning, TEXT("Could not find pin [%s] on preset [%s]"), *pinName.ToString(), *GUID.ToString());
+					
+						if (!found)
+						{
+							//PRESET_INTEGRATION_TODO: Validate that any missed pins have a -1 in the taxonomy for that pin
+							UE_LOG(LogTemp, Warning, TEXT("Could not find pin [%s] on preset [%s]"), *pinName.ToString(), *GUID.ToString());
+						}
 					}
 				}
+				break;
+			default:
+				ensure(false);
+				break;
 			}
-			break;
 		}
 	}
 }

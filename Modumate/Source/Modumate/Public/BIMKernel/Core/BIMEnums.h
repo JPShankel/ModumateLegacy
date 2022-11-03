@@ -86,5 +86,32 @@ enum class EBIMAssetType : uint8
 	Error = 255
 };
 
+UENUM()
+enum class EPresetPropertyMatrixNames : uint8
+{
+	None = 0,
+	IESLight,
+	ConstructionCost,
+	MiterPriority,
+	PatternRef,
+	ProfileRef,
+	MeshRef,
+	Material,
+	Dimensions,
+	Slots,
+	InputPins,
+	Dimension,
+	RawMaterial,
+	Profile,
+	Mesh,
+	Slot,
+	IESProfile,
+	Pattern,
+	SlotConfig,
+	Part,
+	Preset,
+	Error = 255
+};
+
 using FBIMNameType = FName;
 
