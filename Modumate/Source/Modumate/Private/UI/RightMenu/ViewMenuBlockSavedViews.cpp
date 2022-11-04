@@ -2,7 +2,7 @@
 
 #include "UI/RightMenu/ViewMenuBlockSavedViews.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "ModumateCore/ModumateCameraViewStatics.h"
+#include "ModumateCore/ModumateBrowserStatics.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/RightMenu/ComponentSavedViewListItemObject.h"
@@ -47,7 +47,7 @@ void UViewMenuBlockSavedViews::OnButtonAddReleased()
 		int32 listOrder = SavedViewsList->GetNumItems() + 1;
 		FString newViewName = FString(TEXT("New Camera View ")) + FString::FromInt(listOrder);
 		int32 nextID = Controller->GetDocument()->GetNextAvailableID();
-		UModumateCameraViewStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, nextID, listOrder);
+		UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, nextID, listOrder);
 	}
 }
 

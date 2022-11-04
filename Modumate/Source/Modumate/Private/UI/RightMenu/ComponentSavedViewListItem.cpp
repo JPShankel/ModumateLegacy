@@ -6,7 +6,7 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "ModumateCore/ModumateCameraViewStatics.h"
+#include "ModumateCore/ModumateBrowserStatics.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/RightMenu/ViewMenuWidget.h"
 #include "UI/RightMenu/ViewMenuBlockSavedViews.h"
@@ -77,7 +77,7 @@ void UComponentSavedViewListItem::OnButtonMainReleased()
 
 void UComponentSavedViewListItem::OnButtonDeleteReleased()
 {
-	UModumateCameraViewStatics::RemoveCameraViewMoi(this, CameraView.MoiId);
+	UModumateBrowserStatics::RemoveCameraViewMoi(this, CameraView.MoiId);
 }
 
 void UComponentSavedViewListItem::OnButtonUpdateReleased()
@@ -86,7 +86,7 @@ void UComponentSavedViewListItem::OnButtonUpdateReleased()
 	if (cameraComp)
 	{
 		FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
-		UModumateCameraViewStatics::UpdateCameraViewAsMoi(this, cameraComp, CameraView.MoiId, dateTime);
+		UModumateBrowserStatics::UpdateCameraViewAsMoi(this, cameraComp, CameraView.MoiId, dateTime);
 	}
 }
 
@@ -99,12 +99,91 @@ void UComponentSavedViewListItem::OnEditableTitleCommitted(const FText& Text, ET
 		return;
 	}
 
-	UModumateCameraViewStatics::EditCameraViewName(this, CameraView.MoiId, Text.ToString());
+	UModumateBrowserStatics::EditCameraViewName(this, CameraView.MoiId, Text.ToString());
 }
 
 void UComponentSavedViewListItem::ActivateCameraView()
 {
-	UModumateCameraViewStatics::ActivateCameraView(GetWorld(), CameraView);
+	APawn *pawn = Controller->GetPawn();
+	if (pawn)
+	{
+		// Position and rotation
+		pawn->SetActorLocationAndRotation(CameraView.Position, CameraView.Rotation);
+
+		// Projection mode
+		Controller->EMPlayerPawn->SetCameraOrtho(CameraView.bOrthoView);
+
+		// FOV and ortho width
+		UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+		if (cameraComp)
+		{
+			cameraComp->FieldOfView = CameraView.FOV;
+			cameraComp->SetOrthoWidth(CameraView.OrthoWidth);
+		}
+
+		//Ray Tracing Enabled
+		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+		AEditModelPlayerState* playerState = Controller->GetPlayerState<AEditModelPlayerState>();
+		if (playerState == nullptr)
+		{
+			return;
+		}
+		if (ppv != nullptr && RTSettings != nullptr)
+		{
+			RTSettings->Init();
+			RTSettings->SetRayTracingEnabled(ppv, CameraView.bRTEnabled);
+			RTSettings->ApplyRayTraceQualitySettings(ppv, CameraView.rayTracingQuality);
+			RTSettings->SetExposure(ppv, CameraView.rayTracingExposure);
+			playerState->RayTracingExposure = CameraView.rayTracingExposure;
+			playerState->RayTracingQuality = CameraView.rayTracingQuality;
+		}
+		playerState->bShowLights = CameraView.bShowLights;
+		// Time
+		FDateTime newDateTime;
+		if (FDateTime::ParseIso8601(*CameraView.SavedTime, newDateTime))
+		{
+			Controller->SkyActor->SetCurrentDateTime(newDateTime);
+		}
+
+		// Axis actor
+		if (Controller->AxesActor)
+		{
+			Controller->AxesActor->SetActorHiddenInGame(!CameraView.bAxesActorVisibility);
+		}
+
+		// Viewcube
+		if (Controller->EditModelUserWidget->ViewCubeUserWidget && Controller->EditModelUserWidget->ViewCubeUserWidget)
+		{
+			Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(CameraView.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		}
+
+		// Sync with menu
+		Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_Properties->SyncAllMenuProperties();
+		Controller->EditModelUserWidget->ViewMenu->MouseEndHoverView(this);
+
+		// Update cutplane culling
+		Controller->SetCurrentCullingCutPlane(CameraView.SavedCullingCutPlane, false);
+
+		// Update cutplane visibility
+		TArray<int32> visibleCPs;
+		TArray<int32> hiddenCPs;
+		for (const auto& kvp : CameraView.SavedCutPlaneVisibilities)
+		{
+			if (kvp.Value)
+			{
+				visibleCPs.Add(kvp.Key);
+			}
+			else
+			{
+				hiddenCPs.Add(kvp.Key);
+			}
+		}
+
+		playerState->AddHideObjectsById(hiddenCPs);
+		playerState->UnhideObjectsById(visibleCPs);
+		Controller->GetDocument()->OnCameraViewSelected(CameraView.MoiId);
+	}
 }
 
 void UComponentSavedViewListItem::NativeOnListItemObjectSet(UObject* ListItemObject)

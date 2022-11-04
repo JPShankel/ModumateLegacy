@@ -38,7 +38,6 @@
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
-#include "ModumateCore/ModumateCameraViewStatics.h"
 
 const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
 const FString AEditModelPlayerState::DefaultEnvDateTime(TEXT("2020-09-21T13:30:00.000Z"));
@@ -1881,8 +1880,64 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	}
 	else if (EMPlayerController)
 	{
-		//activate camera view
-		UModumateCameraViewStatics::ActivateCameraView(GetWorld(), InState.camera);
+		FDateTime dateTime;
+		if (!ensureMsgf(!InState.camera.SavedTime.IsEmpty(), TEXT("The camera saved time was lost. Defaulting to %s"), *DefaultEnvDateTime))
+		{
+			FDateTime::ParseIso8601(*DefaultEnvDateTime, dateTime);
+		}
+		else
+		{
+			FDateTime::ParseIso8601(*InState.camera.SavedTime, dateTime);
+		}
+		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+		if (ppv != nullptr && RTSettings != nullptr)
+		{
+			RTSettings->Init();
+			RTSettings->SetRayTracingEnabled(ppv, InState.camera.bRTEnabled);
+			RTSettings->ApplyRayTraceQualitySettings(ppv, InState.camera.rayTracingQuality);
+			RTSettings->SetExposure(ppv, InState.camera.rayTracingExposure);
+			EMPlayerController->GetPlayerState<AEditModelPlayerState>()->RayTracingExposure = InState.camera.rayTracingExposure;
+			EMPlayerController->GetPlayerState<AEditModelPlayerState>()->RayTracingQuality = InState.camera.rayTracingQuality;
+			EMPlayerController->GetPlayerState<AEditModelPlayerState>()->bShowLights = InState.camera.bShowLights;
+			//dirty all light mois to toggle lights
+			TArray<AModumateObjectInstance*> mois = doc->GetObjectsOfType(EObjectType::OTFurniture);
+			for (AModumateObjectInstance* moi : mois)
+			{
+				if (moi != nullptr)
+				{
+					const FBIMPresetInstance* preset = doc->GetPresetCollection().PresetFromGUID(moi->GetStateData().AssemblyGUID);
+					if (preset && preset->HasCustomData<FLightConfiguration>())
+					{
+						moi->MarkDirty(EObjectDirtyFlags::Structure);
+					}
+				}
+			}
+		}
+		EMPlayerController->SetFieldOfViewCommand(InState.camera.FOV);
+		EMPlayerController->ToggleAllCutPlanesColor(InState.camera.bCutPlanesColorVisibility);
+
+		if (EMPlayerController->EMPlayerPawn != nullptr)
+		{
+			EMPlayerController->EMPlayerPawn->SetCameraOrtho(InState.camera.bOrthoView);
+		}
+
+		if (EMPlayerController->SkyActor != nullptr)
+		{
+			EMPlayerController->SkyActor->SetCurrentDateTime(dateTime);
+		}
+
+		if (EMPlayerController->AxesActor != nullptr)
+		{
+			EMPlayerController->AxesActor->SetActorHiddenInGame(!InState.camera.bAxesActorVisibility);
+		}
+
+		if (EMPlayerController->EditModelUserWidget != nullptr && EMPlayerController->EditModelUserWidget->ViewCubeUserWidget != nullptr)
+		{
+			EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		}
+
+		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
 		
 		// Cache the camera state to send back to the web
 		CachedInputCameraState = InState.camera;
