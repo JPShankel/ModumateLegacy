@@ -322,27 +322,24 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(UModumateDocument* 
 		return;
 	}
 
-	// Return quickly if no movements or not in Symbol group.
+	// Return quickly if no movements or not part of Symbol.
 	int32 surfaceGraphId = GraphDelta->ID;
-	int32 groupId = UModumateObjectStatics::GetGroupIdForObject(Doc, surfaceGraphId);
-	
-	if (groupId == MOD_ID_NONE || groupId == Doc->GetRootVolumeGraphID())
+	int32 symbolMoiID;
+	FGuid symbolGuid;
+
+	if (!UModumateObjectStatics::IsObjectInSymbol(Doc, surfaceGraphId, &symbolGuid, &symbolMoiID))
 	{
 		return;
 	}
 
-	AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupId));
-	if (!ensure(groupObj) || !groupObj->GetStateData().AssemblyGUID.IsValid())
-	{
-		return;
-	}
 
 	if (GraphDelta->EdgeAdditions.Num() + GraphDelta->EdgeDeletions.Num() + GraphDelta->PolygonAdditions.Num() + GraphDelta->PolygonDeletions.Num()
 		+ GraphDelta->PolygonIDUpdates.Num() + GraphDelta->VertexAdditions.Num() + GraphDelta->VertexDeletions.Num() != 0)
 	{
-		Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
+		AMOIMetaGraph* symbolGroupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(symbolMoiID));
+		Doc->DirtySymbolGroup(symbolMoiID);  // Just re-duplicate group to other symbol instances.
 		// Graph might've already been cleaned.
-		groupObj->MarkDirty(EObjectDirtyFlags::Structure);
+		symbolGroupObj->MarkDirty(EObjectDirtyFlags::Structure);
 		return;
 
 	}
@@ -350,14 +347,14 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(UModumateDocument* 
 	if (GraphDelta->VertexMovements.Num() != 0)
 	{
 		const FBIMPresetCollection& presets = Doc->GetPresetCollection();
-		const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupObj->GetStateData().AssemblyGUID);
+		const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(symbolGuid);
 		if (!ensure(symbolPreset))
 		{
 			return;
 		}
 
 		FBIMSymbolPresetData symbolData;
-		if (!ensure(symbolPreset->TryGetCustomData(symbolData)))
+		if (!ensure(symbolPreset->TryGetCustomData(symbolData) && symbolData.SurfaceGraphs.Contains(surfaceGraphId)))
 		{
 			return;
 		}
@@ -366,6 +363,10 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(UModumateDocument* 
 		for (const auto& vertexMove : GraphDelta->VertexMovements)
 		{
 			int32 vertexId = vertexMove.Key;
+
+			// Update Symbol Preset:
+			symbolData.SurfaceGraphs[surfaceGraphId].Vertices.Add(vertexId, vertexMove.Value.Value);
+
 			for (const auto& idMapping : symbolData.EquivalentIDs)
 			{
 				if (idMapping.Value.IDSet.Contains(vertexId))
@@ -399,6 +400,10 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph2d(UModumateDocument* 
 			OutDeltas.Add(delta.Value);
 		}
 
+		FBIMPresetInstance newSymbolPreset(*symbolPreset);
+		newSymbolPreset.SetCustomData(symbolData);
+
+		OutDeltas.Add(presets.MakeUpdateDelta(newSymbolPreset));
 	}
 }
 

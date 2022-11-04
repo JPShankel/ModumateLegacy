@@ -1263,7 +1263,11 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 		// Capture any group currently in project.
 		int32 groupMember = *symbolData.EquivalentIDs.CreateConstIterator()->Value.IDSet.CreateConstIterator();
 		UModumateDocument* doc = GameState->Document;
-		int32 groupID = UModumateObjectStatics::GetGroupIdForObject(doc, groupMember);
+		int32 groupID;
+		if (!ensure(UModumateObjectStatics::IsObjectInSymbol(doc, groupMember, nullptr, &groupID)))
+		{
+			return false;
+		}
 		AModumateObjectInstance* groupMoi = doc->GetObjectById(groupID);
 		if (!groupMoi)
 		{
@@ -1271,7 +1275,7 @@ bool ADynamicIconGenerator::SetIconMeshForSymbol(const FBIMPresetInstance* Symbo
 		}
 
 		TSet<AModumateObjectInstance*> groupObjects;
-		UModumateObjectStatics::GetObjectsInGroups(doc, { groupID }, groupObjects);
+		UModumateObjectStatics::GetObjectsInGroupRecursive(doc, groupID, groupObjects);
 
 		SceneCaptureComp->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 		SceneCaptureComp->ClearShowOnlyComponents();
