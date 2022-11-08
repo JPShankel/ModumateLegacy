@@ -918,25 +918,16 @@ bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Prese
 	FBIMIESProfile iesProfileConfig;
 	ensure(Preset->TryGetCustomData(iesProfileConfig));
 	FSoftObjectPath iconReferencePath = FString(TEXT("Texture2D'")).Append(iesProfileConfig.CraftingIconAssetFilePath).Append(TEXT("'"));
-	TSharedPtr<FStreamableHandle> SyncStreamableHandleIcon = UAssetManager::GetStreamableManager().RequestSyncLoad(iconReferencePath);
-	UTexture2D* IESProfileIcon;
-	if (SyncStreamableHandleIcon)
+	UTexture2D* IESProfileIcon = Cast<UTexture2D>(iconReferencePath.TryLoad());
+	if (ensure(IESProfileIcon))
 	{
-		auto* loadedAsset = SyncStreamableHandleIcon->GetLoadedAsset();
-		IESProfileIcon = Cast<UTexture2D>(loadedAsset);
-		if (IESProfileIcon == nullptr)
-		{
-			return false;
-		}
+		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
+		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, IESProfileIcon);
+		OutMaterial = dynMat;
+		return true;
 	}
-	else {
-		return false;
-	}
-	
-	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
-	dynMat->SetTextureParameterValue(MaterialIconTextureParamName, IESProfileIcon);
-	OutMaterial = dynMat;
-	return true;
+	return false;
+
 }
 
 bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget)
