@@ -38,8 +38,16 @@ struct MODUMATE_API FBIMSymbolPresetDataV26
 };
 
 USTRUCT()
-struct MODUMATE_API FBIMSymbolPresetData
+struct MODUMATE_API FBIMSymbolPresetData : public FCustomDataWebConvertable
 {
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::Symbol);
+	}
+	virtual UStruct* VirtualizedStaticStruct() override
+	{
+		return FBIMSymbolPresetData::StaticStruct();
+	}
 	GENERATED_BODY()
 
 	UPROPERTY()

@@ -110,6 +110,7 @@ enum class EPresetPropertyMatrixNames : uint8
 	SlotConfig,
 	Part,
 	Preset,
+	Symbol,
 	Error = 255
 };
 
