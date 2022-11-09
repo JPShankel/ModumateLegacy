@@ -28,6 +28,7 @@
 #include "BIMKernel/Presets/CustomData/BIMSlot.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
+#include "ImageWriteBlueprintLibrary.h"
 
 
 
@@ -900,11 +901,19 @@ bool ADynamicIconGenerator::SetIconMeshForPointHostedAssembly(const FBIMAssembly
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial)
+bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial, bool bExportToTempFolder /*= false*/)
 {
 	const FStaticIconTexture* staticIcon = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(PresetID);
 	if (staticIcon != nullptr && staticIcon->IsValid())
 	{
+		if (bExportToTempFolder)
+		{
+			const FString filePath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), TEXT("PresetIcons/"));
+			const FString fileName = PresetID.ToString() + TEXT(".png");
+			FImageWriteOptions writeOption;
+			writeOption.Format = EDesiredImageFormat::PNG;
+			UImageWriteBlueprintLibrary::ExportToDisk(staticIcon->Texture.Get(), filePath + fileName, writeOption);
+		}
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
 		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, staticIcon->Texture.Get());
 		OutMaterial = dynMat;
@@ -913,7 +922,7 @@ bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMate
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Preset, UMaterialInterface*& OutMaterial)
+bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Preset, UMaterialInterface*& OutMaterial, bool bExportToTempFolder /*= false*/)
 {
 	FBIMIESProfile iesProfileConfig;
 	ensure(Preset->TryGetCustomData(iesProfileConfig));
@@ -921,6 +930,14 @@ bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Prese
 	UTexture2D* IESProfileIcon = Cast<UTexture2D>(iconReferencePath.TryLoad());
 	if (ensure(IESProfileIcon))
 	{
+		if (bExportToTempFolder)
+		{
+			const FString filePath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), TEXT("PresetIcons/"));
+			const FString fileName = Preset->GUID.ToString() + TEXT(".png");
+			FImageWriteOptions writeOption;
+			writeOption.Format = EDesiredImageFormat::PNG;
+			UImageWriteBlueprintLibrary::ExportToDisk(IESProfileIcon, filePath + fileName, writeOption);
+		}
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
 		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, IESProfileIcon);
 		OutMaterial = dynMat;

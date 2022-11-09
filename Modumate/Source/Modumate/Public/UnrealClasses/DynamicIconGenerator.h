@@ -183,8 +183,8 @@ public:
 	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, bool bMakeTread, bool bMakeRiser);
 	bool SetIconMeshForPointHostedAssembly(const FBIMAssemblySpec& Assembly, UTextureRenderTarget2D* InRenderTarget);
 
-	bool SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial);
-	bool SetIconForIESProfile(const FBIMPresetInstance* Preset, UMaterialInterface*& OutMaterial);
+	bool SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial, bool bExportToTempFolder = false);
+	bool SetIconForIESProfile(const FBIMPresetInstance* Preset, UMaterialInterface*& OutMaterial, bool bExportToTempFolder = false);
 	bool SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForProfile(const FGuid& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForMesh(const FGuid& MeshKey, UTextureRenderTarget2D* InRenderTarget);
