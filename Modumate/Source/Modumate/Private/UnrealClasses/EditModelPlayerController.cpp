@@ -4457,8 +4457,8 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 }
 void AEditModelPlayerController::CaptureScreen(FString Filepath, FString Filename, float FOV)
 {
-	int32 screenshotWidth = 1920;
-	int32 screenshotHeight = 1080;
+	int32 screenshotWidth = 3840;
+	int32 screenshotHeight = 2160;
 	if (!ensureAlways(EMPlayerPawn && EMPlayerPawn->ScreenshotTaker))
 	{
 		return;
