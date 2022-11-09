@@ -38,6 +38,7 @@
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
+#include "ModumateCore/ModumateCameraViewStatics.h"
 
 const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
 const FString AEditModelPlayerState::DefaultEnvDateTime(TEXT("2020-09-21T13:30:00.000Z"));
@@ -1879,7 +1880,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		}
 	}
 	else if (EMPlayerController)
-	{
+	{		
 		FDateTime dateTime;
 		if (!ensureMsgf(!InState.camera.SavedTime.IsEmpty(), TEXT("The camera saved time was lost. Defaulting to %s"), *DefaultEnvDateTime))
 		{
@@ -1938,7 +1939,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		}
 
 		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
-		
+
 		// Cache the camera state to send back to the web
 		CachedInputCameraState = InState.camera;
 	}

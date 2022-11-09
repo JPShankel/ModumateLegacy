@@ -35,7 +35,7 @@
 #include "ModumateCore/EnumHelpers.h"
 #include "Online/ModumateCloudConnection.h"
 #include "ModumateCore/PlatformFunctions.h"
-#include "ModumateCore/ModumateBrowserStatics.h"
+#include "ModumateCore/ModumateCameraViewStatics.h"
 #include "UI/Custom/ModumateWebBrowser.h"
 #include "UI/EditModelUserWidget.h"
 
@@ -356,7 +356,7 @@ void UModumateDocumentWebBridge::create_mois(TArray<FString> MOIType, TArray<int
 			{
 				FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
 				FString newViewName = Document->GetNextMoiName(EObjectType::OTCameraView, LOCTEXT("NewCameraViewMoiName", "New Camera View ").ToString());
-				UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, localNextID, 0);
+				UModumateCameraViewStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, localNextID, 0);
 			}
 		}
 		else

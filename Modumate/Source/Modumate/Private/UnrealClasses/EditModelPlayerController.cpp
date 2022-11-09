@@ -8,6 +8,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/EditableTextBox.h"
 
+#include "ModumateCore/ModumateCameraViewStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSnappingView.h"
@@ -4387,7 +4388,7 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracing(TArray<AMOICameraV
 		RTSettings->SetExposure(ppv, CurrentCameraView->InstanceData.rayTracingExposure);
 	}
 	GetPlayerState<AEditModelPlayerState>()->bShowLights = CurrentCameraView->InstanceData.bShowLights;
-	DirtyLightMOIs();
+	UModumateCameraViewStatics::DirtyLightMOIs(this);
 	FDateTime newDateTime;
 	if (FDateTime::ParseIso8601(*CurrentCameraView->InstanceData.SavedTime, newDateTime))
 	{
@@ -4436,7 +4437,7 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 				RTSettings->ApplyRayTraceQualitySettings(ppv, OriginalRTQuality);
 			}
 			GetPlayerState<AEditModelPlayerState>()->bShowLights = bOriginalShowLights;
-			DirtyLightMOIs();
+			UModumateCameraViewStatics::DirtyLightMOIs(this);
 			EMPlayerPawn->SetActorLocationAndRotation(OriginalPlayerTransform.GetLocation(), OriginalPlayerTransform.GetRotation());
 			SkyActor->SetCurrentDateTime(OriginalDateTime);
 			EMPlayerPawn->ScreenshotTaker->bCaptureEveryFrame = false;
@@ -4447,22 +4448,7 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 		//pop camera view
 		CurrentCameraView = RTSSCameraViews.Pop();
 		//update player camera and skylight to camera view settings
-		UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
-		if (ppv != nullptr && RTSettings != nullptr)
-		{
-			RTSettings->Init();
-			RTSettings->SetRayTracingEnabled(ppv, CurrentCameraView->InstanceData.bRTEnabled);
-			RTSettings->ApplyRayTraceQualitySettings(ppv, CurrentCameraView->InstanceData.rayTracingQuality);
-			RTSettings->SetExposure(ppv, CurrentCameraView->InstanceData.rayTracingExposure);
-		}
-		GetPlayerState<AEditModelPlayerState>()->bShowLights = CurrentCameraView->InstanceData.bShowLights;
-		DirtyLightMOIs();
-		EMPlayerPawn->SetActorLocationAndRotation(CurrentCameraView->InstanceData.Position, CurrentCameraView->InstanceData.Rotation);
-		FDateTime newDateTime;
-		if (FDateTime::ParseIso8601(*CurrentCameraView->InstanceData.SavedTime, newDateTime))
-		{
-			SkyActor->SetCurrentDateTime(newDateTime);
-		}
+		UModumateCameraViewStatics::ActivateCameraView(this, CurrentCameraView->InstanceData);
 		EMPlayerPawn->ScreenshotTaker->SetWorldTransform(EMPlayerPawn->GetActorTransform());
 		EMPlayerPawn->ScreenshotTaker->FOVAngle = CurrentCameraView->InstanceData.FOV;
 		//reset variables
@@ -4529,7 +4515,7 @@ void AEditModelPlayerController::CaptureCameraView(FString Filepath, const AMOIC
 		SkyActor->SetCurrentDateTime(newDateTime);
 	}
 	GetPlayerState<AEditModelPlayerState>()->bShowLights = CameraView->InstanceData.bShowLights;
-	DirtyLightMOIs();
+	UModumateCameraViewStatics::DirtyLightMOIs(GetWorld());
 	//need to call clean objects so that the change happens to the mois immediately
 	FString currentFilename = CameraView->InstanceData.Name;
 	currentFilename.Append(TEXT(".png"));
@@ -4556,28 +4542,7 @@ void AEditModelPlayerController::CaptureCameraView(FString Filepath, const AMOIC
 	}
 	SkyActor->SetCurrentDateTime(origDateTime);
 	GetPlayerState<AEditModelPlayerState>()->bShowLights = bOriginalShowLights;
-	DirtyLightMOIs();
+	UModumateCameraViewStatics::DirtyLightMOIs(this);
 }
-void AEditModelPlayerController::DirtyLightMOIs()
-{
-	AEditModelGameState* gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState>() : nullptr;
-	if (gameState == nullptr)
-	{
-		return;
-	}
-	UModumateDocument* doc = gameState->Document;
-	TArray<AModumateObjectInstance*> mois = doc->GetObjectsOfType(EObjectType::OTFurniture);
-	for (AModumateObjectInstance* moi : mois)
-	{
-		if (moi != nullptr)
-		{
-			const FBIMPresetInstance* preset = doc->GetPresetCollection().PresetFromGUID(moi->GetStateData().AssemblyGUID);
-			if (preset && preset->HasCustomData<FLightConfiguration>())
-			{
-				moi->MarkDirty(EObjectDirtyFlags::Structure);
-				moi->CleanObject(EObjectDirtyFlags::Structure, nullptr);
-			}
-		}
-	}
-}
+
 #undef LOCTEXT_NAMESPACE
