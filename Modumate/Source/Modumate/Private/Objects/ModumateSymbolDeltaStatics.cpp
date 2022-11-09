@@ -29,7 +29,7 @@ void FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* 
 	}
 }
 
-void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocument* Doc, const FMOIDeltaState& DeltaState,
+void FModumateSymbolDeltaStatics::GetDerivedDeltasForMoi(UModumateDocument* Doc, const FMOIDeltaState& DeltaState,
 	EMOIDeltaType DeltaType, TArray<FDeltaPtr>& OutDeltas)
 {
 	if (DeltaType != EMOIDeltaType::None && DeltaType != DeltaState.DeltaType)
@@ -139,6 +139,14 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 		Doc->DirtySymbolGroup(symbolMoiID);  // Just re-duplicate group to other symbol instances.
 		symbolGroupMoi->MarkDirty(EObjectDirtyFlags::Structure);
 		bRefreshIcon = true;
+
+		int32 symbolParent;
+		// Check for nested Symbol-within-Symbol:
+		if (DeltaState.NewState.ObjectType == EObjectType::OTMetaGraph && UModumateObjectStatics::IsObjectInSymbol(Doc, symbolGroupMoi->GetParentID(), nullptr, &symbolParent))
+		{
+			Doc->DirtySymbolGroup(symbolParent);
+			Doc->GetObjectById(symbolParent)->MarkDirty(EObjectDirtyFlags::Structure);
+		}
 		break;
 	}
 
@@ -481,8 +489,8 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 
 		auto groupDelta = MakeShared<FMOIDelta>();
 		groupDelta->AddMutationState(group, group->GetStateData(), groupInstanceData);
-		OutDeltas.Add(presetDelta);
 		OutDeltas.Add(groupDelta);
+		OutDeltas.Add(presetDelta);
 		return true;
 	}
 
@@ -505,24 +513,32 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 		if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType()) == EGraph3DObjectType::None
 			&& UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType()) == EGraphObjectType::None)
 		{
-			OutPreset.Members.Add(moi->ID, moi->GetStateData()).CustomData.SaveJsonFromCbor();
-			if (moi->GetObjectType() == EObjectType::OTFurniture)
+			FMOIStateData& stateInPreset = OutPreset.Members.Add(moi->ID, moi->GetStateData());
+			stateInPreset.CustomData.SaveJsonFromCbor();
+
+			switch (moi->GetObjectType())
 			{
-				FMOIStateData& ffeState = OutPreset.Members[moi->ID];
+			case EObjectType::OTFurniture:
+			{
 				FMOIFFEData ffeData;
-				ffeState.CustomData.LoadStructData(ffeData);
+				stateInPreset.CustomData.LoadStructData(ffeData);
 				FTransform canonicalXform(moi->GetWorldTransform() * Transform);
 				ffeData.Location = canonicalXform.GetLocation();
 				ffeData.Rotation = canonicalXform.GetRotation();
-				ffeState.CustomData.SaveStructData(ffeData, true);
+				stateInPreset.CustomData.SaveStructData(ffeData, true);
+				break;
 			}
-			else if (moi->GetObjectType() == EObjectType::OTSurfaceGraph)
+
+			case EObjectType::OTSurfaceGraph:
 			{
 				const TSharedPtr<FGraph2D> graph2d = Doc->FindSurfaceGraph(moi->ID);
 				if (ensure(graph2d))
 				{
 					graph2d->ToDataRecord(&OutPreset.SurfaceGraphs.FindOrAdd(moi->ID), true, true);
 				}
+				break;
+			}
+
 			}
 		}
 		OutPreset.EquivalentIDs.Add(moi->ID, { {moi->ID} });
@@ -543,12 +559,25 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 		TArray<const AModumateObjectInstance*> children = SymbolGroup->GetChildObjects();
 		for (const auto* child : children)
 		{
-			// Ignore Symbols within Symbols, for now.
-			if (!child->GetStateData().AssemblyGUID.IsValid())
+			int32 childID = child->ID;
+			FMOIStateData& stateInPreset = OutPreset.Members.Add(childID, child->GetStateData());
+			stateInPreset.CustomData.SaveJsonFromCbor();
+
+			OutPreset.EquivalentIDs.Add(childID, { {childID} });
+
+			// Symbol groups need Custom data with applied transform,
+			// regular groups need to be added recursively..
+			if (child->GetStateData().AssemblyGUID.IsValid())
 			{
-				int32 childID = child->ID;
-				OutPreset.Members.Add(childID, child->GetStateData()).CustomData.SaveJsonFromCbor();
-				OutPreset.EquivalentIDs.Add(childID, { {childID} });
+				FMOIMetaGraphData groupData;
+				stateInPreset.CustomData.LoadStructData(groupData);
+				FTransform canonicalXform(child->GetWorldTransform() * Transform);
+				groupData.Location = canonicalXform.GetLocation();
+				groupData.Rotation = canonicalXform.GetRotation();
+				stateInPreset.CustomData.SaveStructData(groupData, true);
+			}
+			else
+			{
 				CreatePresetDataForSymbol(Doc, child, Transform, OutPreset);
 			}
 		}
@@ -561,7 +590,7 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 
 // Create Deltas for new Symbol instance from Symbol Preset. Assumes Group MOI & Graph3d are created elsewhere.
 bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, FBIMSymbolPresetData& Preset,
-	const FTransform& Transform, TArray<FDeltaPtr>& OutDeltas)
+	const FTransform& Transform, TArray<FDeltaPtr>& OutDeltas, const TSet<FGuid>& SymbolsList)
 {
 	TMap<int32, int32> oldIDToNewID;
 	oldIDToNewID.Add(MOD_ID_NONE, MOD_ID_NONE);
@@ -720,12 +749,48 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 				FMOIFFEData ffeInstanceData;
 				if (ensure(newState.CustomData.LoadStructData(ffeInstanceData)) )
 				{
-					FTransform newTransform(FTransform(ffeInstanceData.Rotation, ffeInstanceData.Location)* Transform);
+					FTransform newTransform(FTransform(ffeInstanceData.Rotation, ffeInstanceData.Location) * Transform);
 					ffeInstanceData.Location = newTransform.GetLocation();
 					ffeInstanceData.Rotation = newTransform.GetRotation();
 					newState.CustomData.SaveStructData(ffeInstanceData);
 				}
+				break;
+			}
 
+			case EObjectType::OTMetaGraph:
+			{
+				if (newState.AssemblyGUID.IsValid())
+				{
+					const FGuid subSymbolGuid = newState.AssemblyGUID;
+					const FBIMPresetCollection& presets = Doc->GetPresetCollection();
+					const FBIMPresetInstance* subSymbol =  presets.PresetFromGUID(subSymbolGuid);
+					FBIMSymbolPresetData subSymbolData;
+					if (ensure(subSymbol && subSymbol->TryGetCustomData(subSymbolData)) 
+						&& !SymbolsList.Contains(subSymbolGuid))
+					{
+						// Create the graph for the root of the subsymbol:
+						auto subSymbolGraphDelta = MakeShared<FGraph3DDelta>(newState.ID);
+						subSymbolGraphDelta->DeltaType = EGraph3DDeltaType::Add;
+						OutDeltas.Add(subSymbolGraphDelta);
+
+						// Get subsymbol original transform and apply current transform for new subsymbol instantiation.
+						FMOIMetaGraphData subGroupData;
+						newState.CustomData.LoadStructData(subGroupData);
+						FTransform originalSubGroupTransform(subGroupData.Rotation, subGroupData.Location);
+						FTransform newTransform(originalSubGroupTransform * Transform);
+						subGroupData.Location = newTransform.GetLocation();
+						subGroupData.Rotation = newTransform.GetRotation();
+						newState.CustomData.SaveStructData(subGroupData);
+
+						ensure(CreateDeltasForNewSymbolInstance(Doc, newState.ID, NextID, subSymbolData, newTransform, OutDeltas, SymbolsList.Union({ subSymbolGuid })) );
+
+						// Update subsymbol Preset equivalent IDs.
+						FBIMPresetInstance newSymbolPreset(*subSymbol);
+						newSymbolPreset.SetCustomData(subSymbolData);
+						OutDeltas.Add(presets.MakeUpdateDelta(newSymbolPreset));
+					}
+
+				}
 				break;
 			}
 
@@ -808,7 +873,8 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 		{
 			FModumateObjectDeltaStatics::GetDeltasForGraphDeleteRecursive(Doc, otherGroup, OutDeltas, false);
 			FTransform transform(otherGroupMoi->GetWorldTransform());
-			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, newSymbolData, transform, OutDeltas));
+			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, newSymbolData, transform,
+				OutDeltas, { symbolPreset->GUID }));
 		}
 	}
 

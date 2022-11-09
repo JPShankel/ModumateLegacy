@@ -171,9 +171,10 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 
 		if (OutSideEffectDeltas && Document->IsSymbolGroupDirty(ID))
 		{
-			int32 nextID = Document->GetNextAvailableID();
+			int32 nextID = Document->ReserveNextIDs(ID);
 			FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(Document, nextID, ID, *OutSideEffectDeltas);
-			Document->ClearDirtySymbolGroups();
+			Document->SetNextID(nextID, ID);
+			Document->ClearDirtySymbolGroup(ID);
 		}
 	}
 
@@ -265,7 +266,7 @@ void AMOIMetaGraph::SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas)
 	// Add new Symbol contents:
 	FTransform transform(InstanceData.Rotation, InstanceData.Rotation.RotateVector(deltaAnchor) + InstanceData.Location);
 	int32 nextID = Document->GetNextAvailableID();
-	FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(Document, ID, nextID, newSymbolData, transform, *OutSideEffectDeltas);
+	FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(Document, ID, nextID, newSymbolData, transform, *OutSideEffectDeltas, { newSymbolPreset->GUID });
 
 	// New transform for the group
 	auto groupDelta = MakeShared<FMOIDelta>();

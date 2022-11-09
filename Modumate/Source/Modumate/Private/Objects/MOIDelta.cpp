@@ -109,6 +109,6 @@ void FMOIDelta::GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOper
 {
 	for (const auto& deltaState : States)
 	{
-		FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(Doc, deltaState, DeltaOperation, OutDeltas);
+		FModumateSymbolDeltaStatics::GetDerivedDeltasForMoi(Doc, deltaState, DeltaOperation, OutDeltas);
 	}
 }

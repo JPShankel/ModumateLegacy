@@ -103,8 +103,7 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 		OutDeltas.Add(newGraph3d);
 		OutDeltas.Add(groupDelta);
 
-		FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(doc, newGroupID, nextID, symbolData, FTransform(Location),
-			OutDeltas);
+		FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(doc, newGroupID, nextID, symbolData, FTransform(Location), OutDeltas, {SymbolGuid});
 
 		if (bPresetDelta)
 		{
