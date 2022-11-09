@@ -878,29 +878,22 @@ void UModumateDocumentWebBridge::export_views(TArray<int32> CameraViewIDs)
 	auto world = GetWorld();
 	if (!world)
 		return;
-	TArray<AMOICameraView*> outActors, rayTracingEnabledViews, nonRTViews;
+	TArray<AMOICameraView*> outActors, filteredCameraViews;
 	UModumateObjectStatics::FindAllActorsOfClass(world, outActors);
 	if (outActors.Num() == 0)
 	{
 		//no camera views found
 		return;
 	}
-	
+	int32 nonRTViewsCount = 0;
 	for (AMOICameraView* cv : outActors)
 	{
 		if (cv != nullptr && CameraViewIDs.Contains(cv->ID))
 		{
-			if (cv->InstanceData.bRTEnabled)
-			{
-				rayTracingEnabledViews.Add(cv);
-			}
-			else 
-			{
-				nonRTViews.Add(cv);
-			}
+			filteredCameraViews.Add(cv);
 		}
 	}
-	if (rayTracingEnabledViews.Num() == 0 && nonRTViews.Num() == 0)
+	if (filteredCameraViews.Num() == 0)
 	{
 		//selected camera views not found
 		return;
@@ -913,13 +906,9 @@ void UModumateDocumentWebBridge::export_views(TArray<int32> CameraViewIDs)
 		return;
 	}
 
-	for (AMOICameraView* cv : nonRTViews)
-	{
-		controller->CaptureCameraView(filePath, cv);
-	}
-	controller->CaptureCameraViewsRayTracing(rayTracingEnabledViews, filePath);
+	controller->CaptureCameraViewsRayTracing(filteredCameraViews, filePath);
 
-	if (rayTracingEnabledViews.Num() == 0)
+	if (filteredCameraViews.Num() == 0)
 	{
 		Document->NotifyWeb(ENotificationLevel::INFO, TEXT("3D Views Exported Successfully"));	
 	}

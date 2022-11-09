@@ -4405,9 +4405,7 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracing(TArray<AMOICameraV
 }
 void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTime)
 {
-	CurrentSSInterval += DeltaTime;
-
-	if (CurrentSSInterval > WaitSSInterval)
+	if (CurrentSSInterval > WaitSSInterval || (!CurrentCameraView->InstanceData.bRTEnabled && CurrentSSInterval > 1))
 	{
 		//take screenshot
 		FString currentFilename = CurrentCameraView->InstanceData.Name;
@@ -4452,8 +4450,9 @@ void AEditModelPlayerController::CaptureCameraViewsRayTracingTick(float DeltaTim
 		EMPlayerPawn->ScreenshotTaker->SetWorldTransform(EMPlayerPawn->GetActorTransform());
 		EMPlayerPawn->ScreenshotTaker->FOVAngle = CurrentCameraView->InstanceData.FOV;
 		//reset variables
-		CurrentSSInterval = 0.0f;
+		CurrentSSInterval = 0;
 	}
+	CurrentSSInterval++;
 	return;
 }
 void AEditModelPlayerController::CaptureScreen(FString Filepath, FString Filename, float FOV)

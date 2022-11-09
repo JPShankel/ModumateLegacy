@@ -13,7 +13,7 @@
 #include "Objects/MOIStructureData.h"
 #include "Online/ModumateVoice.h"
 #include "Online/ModumateTextChat.h"
-#include "UI/Custom/WebKeyboardCapture.h"
+#include "UI/Custom/WebKeyboardCapture.h" 
 #include "UnrealClasses/ModumateCapability.h"
 #include "Objects/CameraView.h"
 
@@ -662,8 +662,9 @@ private:
 	//screemshotting variables
 	TArray<AMOICameraView*> RTSSCameraViews;
 	AMOICameraView* CurrentCameraView;
-	float WaitSSInterval = 0.75f; //seconds
-	float CurrentSSInterval = 0.0f;
+	int32 WaitSSInterval = 30; //frames
+	int32 CurrentSSInterval = 0;
+	int32 NonRayTracingCount = 0;
 	bool bScreenshotInProgress = false;
 	FString SSFilepath;
 	FTransform OriginalPlayerTransform;
