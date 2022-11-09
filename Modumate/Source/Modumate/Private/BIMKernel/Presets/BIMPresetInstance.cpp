@@ -1264,25 +1264,6 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.canonicalBase = CanonicalBase;
 	
 	TMap<FString, FBIMWebPresetProperty> properties;
-	
-	for (auto& kvp : CustomDataByClassName)
-	{
-		TSharedPtr<FJsonObject> jsonObject;
-		kvp.Value.GetJsonObject(jsonObject);
-		for (auto& val : jsonObject->Values)
-		{
-			if (val.Value->Type == EJson::String || val.Value->Type == EJson::Number)
-			{
-				// TODO: currently we are sending the properties with the class name instead of the property scope name
-				// ie. Instead of "Mesh.Source" we are sending "BIMMesh" because that is the name of the c++ type
-				// we need to fix this by toJSON and fromJson on the custom data
-				FBIMWebPresetProperty webProperty;
-				webProperty.key = kvp.Key.ToString() + TEXT(".") + val.Key;
-				webProperty.value.Add(val.Value->AsString());
-				properties.Add(webProperty.key, webProperty);	
-			}
-		}
-	}
 
 	Properties_DEPRECATED.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
 		{
@@ -1477,12 +1458,18 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 
 void FBIMPresetInstance::ConvertCustomDataToWebProperties(FBIMWebPreset& OutPreset, UWorld* World) const
 {
-	// TODO: make this the reverse of ConvertWebPropertiesToCustomData 
+	//Populate CustomData JSON string (for legacy)
 	FString customDataJSONString;
 	FPresetCustomDataWrapper presetCustomData;
 	presetCustomData.CustomDataWrapper = CustomDataByClassName;
 	WriteJsonGeneric<FPresetCustomDataWrapper>(customDataJSONString, &presetCustomData);
 	OutPreset.customDataJSON = customDataJSONString;
+
+	for (auto& kvp : CustomDataByClassName)
+	{
+		FCustomDataWebConvertable* s = kvp.Value.CreateStructFromJSON<FCustomDataWebConvertable>();
+		s->ConvertToWebPreset(OutPreset);
+	}
 }
 
 void FBIMPresetInstance::ConvertWebPropertiesFromChildPresets(FBIMWebPreset& OutPreset) const

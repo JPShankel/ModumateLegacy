@@ -12,7 +12,14 @@ void FBIMPresetLayerPriority::ConvertToWebPreset(FBIMWebPreset& OutPreset)
 	
 	FString group = GetEnumValueString(PriorityGroup);
 	FString priority = FString::FromInt(PriorityValue);
-	
+	if(!OutPreset.properties.Contains(GroupKey))
+	{
+		OutPreset.properties.Add(GroupKey, {});
+	}
+	if(!OutPreset.properties.Contains(PriorityKey))
+	{
+		OutPreset.properties.Add(PriorityKey, {});
+	}
 	OutPreset.properties[GroupKey].value.Add(group);
 	OutPreset.properties[PriorityKey].value.Add(priority);
 }
