@@ -78,6 +78,8 @@ private:
 	TSet<AModumateObjectInstance*> HiddenObjects;  // For per-cut-plane design options
 	TMap<AActor*, bool> ExistingVisibility;  // To restore pre-render visibility
 
+	bool bRayTracingEnabled = false;
+
 	// Stencil-buffer values that are coordinated with the post-process material PP_DrawingDesignerRender.
 	// Also with ALineActor::ToggleForDrawingRender().
 	enum EStencilValues {SVNone = 0, SVMoi = 1, SVForeground = 2};

@@ -8,6 +8,7 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateRayTracingSettings.h"
 #include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
@@ -22,6 +23,7 @@
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/AxesActor.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 const TSet<EObjectType> ADrawingDesignerRender::RenderedObjectTypes({ EObjectType::OTCabinet, EObjectType::OTCeiling,
 	EObjectType::OTCountertop, EObjectType::OTDoor, EObjectType::OTEdgeHosted, EObjectType::OTFaceHosted, EObjectType::OTFinish,
@@ -248,6 +250,23 @@ void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength
 
 	CaptureComponent->CaptureScene();
 
+	if (bRayTracingEnabled)
+	{	// Re-enable ray tracing.
+		bRayTracingEnabled = false;
+		UModumateRayTracingSettings* rtSettings = NewObject<UModumateRayTracingSettings>();
+		APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+
+		if (rtSettings && ppv)
+		{
+			const auto* playerController = Cast<AEditModelPlayerController>(GetGameInstance<UModumateGameInstance>()->GetFirstLocalPlayerController());
+			const auto* playerState = playerController->GetPlayerState<AEditModelPlayerState>();
+			rtSettings->Init();
+			rtSettings->SetRayTracingEnabled(ppv, true);
+			rtSettings->SetExposure(ppv, playerState->RayTracingExposure);
+			rtSettings->ApplyRayTraceQualitySettings(ppv, playerState->RayTracingQuality);
+		}
+	}
+
 	RestoreFfeMaterials();
 	RestoreObjects();
 
@@ -303,6 +322,21 @@ void ADrawingDesignerRender::RenderFfe()
 	if (!ensure(depthMaterial))
 	{
 		return;
+	}
+
+	IConsoleVariable* rayTracingCVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	bRayTracingEnabled = rayTracingCVar->AsVariableInt()->GetValueOnAnyThread() != 0;
+
+	// Disable ray tracing.
+	UModumateRayTracingSettings* rtSettings = NewObject<UModumateRayTracingSettings>();
+	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	if (bRayTracingEnabled)
+	{
+		if (ensure(ppv != nullptr && rtSettings != nullptr))
+		{
+			rtSettings->Init();
+			rtSettings->SetRayTracingEnabled(ppv, false);
+		}
 	}
 
 	CaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
@@ -368,7 +402,7 @@ void ADrawingDesignerRender::RenderFfe()
 	}
 
 #if 0
-	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), FfeRenderTarget, TEXT("/Modumate"), TEXT("portaldrawing_ffe.png"));
+	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), FfeRenderTarget, TEXT("/Modumate"), TEXT("ffedepthrender.png"));
 #endif
 }
 
