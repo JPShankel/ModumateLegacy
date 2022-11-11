@@ -65,26 +65,19 @@ void ACompoundMeshActor::Tick(float DeltaTime)
 void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int32 PartIndex, FVector Scale, bool bLateralInvert, bool bMakeCollision)
 {
 	// Figure out how many components we might need.
-	int32 maxNumMeshes = ObAsm.Parts.Num();
 
-	// Check if it is currently in preview delta mode, do not create collision
-	auto controller = GetWorld() ? GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
-	ECollisionEnabled::Type collisionType = ECollisionEnabled::QueryAndPhysics;
-	bool bProcMakeCollision = bMakeCollision;
-	if (controller && controller->GetDocument()->IsPreviewingDeltas())
-	{
-		collisionType = ECollisionEnabled::NoCollision;
-		bProcMakeCollision = false;
-	}
+	int32 maxNumMeshes = ObAsm.Parts.Num();
 
 	// Datasmith assets
 	TArray<UStaticMesh*> importedAssets;
 	TArray<FTransform> importedMeshTransforms;
+
 	TMap<UStaticMesh*, TArray<UMaterialInstanceDynamic*>> importedMaterials;
 
 	bool bUsesImportedAssets = ObAsm.Parts.Num() > 0 && !ObAsm.Parts[0].Mesh.DatasmithUrl.IsEmpty();
 	if (bUsesImportedAssets)
 	{
+		auto controller = GetWorld() ? GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 		auto importer = controller ? controller->EditModelDatasmithImporter : nullptr;
 		if (importer && importer->PresetLoadStatusMap.FindRef(ObAsm.PresetGUID) == EAssetImportLoadStatus::Loaded)
 		{
@@ -284,7 +277,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 		if (bPartIsStatic)
 		{
 			partStaticMeshComp->SetVisibility(true);
-			partStaticMeshComp->SetCollisionEnabled(collisionType);
+			partStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 			partStaticMeshComp->SetRelativeLocation(rootFlip * partRelativePos);
 			partStaticMeshComp->SetRelativeRotation(partRotator);
@@ -296,7 +289,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 				{
 					UStaticMeshComponent* comp = StaticMeshComps[i];
 					comp->SetVisibility(true);
-					comp->SetCollisionEnabled(collisionType);
+					comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 					comp->SetRelativeLocation(rootFlip * importedMeshTransforms[i].GetLocation());
 					comp->SetRelativeRotation(importedMeshTransforms[i].GetRotation());
@@ -360,7 +353,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 
 					if (bMeshChanged || bCreated)
 					{
-						UKismetProceduralMeshLibrary::CopyProceduralMeshFromStaticMeshComponent(partStaticMeshComp, lodIndex, baseProcMeshComp, bProcMakeCollision);
+						UKismetProceduralMeshLibrary::CopyProceduralMeshFromStaticMeshComponent(partStaticMeshComp, lodIndex, baseProcMeshComp, bMakeCollision);
 
 						CalculateNineSliceComponents(comps, rootComp, lodIndex, sliceCompIdxStart, nineSliceInterior, partNativeSize, partStaticMeshComp);
 
@@ -497,7 +490,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 						comp->SetRelativeRotation(partRotator);
 						comp->SetRelativeScale3D(rootFlip * sliceScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
 						comp->SetVisibility(true);
-						comp->SetCollisionEnabled(collisionType);
+						comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 					}
 
 					UseSlicedMesh[slotIdx] = true;
