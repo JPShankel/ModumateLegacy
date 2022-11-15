@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/Presets/CustomData/CustomDataWebConvertable.h"
 #include "Objects/MOIState.h"
 
 #include "EdgeDetailData.generated.h"
@@ -81,7 +82,7 @@ struct FEdgeDetailOverrides
 };
 
 USTRUCT()
-struct FEdgeDetailData
+struct FEdgeDetailData : public FCustomDataWebConvertable
 {
 	GENERATED_BODY()
 
@@ -131,6 +132,15 @@ struct FEdgeDetailData
 	UPROPERTY()
 	uint32 CachedConditionHash = 0;
 
+	
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::EdgeDetail);
+	}
+	virtual UStruct* VirtualizedStaticStruct() override
+	{
+		return FEdgeDetailData::StaticStruct();
+	}
 protected:
 	static FEdgeDetailData TempOrientedDetail;
 	static TArray<uint32> TempOrientedConditionHashes;

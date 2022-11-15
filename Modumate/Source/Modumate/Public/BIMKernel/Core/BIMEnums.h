@@ -111,7 +111,8 @@ enum class EPresetPropertyMatrixNames : uint8
 	Part,
 	Preset,
 	Symbol,
-	Error = 255
+	EdgeDetail,
+	Error = 255,
 };
 
 using FBIMNameType = FName;

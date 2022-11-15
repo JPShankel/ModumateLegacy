@@ -91,7 +91,11 @@ bool FCustomDataWebConvertable::SerializeByPropertyName(void* Container, FProper
 		if (FArrayProperty * ChildArrayProp = CastField<FArrayProperty>(Property))
 		{
 			TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(Container);
-			OutProperties.Add(Entry, {Entry, *array});
+			if(array != nullptr)
+			{
+				//TODO: Edge Details use arrays of structs which need special handling - JN
+				OutProperties.Add(Entry, {Entry, *array});	
+			}
 		}
 	}
 	else
@@ -170,8 +174,12 @@ bool FCustomDataWebConvertable::DeserializeByPropertyName(void* Container,
         	if (FArrayProperty * ChildArrayProp = CastField<FArrayProperty>(Property))
         	{
         		TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(Container);
-        		*array = InProperties[Entry].value;
-        		rtn = true;
+        		if(array != nullptr)
+        		{
+        			//TODO: Edge Details use arrays of structs which need special handling - JN
+        			*array = InProperties[Entry].value;
+        			rtn = true;
+        		}
         	}
         } 
 	}
