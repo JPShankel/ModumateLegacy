@@ -20,6 +20,7 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/MetaEdgeSpan.h"
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 
@@ -1371,10 +1372,12 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 	OutDeltas.Add(moiDelta);
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi /*= true*/)
+void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas,
+	bool bDeleteGraphMoi /*= true*/, FBIMSymbolCollectionProxy* SymbolCollection /*= nullptr*/)
 {
 	auto* graph = Doc->GetVolumeGraph(GraphID);
 	TMap<int32, FGraph2DDelta> surfaceGraphDeltas;
+	TSet<int32> deletedIDs;
 
 	if (graph)
 	{
@@ -1412,8 +1415,11 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 			{
 				TArray<const AModumateObjectInstance*> mois;
 				UModumateObjectStatics::GetAllDescendents(metaObject, mois);
+				deletedIDs.Add(metaObject->ID);
 				for (auto* moi : mois)
 				{
+					deletedIDs.Add(moi->ID);
+
 					EGraphObjectType graph2dType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
 					if (graph2dType != EGraphObjectType::None)
 					{
@@ -1477,20 +1483,36 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 				OutDeltas.Add(deleteMetaGraph);
 			}
 		}
+
+		if (SymbolCollection)
+		{
+			const AModumateObjectInstance* groupMoi = Doc->GetObjectById(GraphID);
+			// If group is symbol then remove deleted items from Equivalence map.
+			if (groupMoi && groupMoi->GetStateData().AssemblyGUID.IsValid())
+			{
+				auto childGroups = groupMoi->GetAllDescendents();
+				Algo::ForEach(childGroups, [&deletedIDs](const AModumateObjectInstance* moi) { deletedIDs.Add(moi->ID); });
+				auto* symbolData = SymbolCollection->PresetDataFromGUID(groupMoi->GetStateData().AssemblyGUID);
+				for (auto& set : symbolData->EquivalentIDs)
+				{
+					set.Value.IDSet = set.Value.IDSet.Difference(deletedIDs);
+				}
+			}
+		}
 	}
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForGraphDeleteRecursive(const UModumateDocument* Doc, int32 GraphID,
+void FModumateObjectDeltaStatics::GetDeltasForGraphDeleteRecursive(const UModumateDocument* Doc, int32 GraphID, FBIMSymbolCollectionProxy* SymbolCollection,
 	TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi /*= true*/)
 {
 	auto* groupObject = Doc->GetObjectById(GraphID);
 	if (groupObject)
 	{
 		TArray<const AModumateObjectInstance*> descendants = groupObject->GetAllDescendents();
-		GetDeltasForGraphDelete(Doc, GraphID, OutDeltas, bDeleteGraphMoi);
+		GetDeltasForGraphDelete(Doc, GraphID, OutDeltas, bDeleteGraphMoi, SymbolCollection);
 		for (const auto* subObject: descendants)
 		{
-			GetDeltasForGraphDelete(Doc, subObject->ID, OutDeltas, true);
+			GetDeltasForGraphDelete(Doc, subObject->ID, OutDeltas, true, SymbolCollection);
 		}
 	}
 }

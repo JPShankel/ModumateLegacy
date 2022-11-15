@@ -51,4 +51,3 @@ private:
 
 	void SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas);
 };
-

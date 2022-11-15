@@ -288,6 +288,7 @@ public:
 	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World, bool bRedoingDeltas = false, bool bDDCleaningDelta = false);
 	bool ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World);
 	bool ApplySettingsDelta(const FDocumentSettingDelta& SettingsDelta, UWorld* World);
+	void ApplySymbolDeltas(TArray<FDeltaPtr>& Deltas);
 
 	void PurgeDeltas();
 

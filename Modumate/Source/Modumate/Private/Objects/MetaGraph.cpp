@@ -168,14 +168,6 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 		{
 			return false;
 		}
-
-		if (OutSideEffectDeltas && Document->IsSymbolGroupDirty(ID))
-		{
-			int32 nextID = Document->ReserveNextIDs(ID);
-			FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(Document, nextID, ID, *OutSideEffectDeltas);
-			Document->SetNextID(nextID, ID);
-			Document->ClearDirtySymbolGroup(ID);
-		}
 	}
 
 	return true;
@@ -236,22 +228,24 @@ void AMOIMetaGraph::SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	const FBIMPresetCollection& presets = Document->GetPresetCollection();
 	const FBIMPresetInstance* oldSymbolPreset = presets.PresetFromGUID(CachedSymbolGuid);
-	const FBIMPresetInstance* newSymbolPreset = presets.PresetFromGUID(StateData.AssemblyGUID);
 
-	if (!ensure(oldSymbolPreset && newSymbolPreset))
+	if (!ensure(oldSymbolPreset))
 	{
 		return;
 	}
 
+	FBIMSymbolCollectionProxy symbolCollection(&presets);
+
+	// TODO: old symbol data to use collection proxy also.
 	FBIMSymbolPresetData oldSymbolData;
-	FBIMSymbolPresetData newSymbolData;
-	if (!ensure(oldSymbolPreset->TryGetCustomData(oldSymbolData) && newSymbolPreset->TryGetCustomData(newSymbolData)) )
+	if (!ensure(oldSymbolPreset->TryGetCustomData(oldSymbolData) && symbolCollection.PresetDataFromGUID(StateData.AssemblyGUID)) )
 	{
 		return;
 	}
+
 
 	const FVector oldAnchor = oldSymbolData.Anchor;
-	const FVector newAnchor = newSymbolData.Anchor;
+	const FVector newAnchor = symbolCollection.PresetDataFromGUID(StateData.AssemblyGUID)->Anchor;
 	const FVector deltaAnchor(oldAnchor - newAnchor);
 
 	// Gut the group:
@@ -266,7 +260,9 @@ void AMOIMetaGraph::SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas)
 	// Add new Symbol contents:
 	FTransform transform(InstanceData.Rotation, InstanceData.Rotation.RotateVector(deltaAnchor) + InstanceData.Location);
 	int32 nextID = Document->GetNextAvailableID();
-	FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(Document, ID, nextID, newSymbolData, transform, *OutSideEffectDeltas, { newSymbolPreset->GUID });
+	
+	FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(Document, ID, nextID, StateData.AssemblyGUID, symbolCollection,
+		transform, *OutSideEffectDeltas, { StateData.AssemblyGUID });
 
 	// New transform for the group
 	auto groupDelta = MakeShared<FMOIDelta>();
@@ -282,7 +278,5 @@ void AMOIMetaGraph::SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas)
 	oldPresetDelta->NewState.SetCustomData(oldSymbolData);
 	OutSideEffectDeltas->Add(oldPresetDelta);
 
-	auto newPresetDelta = presets.MakeUpdateDelta(StateData.AssemblyGUID);
-	newPresetDelta->NewState.SetCustomData(newSymbolData);
-	OutSideEffectDeltas->Add(newPresetDelta);
+	symbolCollection.GetPresetDeltas(*OutSideEffectDeltas);
 }

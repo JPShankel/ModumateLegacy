@@ -1215,6 +1215,42 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 	return true;
 }
 
+void UModumateDocument::ApplySymbolDeltas(TArray<FDeltaPtr>& Deltas)
+{
+	if (GetDirtySymbolGroups().Num() != 0)
+	{
+		int32 nextID = NextID;
+		TArray<FDeltaPtr> symbolDeltas;
+
+		FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(this, nextID, symbolDeltas);
+		if (symbolDeltas.Num() > 0)
+		{
+			TArray<FDeltaPtr> sideEffectDeltas;
+
+			for (auto& delta : symbolDeltas)
+			{
+				delta->ApplyTo(this, GetWorld());
+				Deltas.Add(delta);
+			}
+
+			int32 guard = 8;
+			do
+			{
+				sideEffectDeltas.Reset();
+				CleanObjects(&sideEffectDeltas);
+
+				for (auto& delta : sideEffectDeltas)
+				{
+					delta->ApplyTo(this, GetWorld());
+					Deltas.Add(delta);
+				}
+
+			} while (sideEffectDeltas.Num() != 0 && guard-- > 0);
+		}
+	}
+
+}
+
 bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World, bool bRedoingDeltas, bool bDDCleaningDelta)
 {
 	// Vacuous success if there are no deltas to apply
@@ -1290,6 +1326,8 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	}
 
 	CalculateSideEffectDeltas(ur->Deltas, World, false);
+
+	ApplySymbolDeltas(ur->Deltas);
 
 	EndUndoRedoMacro();
 	if (controller && controller->InputAutomationComponent)

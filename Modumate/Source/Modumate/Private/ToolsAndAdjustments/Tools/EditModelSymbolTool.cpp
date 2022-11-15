@@ -84,7 +84,8 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 {
 	FBIMSymbolPresetData symbolData;
 	const FBIMPresetInstance* symbolPreset = GameState->Document->GetPresetCollection().PresetFromGUID(SymbolGuid);
-	if (symbolPreset && symbolPreset->TryGetCustomData(symbolData))
+	FBIMSymbolCollectionProxy symbolCollection(&GameState->Document->GetPresetCollection());
+	if (symbolCollection.PresetDataFromGUID(SymbolGuid))
 	{
 		auto* doc = GameState->Document;
 		int32 nextID = doc->GetNextAvailableID();
@@ -103,13 +104,11 @@ bool USymbolTool::GetObjectCreationDeltas(const FVector& Location, bool bPresetD
 		OutDeltas.Add(newGraph3d);
 		OutDeltas.Add(groupDelta);
 
-		FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(doc, newGroupID, nextID, symbolData, FTransform(Location), OutDeltas, {SymbolGuid});
+		FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(doc, newGroupID, nextID, SymbolGuid, symbolCollection, FTransform(Location), OutDeltas, {SymbolGuid});
 
 		if (bPresetDelta)
 		{
-			FBIMPresetInstance newSymbolPreset(*symbolPreset);
-			newSymbolPreset.SetCustomData(symbolData);
-			OutDeltas.Add(doc->GetPresetCollection().MakeUpdateDelta(newSymbolPreset));
+			symbolCollection.GetPresetDeltas(OutDeltas);
 		}
 	}
 	return true;

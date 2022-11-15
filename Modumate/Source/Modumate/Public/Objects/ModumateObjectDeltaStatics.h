@@ -19,6 +19,7 @@ struct FGraph3DDelta;
 class FGraph3D;
 class AEditModelPlayerController;
 class AModumateObjectInstance;
+class FBIMSymbolCollectionProxy;
 
 // Helper functions for delta preview operations
 class FModumateObjectDeltaStatics
@@ -53,8 +54,10 @@ public:
 		TArray<FDeltaPtr>& OutDeltas);
 
 	// Create deltas for wholesale deletion of graph and its contents.
-	static void GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi = true);
-	static void GetDeltasForGraphDeleteRecursive(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi = true);
+	static void GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi = true,
+		FBIMSymbolCollectionProxy* SymbolCollection = nullptr);
+	static void GetDeltasForGraphDeleteRecursive(const UModumateDocument* Doc, int32 GraphID, FBIMSymbolCollectionProxy* SymbolCollection,
+		TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi = true);
 
 	static void GetDeltasForFaceSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);
 	static void GetDeltasForEdgeSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);
