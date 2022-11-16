@@ -7,6 +7,7 @@
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
+#include "Misc/EnumRange.h"
 
 #include "BIMPresetTypeDefinition.generated.h"
 
@@ -28,6 +29,7 @@ enum class EBIMPinTarget : uint8
 	Riser,
 	Cabinet
 };
+ENUM_RANGE_BY_FIRST_AND_LAST(EBIMPinTarget, EBIMPinTarget::None, EBIMPinTarget::Cabinet);
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetNodePinSet

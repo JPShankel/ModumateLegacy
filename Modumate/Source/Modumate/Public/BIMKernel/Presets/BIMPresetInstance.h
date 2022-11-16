@@ -247,9 +247,9 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
 	EBIMResult FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World);
 
-	void ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World);
+	void CreateCustomDataFromWebProperties(const FBIMWebPreset& InPreset, UWorld* World);
 	void ConvertCustomDataToWebProperties(FBIMWebPreset& OutPreset, UWorld* World) const;
-	void ConvertWebPropertiesFromChildPresets(FBIMWebPreset& OutPreset) const;
+	void ConvertChildPresetsToWebProperties(FBIMWebPreset& OutPreset) const;
 
 	// TODO: deprecate this and change all custom data to inherit from a class that forces a ToJSON() and FromJSON() method
 template<class T>

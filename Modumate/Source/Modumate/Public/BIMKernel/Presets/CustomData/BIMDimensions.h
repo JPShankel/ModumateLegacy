@@ -24,12 +24,6 @@ protected:
 
 public:
 
-	/**
-	 *	KLUDGE: Maybe this should be dynamic
-	 *	This boolean is used to determine if we are to use the default values from named dimensions
-	 *	if no custom value is present
-	 */
-	UPROPERTY()
 	bool bHasDefaults = false;
 	
 	bool HasCustomDimension(const FName& InDimensionName) const;

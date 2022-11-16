@@ -1,6 +1,7 @@
 #include "CoreMinimal.h"
 #include "VectorTypes.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetPatternDefinition.h"
 #include "BIMKernel/Presets/BIMWebPreset.h"
 #include "Misc/AutomationTest.h"
@@ -17,7 +18,69 @@
 #include "BIMKernel/Presets/CustomData/BIMProfileRef.h"
 #include "BIMKernel/Presets/CustomData/BIMRawMaterial.h"
 #include "BIMKernel/Presets/CustomData/BIMSlotConfig.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
+
+class AEditModelPlayerController;
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateWebPresetsSerializes, "Modumate.BIM.WebPresets.Serializes",
+                                EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+bool FModumateWebPresetsSerializes::RunTest(const FString& Parameters)
+{
+	UWorld* world = nullptr;
+	for (const FWorldContext& worldContext : GEngine->GetWorldContexts())
+	{
+		if (worldContext.WorldType == EWorldType::Game || worldContext.WorldType == EWorldType::PIE)
+		{
+			world = worldContext.World();
+			break;
+		}
+	}
+	
+	if(world == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TEST NOT RUN, must have PIE or Standalone context running"));
+		return true;
+	}
+		
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+	if(controller == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TEST NOT RUN, must have PIE or Standalone context running"));
+		return true;
+	}
+
+	auto gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	if(gameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TEST NOT RUN, must have PIE or Standalone context running"));
+		return true;
+	}
+	
+	FBIMPresetCollection collection {};
+	collection.ReadInitialPresets(gameInstance);
+
+	TArray<FGuid> keys;
+	collection.GetAllPresetKeys(keys);
+	for(auto& key : keys)
+	{
+		const FBIMPresetInstance* InPreset = collection.PresetFromGUID(key);
+		FBIMPresetInstance OutPreset;
+		FBIMWebPreset interim;
+		InPreset->ToWebPreset(interim, world);
+		OutPreset.FromWebPreset(interim, world);
+		collection.RemovePreset(key);
+		collection.AddOrUpdatePreset(OutPreset, OutPreset);
+
+		//The VDP table can screw this, for our test we just fix it.
+		OutPreset.GUID = InPreset->GUID;
+
+		FString msg = TEXT("Preset ") + InPreset->CanonicalBase.ToString() + TEXT(" serializes and matches deserialization");
+		TestTrue(msg, *InPreset == OutPreset);
+	}
+	return true;
+}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCustomDataSerializes, "Modumate.BIM.CustomData.Serializes", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter)
 	bool FModumateCustomDataSerializes::RunTest(const FString& Parameters)

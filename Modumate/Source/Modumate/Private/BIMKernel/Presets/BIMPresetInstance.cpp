@@ -1213,6 +1213,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(FBIMPresetCollection& PresetCollectio
 	return EBIMResult::Success;
 }
 
+
 EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World)
 {
 	
@@ -1250,8 +1251,8 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 	TMap<FString, FBIMWebPresetPropertyDef> propTypes;
 	collection.PresetTaxonomy.GetPropertiesForTaxonomyNode(ncpNode.tagPath, propTypes);
 	
-	ConvertWebPropertiesToCustomData(InPreset, World);
-
+	CreateCustomDataFromWebProperties(InPreset, World);
+	
 	return EBIMResult::Success;
 }
 
@@ -1287,13 +1288,13 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	{
 		// Add slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
 		FBIMWebPresetProperty slotNameProperty;
-		slotNameProperty.key = TEXT("Slot.SlotName");
+		slotNameProperty.key = TEXT("Slots.SlotName");
 	
 		FBIMWebPresetProperty partPresetsProperty;
-		partPresetsProperty.key = TEXT("Slot.PartPreset");
+		partPresetsProperty.key = TEXT("Slots.PartPreset");
 
 		FBIMWebPresetProperty slotConfigProperty;
-		slotConfigProperty.key = TEXT("Slot.SlotConfig");
+		slotConfigProperty.key = TEXT("Slots.SlotConfig");
 		slotConfigProperty.value.Add(SlotConfigPresetGUID.ToString());
 	
 		for (auto& partSlot : PartSlots)
@@ -1310,7 +1311,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.properties = properties;
 
 	ConvertCustomDataToWebProperties(OutPreset, World);
-	ConvertWebPropertiesFromChildPresets(OutPreset);
+	ConvertChildPresetsToWebProperties(OutPreset);
 
 	// typeMark is deprecated
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
@@ -1320,9 +1321,9 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	return EBIMResult::Success;
 }
 
-void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& InPreset, UWorld* World)
+void FBIMPresetInstance::CreateCustomDataFromWebProperties(const FBIMWebPreset& InPreset, UWorld* World)
 {
-
+	
 	// TODO: the only custom data that does not work with properties currently is Symbols
 	// This needs to be fixed and there is a ticket for it. This is a bugfix for the release of 3.4
 	FPresetCustomDataWrapper presetCustomData;
@@ -1363,9 +1364,10 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 
 	for (auto& presetProp : propertyMap)
 	{
+		//Ty and use the CustomData deserializer
 		if(!FBIMPresetInstanceFactory::DeserializeCustomData(presetProp.Key, *this, InPreset))
 		{
-			//It's not custom data
+			//It's not custom data!
 			switch (presetProp.Key)
 			{
 				case EPresetPropertyMatrixNames::Slots:
@@ -1404,18 +1406,21 @@ void FBIMPresetInstance::ConvertWebPropertiesToCustomData(const FBIMWebPreset& I
 				break;
 				case EPresetPropertyMatrixNames::InputPins:
 				{
+					//For Each property, we get the pinName
 					for (auto prop : presetProp.Value)
 					{
 						FName pinName = FName(prop.Key);
 						bool found = false;
-						
+
+						//This is an array of guids that corresponds to a child preset
 						for (auto propValue : prop.Value)
 						{
 							if (propValue.IsEmpty())
 							{
 								continue;;
 							}
-					
+
+							//Iterate the pinsets and find the correct setPosition and setIndex
 							for (int32 setIndex = 0; setIndex < PinSets.Num(); ++setIndex)
 							{
 								if (PinSets[setIndex].SetName == pinName)
@@ -1475,24 +1480,24 @@ void FBIMPresetInstance::ConvertCustomDataToWebProperties(FBIMWebPreset& OutPres
 	}
 }
 
-void FBIMPresetInstance::ConvertWebPropertiesFromChildPresets(FBIMWebPreset& OutPreset) const
+void FBIMPresetInstance::ConvertChildPresetsToWebProperties(FBIMWebPreset& OutPreset) const
 {
 	TMap<EBIMPinTarget, TArray<FString>> childPresetProps;
 	for (auto item : ChildPresets)
 	{
 		// example of an InputPins prop key is InputPins.ChildRiser
-		FString key = FString::Printf(TEXT("InputPins.Child")) + GetEnumValueString(item.Target);
-		if (OutPreset.properties.Contains(key))
-		{
-			auto guids = OutPreset.properties.Find(key);
-			guids->value.Push(item.PresetGUID.ToString());
-		} else
+		FString pinKey = TEXT("InputPins.Child") + GetEnumValueString(item.Target);
+		auto* guids = OutPreset.properties.Find(pinKey);
+
+		if(guids == nullptr)
 		{
 			FBIMWebPresetProperty inputPinsProperty;
-			inputPinsProperty.key = key;
-			inputPinsProperty.value.Add(item.PresetGUID.ToString());
-			OutPreset.properties.Add(key, inputPinsProperty);
+			inputPinsProperty.key = pinKey;
+			OutPreset.properties.Add(pinKey, inputPinsProperty);
+			guids = OutPreset.properties.Find(pinKey);
 		}
+		guids->value.Push(item.PresetGUID.ToString());
+
 	}
 }
 
