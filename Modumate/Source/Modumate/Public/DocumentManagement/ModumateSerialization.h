@@ -354,7 +354,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 25: Fix missing pin sets
 // Version 26: Preset Custom Data upgrade, deprecating preset properties
 // Version 27: Symbol Presets have multiple 3d graphs
-static constexpr int32 DocVersion = 27;
+// Version 28: VDPTable is 1:* instead of 1:1
+static constexpr int32 DocVersion = 28;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

@@ -639,10 +639,6 @@ EBIMResult FBIMPresetCollection::AddOrUpdatePreset(const FBIMPresetInstance& InP
 	if(InPreset.Origination != EPresetOrigination::Invented)
 	{
 		//Update the VDP Table
-		if(VDPTable.HasCanonical(InPreset.CanonicalBase))
-		{
-			VDPTable.Remove(InPreset.CanonicalBase);
-		}
 		VDPTable.Add(InPreset.CanonicalBase, InPreset.GUID);
 	}
 
@@ -1114,6 +1110,9 @@ bool FBIMPresetCollection::UpgradeMoiStateData(FMOIStateData& InOutMoi, const FB
 bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocumentRecord& DocRecord,
 	const UModumateGameInstance* GameInstance)
 {
+	//Update VDP Table FIRST
+	DocRecord.PresetCollection.VDPTable.UpgradeDocRecord(DocRecordVersion);
+	
 	// With version 24, all presets carry around what market (canonical) preset they were based on (if any)
 	//  all previous bEdited presets become Invented presets. bEdited is deprecated, but we make
 	//  the assumption that anything in the document is bEdited already.
@@ -1208,7 +1207,7 @@ bool FBIMPresetCollection::UpgradeDocRecord(int32 DocRecordVersion, FMOIDocument
 			}
 		}
 	}
-
+	
 	return true;
 }
 
@@ -1913,6 +1912,15 @@ bool FBIMPresetCollection::PopulateMissingCanonicalPresetsFromCloudSync(const TS
 	return true;
 }
 
+/**
+ * @brief Translates a JsonObject in to a preset and adds it to collection. 
+ * @details This is used to add presets from the cloud on the initial connection to the project.
+ * If a VDPTable entry already exists for a canonical it will use the derived GUID the table. If that derived guid
+ * already exists in the collection, we do not add anything and this call becomes a no-op.
+ * @param JsonObject The object that contains the preset 
+ * @param Collection The Collection to add to
+ * @param GameInstance The current Game instance
+ **/
 void FBIMPresetCollection::ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> JsonObject, FBIMPresetCollection& Collection, const UModumateGameInstance* GameInstance)
 {
 	TMap<FString, TSharedPtr<FJsonValue>> topLevelEntries = JsonObject->Values;
@@ -1942,7 +1950,7 @@ void FBIMPresetCollection::ProcessCloudCanonicalPreset(TSharedPtr<FJsonObject> J
 				}
 
 				//If the GUID exists already, don't add it -- it would replace it and we
-				// would lose any user edits.
+				// would lose any user edits. This is ONLY for processing cloud presets
 				if(!Collection.ContainsNonCanon(vdp.GUID))
 				{
 					Collection.AddOrUpdatePreset(vdp, vdp);

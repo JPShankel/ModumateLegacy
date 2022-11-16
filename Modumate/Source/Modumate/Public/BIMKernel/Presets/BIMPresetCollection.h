@@ -19,11 +19,12 @@
 #include "BIMPresetCollection.generated.h"
 
 class UModumateGameInstance;
-static constexpr int32 BIMPresetCollectionCurrentVersion = 8;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 9;
 // Version 5 - FBIMPresetForm & BIM deltas
 // Version 6 - Taxonomy added to collection
 // Version 7 - Point hosted objects
 // Version 8 - Construction details as custom properties
+// Version 9 - VDPTable is 1:* instead of 1:1
 
 struct FBIMPresetDelta;
 

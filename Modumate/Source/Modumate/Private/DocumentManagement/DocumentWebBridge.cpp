@@ -926,25 +926,10 @@ void UModumateDocumentWebBridge::UpdateOrAddPreset(FBIMPresetInstance& Preset)
 		//We CANNOT add Canonical Presets to our Preset Collection...
 		auto Collection = Document->GetPresetCollection();
 		
-		//Do we have this canonical in our preset collection already?
-		if(Collection.VDPTable.HasCanonical(Preset.GUID) ||
-		   Collection.VDPTable.HasCanonical(Preset.CanonicalBase))
-		{
-			
-			//TODO: Add to VDP tables preset targets (which we have to create)
-			// and figure out a way to prompt a user to choose one (which
-			// wouldn't be here). -JN
-
-			//Don't add it for now.
-			return;
-		}
-		else
-		{
-			//Derive it.
-			Preset.CanonicalBase = Preset.GUID;
-			Preset.GUID = FGuid::NewGuid();
-			Preset.Origination = EPresetOrigination::VanillaDerived;
-		}
+		//Derive it.
+		Preset.CanonicalBase = Preset.GUID;
+		Preset.GUID = FGuid::NewGuid();
+		Preset.Origination = EPresetOrigination::VanillaDerived;
 	}
 	
 	auto existingPreset = Document->GetPresetCollection().ContainsNonCanon(Preset.GUID);

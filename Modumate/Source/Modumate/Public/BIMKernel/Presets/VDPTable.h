@@ -6,6 +6,17 @@
 
 #include "VDPTable.generated.h"
 
+typedef FGuid CanonicalPresetGuid;
+typedef FGuid DocumentPresetGuid;
+
+USTRUCT()
+struct MODUMATE_API FVDPEntry
+{
+	GENERATED_BODY();
+
+	UPROPERTY();
+	TArray<FGuid> DerivedGuids;
+};
 
 /**
  * Create a bidirectional map association between a canonical
@@ -18,20 +29,22 @@ USTRUCT()
 struct MODUMATE_API FVDPTable
 {
 	GENERATED_BODY();
-	TSet<FGuid> GetCanonicalGUIDs() const;
-	TSet<FGuid> GetDerivedGUIDs() const;
-	FGuid TranslateToDerived(const FGuid& guid) const;
-	FGuid TranslateToCanonical(const FGuid& guid) const;
+	TSet<CanonicalPresetGuid> GetCanonicalGUIDs() const;
+	TSet<DocumentPresetGuid> GetDerivedGUIDs() const;
+	DocumentPresetGuid TranslateToDerived(const FGuid& guid) const;
+	CanonicalPresetGuid TranslateToCanonical(const FGuid& guid) const;
 	bool HasDerived(const FGuid& guid) const;
 	bool HasCanonical(const FGuid& guid) const;
 	bool Remove(const FGuid& Value);
-	bool Add(const FGuid& Canonical, const FGuid& Derived);
+	bool Add(const CanonicalPresetGuid& Canonical, const DocumentPresetGuid& Derived);
 	bool Contains(const FGuid& Value) const;
-	bool GetAssociated(const FGuid& Input, FGuid& Output) const;
+	void UpgradeDocRecord(int32 DocRecordVersion);
 
 protected:
 	UPROPERTY()
-	TMap<FGuid,FGuid> AtoB;
+	TMap<FGuid, FGuid> AtoB;
+	UPROPERTY(meta=(DeprecatedProperty, DeprecationMessage="Migrated to CanonicalToDerives"))
+	TMap<FGuid, FGuid> BtoA_DEPRECATED;
 	UPROPERTY()
-	TMap<FGuid,FGuid> BtoA;
+	TMap<FGuid, FVDPEntry> CanonicalToDerives;
 };

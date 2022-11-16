@@ -3,7 +3,7 @@
 TSet<FGuid> FVDPTable::GetCanonicalGUIDs() const
 {
 	TSet<FGuid> rtn;
-	BtoA.GetKeys(rtn);
+	CanonicalToDerives.GetKeys(rtn);
 	return rtn;
 }
 
@@ -18,7 +18,7 @@ FGuid FVDPTable::TranslateToDerived(const FGuid& guid) const
 {
 	if(HasCanonical(guid))
 	{
-		return BtoA[guid];
+		return CanonicalToDerives[guid].DerivedGuids[0];
 	}
 	return guid;
 }
@@ -32,32 +32,43 @@ FGuid FVDPTable::TranslateToCanonical(const FGuid& guid) const
 	return guid;
 }
 
-
-bool FVDPTable::HasDerived(const FGuid& guid) const
+bool FVDPTable::HasDerived(const DocumentPresetGuid& guid) const
 {
 	return AtoB.Contains(guid);
 }
 
-bool FVDPTable::HasCanonical(const FGuid& guid) const
+bool FVDPTable::HasCanonical(const CanonicalPresetGuid& guid) const
 {
-	return BtoA.Contains(guid);
+	return CanonicalToDerives.Contains(guid);
 }
 
 bool FVDPTable::Remove(const FGuid& Value)
 {
 	if(AtoB.Contains(Value))
 	{
-		const FGuid Canonical = AtoB[Value];
-		AtoB.Remove(Value);
-		BtoA.Remove(Canonical);
+		//Value is a Derived guid
+		DocumentPresetGuid docGuid = Value;
+		const FGuid Canonical = AtoB[docGuid];
+
+		//Remove it from the entries list and remove the back
+		// association.
+		auto& entries = CanonicalToDerives[Canonical].DerivedGuids;
+		entries.Remove(docGuid);
+		AtoB.Remove(docGuid);
+		
 		return true;
 	}
 
-	if (BtoA.Contains(Value))
+	if (CanonicalToDerives.Contains(Value))
 	{
-		const FGuid Derived = BtoA[Value];
-		AtoB.Remove(Derived);
-		BtoA.Remove(Value);
+		//Value is Canonical, This clears the entries list
+		CanonicalPresetGuid Canonical = Value;
+		auto& entries = CanonicalToDerives[Canonical].DerivedGuids;
+		for(DocumentPresetGuid& entry : entries)
+		{
+			AtoB.Remove(entry);	
+		}
+		CanonicalToDerives.Remove(Canonical);
 		return true;
 	}
 
@@ -65,35 +76,36 @@ bool FVDPTable::Remove(const FGuid& Value)
 }
 bool FVDPTable::Add(const FGuid& Canonical, const FGuid& Derived)
 {
-	if(ensureMsgf(!BtoA.Contains(Canonical), TEXT("Added canonical preset that already existed")) &&
-	   ensureMsgf(!AtoB.Contains(Derived), TEXT("Added Derived preset that already existed")))
+
+	if(!AtoB.Contains(Derived))
 	{
 		AtoB.Add(Derived, Canonical);
-		BtoA.Add(Canonical, Derived);
-		return true;
 	}
-
-	return false;
+	
+	if(!CanonicalToDerives.Contains(Canonical))
+	{
+		CanonicalToDerives.Add(Canonical, {});
+	}
+	auto& entry = CanonicalToDerives[Canonical];
+	entry.DerivedGuids.Add(Derived);
+	
+	return true;
 }
 
 bool FVDPTable::Contains(const FGuid& Value) const
 {
-	return BtoA.Contains(Value) || AtoB.Contains(Value);
+	return CanonicalToDerives.Contains(Value) || AtoB.Contains(Value);
 }
 
-bool FVDPTable::GetAssociated(const FGuid& Input, FGuid& Output) const
+void FVDPTable::UpgradeDocRecord(int32 DocRecordVersion)
 {
-	if(BtoA.Contains(Input))
+	//28: BtoA --> CanonicalToDerives. This allows 1:* mapping.
+	if(DocRecordVersion < 28)
 	{
-		Output = BtoA[Input];
-		return true;
+		for(auto& kvp : BtoA_DEPRECATED)
+		{
+			CanonicalToDerives.Add(kvp.Key, {{kvp.Value}});
+		}
+		BtoA_DEPRECATED.Empty(); //Empty so it's not replicated anymore
 	}
-
-	if(AtoB.Contains(Input))
-	{
-		Output = AtoB[Input];
-		return true;
-	}
-	
-	return false;
 }
