@@ -904,10 +904,20 @@ void FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(UModumateDocument* Do
 
 	dirtySymbols = dirtySymbols.Difference(hasAncestor);
 
+	TMap<FGuid, int32> symbolIDsToMoiID;
+	for (int32 symbolID : dirtySymbols)
+	{
+		symbolIDsToMoiID.Add(Doc->GetObjectById(symbolID)->GetStateData().AssemblyGUID, symbolID);
+	}
+
+	// Only process one instance of each Symbol
+	TArray<int32> uniqueDirtySymbols;
+	symbolIDsToMoiID.GenerateValueArray(uniqueDirtySymbols);
+
 	FBIMPresetCollection& presets = Doc->GetPresetCollection();
 	FBIMSymbolCollectionProxy symbolCollection(&presets);
 
-	for (int32 symbolID: dirtySymbols)
+	for (int32 symbolID: uniqueDirtySymbols)
 	{
 		PropagateChangedSymbolInstance(Doc, NextID, symbolID, OutDeltas, symbolCollection);
 	}

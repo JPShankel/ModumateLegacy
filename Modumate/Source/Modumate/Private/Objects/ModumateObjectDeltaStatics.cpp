@@ -1169,6 +1169,8 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		}
 	}
 
+	FBIMSymbolCollectionProxy symbolsCollection(&Doc->GetPresetCollection());
+
 	// Update EquivalentIDs in any Symbol Presets:
 	for (int32 groupID : GroupIDs)
 	{
@@ -1177,31 +1179,32 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 
 		if (symbolID.IsValid())
 		{
-			const FBIMPresetCollection& presets = Doc->GetPresetCollection();
-			const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(symbolID);
-			FBIMSymbolPresetData symbolPresetData;
-			if (ensure(symbolPreset) && symbolPreset->TryGetCustomData(symbolPresetData))
+			FBIMSymbolPresetData* symbolPresetData = symbolsCollection.PresetDataFromGUID(symbolID);
+			if (ensure(symbolPresetData))
 			{
-				FBIMPresetInstance newSymbolPreset = *symbolPreset;
-				for (auto& IdMap : symbolPresetData.EquivalentIDs)
+				for (auto& IdMap : symbolPresetData->EquivalentIDs)
 				{
+					TSet<int32> newIDs;
 					for (int32 id : IdMap.Value.IDSet)
 					{
-						const auto* oldID = oldIDToNewID.Find(id);
-						if (oldID)
+						const auto* newID = oldIDToNewID.Find(id);
+						if (newID)
 						{
-							IdMap.Value.IDSet.Add(*oldID);
-							break;
+							newIDs.Add(*newID);
 						}
 					}
+					IdMap.Value.IDSet.Append(MoveTemp(newIDs));
 				}
 
-				newSymbolPreset.SetCustomData(symbolPresetData);
-				FDeltaPtr presetDelta = presets.MakeUpdateDelta(newSymbolPreset);
-
-				OutDeltas.Emplace(FSelectedObjectToolMixin::kPreset, presetDelta);
 			}
 		}
+	}
+
+	TArray<FDeltaPtr> symbolsDeltas;
+	symbolsCollection.GetPresetDeltas(symbolsDeltas);
+	for (const auto& delta: symbolsDeltas)
+	{
+		OutDeltas.Emplace(FSelectedObjectToolMixin::kPreset, delta);
 	}
 
 	if (optionToNewGroupsMap.Num() > 0)
