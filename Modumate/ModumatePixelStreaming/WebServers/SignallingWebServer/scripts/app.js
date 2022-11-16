@@ -678,7 +678,7 @@ const ControlSchemeType = {
 var inputOptions = {
 	// The control scheme controls the behaviour of the mouse when it interacts
 	// with the WebRTC player.
-	controlScheme: ControlSchemeType.LockedMouse,
+	controlScheme: ControlSchemeType.HoveringMouse,
 
 	// Browser keys are those which are typically used by the browser UI. We
 	// usually want to suppress these to allow, for example, UE4 to show shader
@@ -1323,8 +1323,8 @@ function registerLockedMouseEvents(playerElement) {
 // the cursor to have an effect over the video. Otherwise the cursor just
 // passes over the browser.
 function registerHoveringMouseEvents(playerElement) {
-	styleCursor = 'none';   // We will rely on UE4 client's software cursor.
-	//styleCursor = 'default';  // Showing cursor
+	//styleCursor = 'none';   // We will rely on UE4 client's software cursor.
+	styleCursor = 'default';  // Showing cursor
 
 	playerElement.onmousemove = function (e) {
 		emitMouseMove(e.offsetX, e.offsetY, e.movementX, e.movementY);
@@ -1676,6 +1676,9 @@ function onConfig(config) {
 }
 
 function load() {
+	document.getElementById('overlay').style.display = 'none';
+	window.showRTX = () => {document.getElementById('overlay').style.display = 'block';};
+	window.hideRTX = () => {document.getElementById('overlay').style.display = 'none';};
 	setupHtmlEvents();
 	setupFreezeFrameOverlay();
 	registerKeyboardEvents();

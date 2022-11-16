@@ -1,5 +1,9 @@
 /*Copyright Epic Games, Inc. All Rights Reserved.*/
 
+* { 
+  cursor: auto !important;
+}
+
 :root {
 	/*Using colour scheme https://color.adobe.com/TD-Colors---Option-3-color-theme-10394433/*/
 	--colour1:#2B3A42;
