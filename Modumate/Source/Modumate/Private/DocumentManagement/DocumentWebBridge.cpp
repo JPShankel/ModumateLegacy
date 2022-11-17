@@ -727,6 +727,13 @@ void UModumateDocumentWebBridge::create_or_update_preset(const FString& PresetDa
 	}
 
 	UpdateOrAddPreset(newPreset);
+
+	// Let EditModelUserWidget manually check for update
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->CheckUpdateSwapMenu();
+	}
 }
 
 void UModumateDocumentWebBridge::delete_preset(const FString& InGUID)

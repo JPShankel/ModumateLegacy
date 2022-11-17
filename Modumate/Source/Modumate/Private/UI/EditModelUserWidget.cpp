@@ -523,6 +523,14 @@ void UEditModelUserWidget::CheckDeletePresetFromWebUI(const FGuid& PresetGUIDToD
 	}
 }
 
+void UEditModelUserWidget::CheckUpdateSwapMenu()
+{
+	if (CurrentLeftMenuState == ELeftMenuState::SwapMenu)
+	{
+		ToggleSwapMenu(true);
+	}
+}
+
 void UEditModelUserWidget::ToggleCutPlaneMenu(bool bNewVisibility)
 {
 	CutPlaneMenu->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);

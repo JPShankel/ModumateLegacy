@@ -157,4 +157,5 @@ public:
 	void EditDetailDesignerFromSelection();
 	void UpdateViewCubeOffset(float InOffset);
 	void CheckDeletePresetFromWebUI(const FGuid& PresetGUIDToDelete);
+	void CheckUpdateSwapMenu();
 };
