@@ -920,6 +920,10 @@ const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMo
 
 bool FBIMPresetCollection::ReadInitialPresets(const UModumateGameInstance* GameInstance)
 {
+	// KLUDGE: Static collections
+	DefaultAssembliesByObjectType.Empty();
+	AMeshes.Reset();
+
 	auto world = GameInstance->GetWorld();
 	if(ensure(world))
 	{
