@@ -39,11 +39,13 @@ public:
 
 	static bool CreateDeltasForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, TArray<FDeltaPtr>& OutDeltas);
 	static bool CreatePresetDataForSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, const FTransform& Transform, FBIMSymbolPresetData& OutPreset);
-	static bool CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, const FGuid& SymbolID, FBIMSymbolCollectionProxy& SymbolCollection, const FTransform& Transform,
-		TArray<FDeltaPtr>& OutDeltas, const TSet<FGuid>& SymbolsList);
-	static void PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID, TArray<FDeltaPtr>& OutDeltas,
-		FBIMSymbolCollectionProxy& SymbolsCollection);
-	static void PropagateAllDirtySymbols(UModumateDocument* Doc, int32& NextID, TArray<FDeltaPtr>& OutDeltas);
+	static bool CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, const FGuid& SymbolID,
+		FBIMSymbolCollectionProxy& SymbolCollection, const FTransform& Transform, TArray<FDeltaPtr>& OutDeltas, const TSet<FGuid>& SymbolsList, TSet<int32>& OutAffectedGroups);
+
+	static void PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID,
+		FBIMSymbolCollectionProxy& SymbolsCollection, TArray<FDeltaPtr>& OutDeltas, TSet<int32>& OutAffectGroups);
+	static void PropagateAllDirtySymbols(UModumateDocument* Doc, int32& NextID, TArray<FDeltaPtr>& OutDeltas,
+		TArray<int32>& OutAffectedGroups);
 
 	static bool CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
 	static bool DetachSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);

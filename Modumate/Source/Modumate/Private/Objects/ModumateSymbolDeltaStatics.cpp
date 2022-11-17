@@ -589,7 +589,8 @@ bool FModumateSymbolDeltaStatics::CreatePresetDataForSymbol(UModumateDocument* D
 
 // Create Deltas for new Symbol instance from Symbol Preset. Assumes Group MOI & Graph3d are created elsewhere.
 bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, const FGuid& SymbolID,
-	FBIMSymbolCollectionProxy& SymbolCollection, const FTransform& Transform, TArray<FDeltaPtr>& OutDeltas, const TSet<FGuid>& SymbolsList)
+	FBIMSymbolCollectionProxy& SymbolCollection, const FTransform& Transform, TArray<FDeltaPtr>& OutDeltas, const TSet<FGuid>& SymbolsList,
+	TSet<int32>& OutAffectedGroups)
 {
 	TMap<int32, int32> oldIDToNewID;
 	oldIDToNewID.Add(MOD_ID_NONE, MOD_ID_NONE);
@@ -608,6 +609,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 		oldIDToNewID.Add(kvp.Key, NextID++);
 	}
 	oldIDToNewID.Add(symbolRoot, GroupID);
+	OutAffectedGroups.Add(GroupID);
 
 	// Similar to FModumateObjectDeltaStatics::DuplicateGroups.
 	if (!ensure(symbolData->Graphs.Contains(symbolRoot)))
@@ -764,6 +766,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 
 			case EObjectType::OTMetaGraph:
 			{
+				OutAffectedGroups.Add(newState.ID);
 				if (newState.AssemblyGUID.IsValid())
 				{
 					const FGuid subSymbolGuid = newState.AssemblyGUID;
@@ -786,7 +789,7 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 						newState.CustomData.SaveStructData(subGroupData);
 
 						ensure(CreateDeltasForNewSymbolInstance(Doc, newState.ID, NextID, subSymbolGuid, SymbolCollection, newTransform,
-							OutDeltas, SymbolsList.Union({ subSymbolGuid })) );
+							OutDeltas, SymbolsList.Union({ subSymbolGuid }), OutAffectedGroups) );
 					}
 
 					symbolData = SymbolCollection.PresetDataFromGUID(SymbolID);
@@ -818,8 +821,8 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 }
 
 
-void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID, TArray<FDeltaPtr>& OutDeltas,
-	FBIMSymbolCollectionProxy& SymbolsCollection)
+void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID,
+	FBIMSymbolCollectionProxy& SymbolsCollection, TArray<FDeltaPtr>& OutDeltas, TSet<int32>& OutAffectGroups)
 {
 	const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(GroupID));
 
@@ -861,7 +864,7 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 			FModumateObjectDeltaStatics::GetDeltasForGraphDeleteRecursive(Doc, otherGroup, &SymbolsCollection, OutDeltas, false);
 			FTransform transform(otherGroupMoi->GetWorldTransform());
 			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, symbolGuid, SymbolsCollection,
-				transform, OutDeltas, { symbolGuid }));
+				transform, OutDeltas, { symbolGuid }, OutAffectGroups));
 		}
 	}
 
@@ -870,9 +873,10 @@ void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocume
 	controller && controller->DynamicIconGenerator && controller->DynamicIconGenerator->InvalidateWebCacheEntry(symbolGuid);
 }
 
-void FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(UModumateDocument* Doc, int32& NextID, TArray<FDeltaPtr>& OutDeltas)
+void FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(UModumateDocument* Doc, int32& NextID, TArray<FDeltaPtr>& OutDeltas,
+	TArray<int32>& OutAffectedGroups)
 {
-	TSet<int32> dirtySymbols (Doc->GetDirtySymbolGroups());
+	TSet<int32> dirtySymbols(Doc->GetDirtySymbolGroups());
 	TSet<int32> badIDs;
 	for (int32 symbolID: dirtySymbols)
 	{
@@ -902,10 +906,10 @@ void FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(UModumateDocument* Do
 		}
 	}
 
-	dirtySymbols = dirtySymbols.Difference(hasAncestor);
+	TSet<int32> rootDirtySymbols(dirtySymbols.Difference(hasAncestor));
 
 	TMap<FGuid, int32> symbolIDsToMoiID;
-	for (int32 symbolID : dirtySymbols)
+	for (int32 symbolID : rootDirtySymbols)
 	{
 		symbolIDsToMoiID.Add(Doc->GetObjectById(symbolID)->GetStateData().AssemblyGUID, symbolID);
 	}
@@ -919,12 +923,13 @@ void FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(UModumateDocument* Do
 
 	for (int32 symbolID: uniqueDirtySymbols)
 	{
-		PropagateChangedSymbolInstance(Doc, NextID, symbolID, OutDeltas, symbolCollection);
+		PropagateChangedSymbolInstance(Doc, NextID, symbolID, symbolCollection, OutDeltas, dirtySymbols);
 	}
 
 	Doc->ClearDirtySymbolGroups();
 
 	symbolCollection.GetPresetDeltas(OutDeltas);
+	OutAffectedGroups = dirtySymbols.Array();
 }
 
 bool FModumateSymbolDeltaStatics::CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group)

@@ -1222,7 +1222,8 @@ void UModumateDocument::ApplySymbolDeltas(TArray<FDeltaPtr>& Deltas)
 		int32 nextID = NextID;
 		TArray<FDeltaPtr> symbolDeltas;
 
-		FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(this, nextID, symbolDeltas);
+		TArray<int32> affectedGroups;
+		FModumateSymbolDeltaStatics::PropagateAllDirtySymbols(this, nextID, symbolDeltas, affectedGroups);
 		if (symbolDeltas.Num() > 0)
 		{
 			TArray<FDeltaPtr> sideEffectDeltas;
@@ -1247,6 +1248,14 @@ void UModumateDocument::ApplySymbolDeltas(TArray<FDeltaPtr>& Deltas)
 
 			} while (sideEffectDeltas.Num() != 0 && guard-- > 0);
 		}
+
+		auto* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+		auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(GetWorld())) : nullptr;
+		if (controller)
+		{
+			controller->EMPlayerState->PostGroupChanged(affectedGroups);
+		}
+
 	}
 
 }

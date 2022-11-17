@@ -261,8 +261,9 @@ void AMOIMetaGraph::SwapSymbol(TArray<FDeltaPtr>* OutSideEffectDeltas)
 	FTransform transform(InstanceData.Rotation, InstanceData.Rotation.RotateVector(deltaAnchor) + InstanceData.Location);
 	int32 nextID = Document->GetNextAvailableID();
 	
+	TSet<int32> unused;
 	FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(Document, ID, nextID, StateData.AssemblyGUID, symbolCollection,
-		transform, *OutSideEffectDeltas, { StateData.AssemblyGUID });
+		transform, *OutSideEffectDeltas, { StateData.AssemblyGUID }, unused);
 
 	// New transform for the group
 	auto groupDelta = MakeShared<FMOIDelta>();
