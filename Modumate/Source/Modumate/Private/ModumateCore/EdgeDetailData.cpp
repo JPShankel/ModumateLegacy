@@ -422,4 +422,39 @@ FText FEdgeDetailData::MakeShortDisplayText(int32 Index) const
 	return FText::Format(entireFormat, numParticipantsText, angleText, indexText);
 }
 
+void FEdgeDetailData::ConvertToWebPreset(FBIMWebPreset& OutPreset)
+{
+	FString conditionsKey = TEXT("EdgeDetail.Conditions");
+	FString overridesKey = TEXT("EdgeDetail.Overrides");
+	
+	FCustomDataWebConvertable::ConvertToWebPreset(OutPreset);
+	
+	FString conditionsJson, overridesJson;
+	WriteJsonUstructArray(conditionsJson, &Conditions, TEXT("Conditions"));
+	WriteJsonUstructArray(overridesJson, &Overrides, TEXT("Overrides"));
+
+	OutPreset.properties.Add(conditionsKey, {conditionsKey, { conditionsJson}});
+	OutPreset.properties.Add(overridesKey, {overridesKey, { overridesJson}});
+}
+
+void FEdgeDetailData::ConvertFromWebPreset(const FBIMWebPreset& InPreset)
+{
+	FString conditionsKey = TEXT("EdgeDetail.Conditions");
+	FString overridesKey = TEXT("EdgeDetail.Overrides");
+	
+	FCustomDataWebConvertable::ConvertFromWebPreset(InPreset);
+	
+	if(InPreset.properties.Contains(conditionsKey))
+	{
+		FString conditionsJson = InPreset.properties[conditionsKey].value[0];
+		ReadJsonUstructArray(conditionsJson, &Conditions, TEXT("Conditions"));
+	}
+
+	if(InPreset.properties.Contains(overridesKey))
+	{
+		FString overridesJson = InPreset.properties[overridesKey].value[0];
+		ReadJsonUstructArray(overridesJson, &Overrides, TEXT("Overrides"));
+	}
+}
+
 #undef LOCTEXT_NAMESPACE

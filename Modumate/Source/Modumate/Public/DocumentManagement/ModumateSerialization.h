@@ -43,6 +43,16 @@ struct FGraph2DEdgeRecord
 
 	UPROPERTY()
 	TArray<int32> VertexIDs;
+
+	friend bool operator==(const FGraph2DEdgeRecord& Lhs, const FGraph2DEdgeRecord& RHS)
+	{
+		return Lhs.VertexIDs == RHS.VertexIDs;
+	}
+
+	friend bool operator!=(const FGraph2DEdgeRecord& Lhs, const FGraph2DEdgeRecord& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 
 USTRUCT()
@@ -52,6 +62,16 @@ struct FGraph2DPolygonRecord
 
 	UPROPERTY()
 	TArray<int32> VertexIDs;
+
+	friend bool operator==(const FGraph2DPolygonRecord& Lhs, const FGraph2DPolygonRecord& RHS)
+	{
+		return Lhs.VertexIDs == RHS.VertexIDs;
+	}
+
+	friend bool operator!=(const FGraph2DPolygonRecord& Lhs, const FGraph2DPolygonRecord& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 
 USTRUCT()
@@ -70,6 +90,19 @@ struct FGraph2DRecord
 
 	UPROPERTY()
 	TMap<int32, FGraph2DPolygonRecord> Polygons;
+	
+	friend bool operator==(const FGraph2DRecord& Lhs, const FGraph2DRecord& RHS)
+	{
+		return Lhs.Epsilon == RHS.Epsilon
+			&& Lhs.Vertices.OrderIndependentCompareEqual(RHS.Vertices)
+			&& Lhs.Edges.OrderIndependentCompareEqual(RHS.Edges)
+			&& Lhs.Polygons.OrderIndependentCompareEqual(RHS.Polygons);
+	}
+
+	friend bool operator!=(const FGraph2DRecord& Lhs, const FGraph2DRecord& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 
 
@@ -91,6 +124,16 @@ struct FGraph3DVertexRecordV1
 
 	// Currently, vertices to not take advantage of group ids
 	// if that changes, the data record will need a property for them here
+	friend bool operator==(const FGraph3DVertexRecordV1& Lhs, const FGraph3DVertexRecordV1& RHS)
+	{
+		return Lhs.ID == RHS.ID
+			&& Lhs.Position == RHS.Position;
+	}
+
+	friend bool operator!=(const FGraph3DVertexRecordV1& Lhs, const FGraph3DVertexRecordV1& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 typedef FGraph3DVertexRecordV1 FGraph3DVertexRecord;
 
@@ -113,6 +156,19 @@ struct FGraph3DEdgeRecordV1
 
 	UPROPERTY()
 	TSet<int32> GroupIDs;
+
+	friend bool operator==(const FGraph3DEdgeRecordV1& Lhs, const FGraph3DEdgeRecordV1& RHS)
+	{
+		return Lhs.ID == RHS.ID
+			&& Lhs.StartVertexID == RHS.StartVertexID
+			&& Lhs.EndVertexID == RHS.EndVertexID
+			&& Lhs.GroupIDs.Difference(RHS.GroupIDs).Num() == 0;
+	}
+
+	friend bool operator!=(const FGraph3DEdgeRecordV1& Lhs, const FGraph3DEdgeRecordV1& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 typedef FGraph3DEdgeRecordV1 FGraph3DEdgeRecord;
 
@@ -138,12 +194,38 @@ struct FGraph3DFaceRecordV1
 
 	UPROPERTY()
 	TSet<int32> ContainedFaceIDs;
+	
+	friend bool operator==(const FGraph3DFaceRecordV1& Lhs, const FGraph3DFaceRecordV1& RHS)
+	{
+		return Lhs.ID == RHS.ID
+			&& Lhs.VertexIDs == RHS.VertexIDs
+			&& Lhs.GroupIDs.Difference(RHS.GroupIDs).Num() == 0
+			&& Lhs.ContainingFaceID == RHS.ContainingFaceID
+			&& Lhs.ContainedFaceIDs.Difference(RHS.ContainedFaceIDs).Num() == 0;
+	}
+
+	friend bool operator!=(const FGraph3DFaceRecordV1& Lhs, const FGraph3DFaceRecordV1& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 typedef FGraph3DFaceRecordV1 FGraph3DFaceRecord;
 
 USTRUCT()
 struct FGraph3DRecordV1
 {
+	friend bool operator==(const FGraph3DRecordV1& Lhs, const FGraph3DRecordV1& RHS)
+	{
+		return Lhs.Vertices.OrderIndependentCompareEqual(RHS.Vertices)
+			&& Lhs.Edges.OrderIndependentCompareEqual(RHS.Edges)
+			&& Lhs.Faces.OrderIndependentCompareEqual(RHS.Faces);
+	}
+
+	friend bool operator!=(const FGraph3DRecordV1& Lhs, const FGraph3DRecordV1& RHS)
+	{
+		return !(Lhs == RHS);
+	}
+
 	GENERATED_BODY()
 
 	UPROPERTY()

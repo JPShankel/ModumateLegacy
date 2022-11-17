@@ -14,6 +14,7 @@ struct FCustomDataWebConvertable
 	
 	virtual void ConvertToWebPreset(FBIMWebPreset& OutPreset);
 	virtual void ConvertFromWebPreset(const FBIMWebPreset& InPreset);
+	
 	virtual FString GetPropertyPrefix() const
 	{
 		ensureAlwaysMsgf(false, TEXT("Must override GetPropertyPrefix()"));

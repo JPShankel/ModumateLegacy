@@ -2,6 +2,7 @@
 
 #include "BIMKernel/Presets/BIMPresetInstanceFactory.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/CustomData/BIMDimensions.h"
 #include "BIMKernel/Presets/CustomData/BIMIESProfile.h"
 #include "BIMKernel/Presets/CustomData/BIMMesh.h"
@@ -156,7 +157,22 @@ bool FBIMPresetInstanceFactory::DeserializeCustomData(EPresetPropertyMatrixNames
 			OutPreset.SetCustomData(data);
 			return true;
 		}
-	default: ;
+	case EPresetPropertyMatrixNames::Symbol:
+		{
+			FBIMSymbolPresetData data;
+			data.ConvertFromWebPreset(WebPreset);
+			OutPreset.SetCustomData(data);
+			return true;
+		}
+	case EPresetPropertyMatrixNames::EdgeDetail:
+		{
+			FEdgeDetailData data;
+			data.ConvertFromWebPreset(WebPreset);
+			OutPreset.SetCustomData(data);
+			return true;
+		}
+	default:
+		break;
 	}
 
 	return false;

@@ -79,6 +79,16 @@ struct FEdgeDetailOverrides
 	void Invert();
 
 	friend uint32 GetTypeHash(const FEdgeDetailOverrides& EdgeDetailOverrides);
+	friend bool operator==(const FEdgeDetailOverrides& Lhs, const FEdgeDetailOverrides& RHS)
+	{
+		return Lhs.LayerExtensions == RHS.LayerExtensions
+			&& Lhs.SurfaceExtensions == RHS.SurfaceExtensions;
+	}
+
+	friend bool operator!=(const FEdgeDetailOverrides& Lhs, const FEdgeDetailOverrides& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 
 USTRUCT()
@@ -141,6 +151,23 @@ struct FEdgeDetailData : public FCustomDataWebConvertable
 	{
 		return FEdgeDetailData::StaticStruct();
 	}
+
+	virtual void ConvertToWebPreset(FBIMWebPreset& OutPreset) override;
+	virtual void ConvertFromWebPreset(const FBIMWebPreset& InPreset) override;
+
+	friend bool operator==(const FEdgeDetailData& Lhs, const FEdgeDetailData& RHS)
+	{
+		return Lhs.Conditions == RHS.Conditions
+			&& Lhs.Overrides == RHS.Overrides
+			&& Lhs.CachedConditionHash == RHS.CachedConditionHash;
+	}
+
+	friend bool operator!=(const FEdgeDetailData& Lhs, const FEdgeDetailData& RHS)
+	{
+		return !(Lhs == RHS);
+	}
+
+	
 protected:
 	static FEdgeDetailData TempOrientedDetail;
 	static TArray<uint32> TempOrientedConditionHashes;

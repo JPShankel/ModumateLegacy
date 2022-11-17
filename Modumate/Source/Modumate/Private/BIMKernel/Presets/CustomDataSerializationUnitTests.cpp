@@ -3,6 +3,7 @@
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetPatternDefinition.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/BIMWebPreset.h"
 #include "Misc/AutomationTest.h"
 #include "BIMKernel/Presets/CustomData/BIMDimensions.h"
@@ -57,15 +58,16 @@ bool FModumateWebPresetsSerializes::RunTest(const FString& Parameters)
 		UE_LOG(LogTemp, Warning, TEXT("TEST NOT RUN, must have PIE or Standalone context running"));
 		return true;
 	}
-	
-	FBIMPresetCollection collection {};
-	collection.ReadInitialPresets(gameInstance);
+
+	//Copy
+	FBIMPresetCollection collection = controller->GetDocument()->GetPresetCollection();
 
 	TArray<FGuid> keys;
 	collection.GetAllPresetKeys(keys);
 	for(auto& key : keys)
 	{
 		const FBIMPresetInstance* InPreset = collection.PresetFromGUID(key);
+
 		FBIMPresetInstance OutPreset;
 		FBIMWebPreset interim;
 		InPreset->ToWebPreset(interim, world);
@@ -100,6 +102,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCustomDataSerializes, "Modumate.BIM.Cu
 	FBIMProfileRef InProfileRef, OutProfileRef;
 	FBIMRawMaterial InRawMaterial, OutRawMaterial;
 	FBIMSlotConfig InSlotConfig, OutSlotConfig;
+	FBIMSymbolPresetData InSymbolData, OutSymbolData;
+	FEdgeDetailData InEdgeDetail, OutEdgeDetail;
 	
 	FBIMPresetMaterialBindingSet InMaterialBindingSet, OutMaterialBindingSet;
 	FLightConfiguration InLightConfig, OutLightConfig;
@@ -186,6 +190,29 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCustomDataSerializes, "Modumate.BIM.Cu
 	InLightConfig.SourceRadius = 1515;
 	InLightConfig.bAsSpotLight = false;
 	InLightConfig.IESProfileGUID = FGuid::NewGuid();
+
+	InSymbolData.Anchor = FVector(5,2,1);
+	InSymbolData.Graphs.Add(1, {});
+	InSymbolData.Graphs.Add(11, {});
+	InSymbolData.Members.Add(2, {});
+	InSymbolData.Members.Add(22, {});
+	InSymbolData.RootGraph = 1;
+	InSymbolData.SurfaceGraphs.Add(1, {});
+	InSymbolData.SurfaceGraphs.Add(11, {});
+	InSymbolData.EquivalentIDs.Add(1, {{1,2,3}});
+	InSymbolData.EquivalentIDs.Add(2, {{4,5,6}});
+	InSymbolData.EquivalentIDs.Add(3, {{7,8,9}});
+
+	InEdgeDetail.Conditions.Add({1.0f, 2.0f, {3.0f, 4.0f}, EDetailParticipantType::Layered});
+	InEdgeDetail.Conditions.Add({5.0f, 6.0f, {7.0f, 8.0f}, EDetailParticipantType::Rigged});
+	
+	InEdgeDetail.Overrides.Add({});
+	InEdgeDetail.Overrides.Add({});
+	InEdgeDetail.Overrides[0].LayerExtensions.Add({1,2});
+	InEdgeDetail.Overrides[0].SurfaceExtensions = {3,4};
+	InEdgeDetail.CachedConditionHash = 55551;
+	InEdgeDetail.Overrides[1].LayerExtensions.Add({5,6});
+	InEdgeDetail.Overrides[1].SurfaceExtensions = {33,44};
 	
 	InDims.ConvertToWebPreset(TestPreset);
 	InIESProfile.ConvertToWebPreset(TestPreset);
@@ -202,6 +229,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCustomDataSerializes, "Modumate.BIM.Cu
 	InSlotConfig.ConvertToWebPreset(TestPreset);
 	InMaterialBindingSet.ConvertToWebPreset(TestPreset);
 	InLightConfig.ConvertToWebPreset(TestPreset);
+	InSymbolData.ConvertToWebPreset(TestPreset);
+	InEdgeDetail.ConvertToWebPreset(TestPreset);
 	
 	OutDims.ConvertFromWebPreset(TestPreset);
 	OutIESProfile.ConvertFromWebPreset(TestPreset);
@@ -218,8 +247,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCustomDataSerializes, "Modumate.BIM.Cu
 	OutSlotConfig.ConvertFromWebPreset(TestPreset);
 	OutMaterialBindingSet.ConvertFromWebPreset(TestPreset);
 	OutLightConfig.ConvertFromWebPreset(TestPreset);
-
-
+	OutSymbolData.ConvertFromWebPreset(TestPreset);
+	OutEdgeDetail.ConvertFromWebPreset(TestPreset);
 
 	TestTrue(TEXT("Dimensions matches"), InDims == OutDims);
 	TestTrue(TEXT("IESProfile matches"), InIESProfile == OutIESProfile);
@@ -235,6 +264,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCustomDataSerializes, "Modumate.BIM.Cu
 	TestTrue(TEXT("SlotConfig matches"), InSlotConfig == OutSlotConfig);
 	TestTrue(TEXT("Material Bindings matches"), InMaterialBindingSet == OutMaterialBindingSet);
 	TestTrue(TEXT("Light Config matches"), InLightConfig == OutLightConfig);
+	TestTrue(TEXT("Symbol Data matches"), InSymbolData == OutSymbolData);
+	TestTrue(TEXT("Edge Detail matches"), InEdgeDetail == OutEdgeDetail);
 	
 	return true;
 }

@@ -1472,11 +1472,8 @@ void FBIMPresetInstance::ConvertCustomDataToWebProperties(FBIMWebPreset& OutPres
 
 	for (auto& kvp : CustomDataByClassName)
 	{
-		if(kvp.Key != TEXT("EdgeDetailData"))
-		{
-			FCustomDataWebConvertable* s = kvp.Value.CreateStructFromJSON<FCustomDataWebConvertable>();
-			s->ConvertToWebPreset(OutPreset);	
-		}
+		FCustomDataWebConvertable* s = kvp.Value.CreateStructFromJSON<FCustomDataWebConvertable>();
+		s->ConvertToWebPreset(OutPreset);	
 	}
 }
 

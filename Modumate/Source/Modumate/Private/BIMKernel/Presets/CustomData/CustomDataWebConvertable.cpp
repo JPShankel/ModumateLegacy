@@ -1,7 +1,6 @@
 #include "BIMKernel/Presets/CustomData/CustomDataWebConvertable.h"
 #include "BIMKernel/Presets/BIMWebPreset.h"
 
-
 void FCustomDataWebConvertable::ConvertToWebPreset(FBIMWebPreset& OutPreset)
 {
 	for (TFieldIterator<FProperty> It(VirtualizedStaticStruct()); It; ++It)
@@ -40,6 +39,23 @@ bool FCustomDataWebConvertable::SerializeByPropertyName(void* Container, FProper
 		{
 			const float* numerical = ChildFloatProp->ContainerPtrToValuePtr<float>(Container);
 			OutProperties.Add(Entry, {Entry, {FString::SanitizeFloat(*numerical)}});
+		}
+	}
+	else if (PropType == TEXT("int32"))
+	{
+		if (const FIntProperty* ChildIntProp = CastField<FIntProperty>(Property))
+		{
+			const int32* numerical = ChildIntProp->ContainerPtrToValuePtr<int32>(Container);
+			OutProperties.Add(Entry, {Entry, {FString::FromInt(*numerical)}});
+		}
+	}
+	else if (PropType == TEXT("uint32"))
+	{
+		if (const FUInt32Property* ChildIntProp = CastField<FUInt32Property>(Property))
+		{
+			const uint32* numerical = ChildIntProp->ContainerPtrToValuePtr<uint32>(Container);
+			FString output = FString::Printf(TEXT("%u"), *numerical);
+			OutProperties.Add(Entry, {Entry, {output}});
 		}
 	}
 	else if (PropType == TEXT("bool"))
@@ -90,11 +106,15 @@ bool FCustomDataWebConvertable::SerializeByPropertyName(void* Container, FProper
 	{
 		if (FArrayProperty * ChildArrayProp = CastField<FArrayProperty>(Property))
 		{
-			TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(Container);
-			if(array != nullptr)
+			FFieldClass* innerType = ChildArrayProp->Inner->GetClass();
+			FString typeName = innerType->GetFName().ToString();
+			if(typeName.Equals(TEXT("StrProperty")))
 			{
-				//TODO: Edge Details use arrays of structs which need special handling - JN
-				OutProperties.Add(Entry, {Entry, *array});	
+				TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(Container);
+				if(array != nullptr)
+				{
+					OutProperties.Add(Entry, {Entry, *array});
+				}	
 			}
 		}
 	}
@@ -131,6 +151,24 @@ bool FCustomDataWebConvertable::DeserializeByPropertyName(void* Container,
 		{
 			float propVal = FCString::Atof(*InProperties[Entry].value[0]);
 			if (const FFloatProperty* ChildFloatProp = CastField<FFloatProperty>(Property))
+			{
+				ChildFloatProp->SetPropertyValue_InContainer(Container, propVal);
+				rtn = true;
+			}
+		}
+		else if (PropType == TEXT("int32"))
+		{
+			int32 propVal = FCString::Atoi(*InProperties[Entry].value[0]);
+			if (const FIntProperty* ChildFloatProp = CastField<FIntProperty>(Property))
+			{
+				ChildFloatProp->SetPropertyValue_InContainer(Container, propVal);
+				rtn = true;
+			}
+		}
+		else if (PropType == TEXT("uint32"))
+		{
+			uint32 propVal = FCString::Strtoui64(*InProperties[Entry].value[0], nullptr, 10);
+			if (const FUInt32Property* ChildFloatProp = CastField<FUInt32Property>(Property))
 			{
 				ChildFloatProp->SetPropertyValue_InContainer(Container, propVal);
 				rtn = true;
@@ -173,12 +211,15 @@ bool FCustomDataWebConvertable::DeserializeByPropertyName(void* Container,
         {
         	if (FArrayProperty * ChildArrayProp = CastField<FArrayProperty>(Property))
         	{
-        		TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(Container);
-        		if(array != nullptr)
+        		FFieldClass* innerType = ChildArrayProp->Inner->GetClass();
+        		if(innerType->GetFName().IsEqual(TEXT("StrProperty")))
         		{
-        			//TODO: Edge Details use arrays of structs which need special handling - JN
-        			*array = InProperties[Entry].value;
-        			rtn = true;
+        			TArray<FString> *array = ChildArrayProp->ContainerPtrToValuePtr<TArray<FString>>(Container);
+        			if(array != nullptr)
+        			{
+        				*array = InProperties[Entry].value;
+        				rtn = true;
+        			}
         		}
         	}
         } 

@@ -5,11 +5,23 @@
 #include "CoreMinimal.h"
 #include "Objects/MOIState.h"
 #include "DocumentManagement//ModumateSerialization.h"
+#include "BIMKernel/Presets/CustomData/CustomDataWebConvertable.h"
 #include "BIMSymbolPresetData.generated.h"
+
 
 USTRUCT()
 struct MODUMATE_API FBIMSymbolPresetIDSet
 {
+	friend bool operator==(const FBIMSymbolPresetIDSet& Lhs, const FBIMSymbolPresetIDSet& RHS)
+	{
+		return Lhs.IDSet.Difference(RHS.IDSet).Num() == 0;
+	}
+
+	friend bool operator!=(const FBIMSymbolPresetIDSet& Lhs, const FBIMSymbolPresetIDSet& RHS)
+	{
+		return !(Lhs == RHS);
+	}
+
 	GENERATED_BODY()
 
 	UPROPERTY()
@@ -40,14 +52,6 @@ struct MODUMATE_API FBIMSymbolPresetDataV26
 USTRUCT()
 struct MODUMATE_API FBIMSymbolPresetData : public FCustomDataWebConvertable
 {
-	virtual FString GetPropertyPrefix() const override
-	{
-		return GetEnumValueString(EPresetPropertyMatrixNames::Symbol);
-	}
-	virtual UStruct* VirtualizedStaticStruct() override
-	{
-		return FBIMSymbolPresetData::StaticStruct();
-	}
 	GENERATED_BODY()
 
 	UPROPERTY()
@@ -67,4 +71,31 @@ struct MODUMATE_API FBIMSymbolPresetData : public FCustomDataWebConvertable
 
 	UPROPERTY()
 	int32 RootGraph { MOD_ID_NONE };
+
+	virtual FString GetPropertyPrefix() const override
+	{
+		return GetEnumValueString(EPresetPropertyMatrixNames::Symbol);
+	}
+	virtual UStruct* VirtualizedStaticStruct() override
+	{
+		return FBIMSymbolPresetData::StaticStruct();
+	}
+
+	virtual void ConvertToWebPreset(FBIMWebPreset& OutPreset) override;
+	virtual void ConvertFromWebPreset(const FBIMWebPreset& InPreset) override;
+
+	friend bool operator==(const FBIMSymbolPresetData& Lhs, const FBIMSymbolPresetData& RHS)
+	{
+		return Lhs.Members.OrderIndependentCompareEqual(RHS.Members)
+			&& Lhs.Graphs.OrderIndependentCompareEqual(RHS.Graphs)
+			&& Lhs.SurfaceGraphs.OrderIndependentCompareEqual(RHS.SurfaceGraphs)
+			&& Lhs.EquivalentIDs.OrderIndependentCompareEqual(RHS.EquivalentIDs)
+			&& Lhs.Anchor == RHS.Anchor
+			&& Lhs.RootGraph == RHS.RootGraph;
+	}
+
+	friend bool operator!=(const FBIMSymbolPresetData& Lhs, const FBIMSymbolPresetData& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
