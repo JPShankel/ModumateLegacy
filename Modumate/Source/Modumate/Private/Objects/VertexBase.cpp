@@ -36,6 +36,7 @@ int32 AMOIVertexBase::GetNumCorners() const
 
 bool AMOIVertexBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
+	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 	if (!UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
 	{
 		return false;

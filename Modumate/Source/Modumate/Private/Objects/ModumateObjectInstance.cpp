@@ -1435,6 +1435,13 @@ bool AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCol
 	moiActor->SetActorHiddenInGame(!bOutVisible);
 	moiActor->SetActorEnableCollision(bOutCollisionEnabled);
 
+	// Group visual affordance:
+	int32 unusedSubgroup;
+	bool bIsInGroup;
+	bool bGroupVisible = UModumateObjectStatics::IsObjectInSubgroup(Document, this, MOD_ID_NONE, unusedSubgroup, bIsInGroup) || bIsInGroup;
+	controller->EMPlayerState->
+		SetActorRenderValues(moiActor, bGroupVisible ? 0 : 0x10 /*EStencilFlags::InactiveGroup*/, false);
+
 	return true;
 }
 

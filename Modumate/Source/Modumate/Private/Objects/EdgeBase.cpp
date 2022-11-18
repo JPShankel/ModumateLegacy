@@ -99,6 +99,7 @@ bool AMOIEdgeBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabl
 		return false;
 	}
 
+	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 	if (!UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
 	{
 		return false;

@@ -42,6 +42,8 @@ bool AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnab
 		return false;
 	}
 
+	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+
 	bool bPreviouslyVisible = IsVisible();
 
 	if (!UModumateObjectStatics::GetMetaObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
