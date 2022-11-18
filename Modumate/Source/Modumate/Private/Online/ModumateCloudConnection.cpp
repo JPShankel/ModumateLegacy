@@ -9,6 +9,7 @@
 #include "Online/ModumateAccountManager.h"
 #include "Online/ProjectConnection.h"
 #include "HAL/Event.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 
 /*
 * With this (without the ECVF_Cheat flag) we can override the AMS endpoint on any shipping build (installer or otherwise) by adding these lines to:
@@ -578,7 +579,7 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 
 	TArray<uint8> bin;
 	FFileHelper::LoadFileToArray(bin, *Filename);
-
+	
 	Request->SetContent(bin);
 	return Request->ProcessRequest();
 }
@@ -894,4 +895,26 @@ void FModumateCloudConnection::ReportMultiPlayerFailure(const FString& Category,
 	{
 		UE_LOG(LogTemp, Error, TEXT("ReportMultiPlayerFailure: Failed to create error-report request"));
 	}
+}
+
+bool FModumateCloudConnection::UploadPresetThumbnailImage(const FString& FileName, TArray<uint8>& OutData, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+{
+	#if UE_SERVER
+		return;
+	#endif
+
+	return RequestEndpoint(TEXT("/assets/presets/") + FileName + TEXT("/thumbnail"),
+		ERequestType::Post,
+		[this, OutData](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{
+			// set up the auth
+			SetupRequestAuth(RefRequest);
+
+			// set png information
+			RefRequest->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
+			RefRequest->SetContent(OutData);
+		},
+		Callback,
+		ServerErrorCallback
+	);
 }

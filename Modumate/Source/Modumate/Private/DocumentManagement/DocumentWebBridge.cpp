@@ -245,6 +245,40 @@ void UModumateDocumentWebBridge::get_preset_thumbnail(const FString& InRequest)
 	}
 }
 
+void UModumateDocumentWebBridge::upload_preset_thumbnail_to_cloud(const FString& InGUID, const FString& NewCanonicalGuid)
+{
+	auto* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	FBufferArchive thumbnail;
+	bool bSuccessful = false;
+
+	if (controller && controller->DynamicIconGenerator
+		&& controller->DynamicIconGenerator->GetMarketplaceIconForPreset(FGuid(InGUID), thumbnail))
+	{
+		auto cloudConnection = controller->GetGameInstance<UModumateGameInstance>()->GetCloudConnection();
+		if (cloudConnection)
+		{
+			cloudConnection->UploadPresetThumbnailImage(NewCanonicalGuid, thumbnail,
+			[&bSuccessful](bool bSuccess, const TSharedPtr<FJsonObject>&)
+			{
+				bSuccessful = bSuccess;
+			},
+			[&bSuccessful](int32 Code, const FString& Error)
+			{
+				bSuccessful = false;
+			});
+		}
+	}
+
+	if (bSuccessful)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("Successfully uploaded thumbnail for preset %s to cloud with new guid of %s."), *InGUID, *NewCanonicalGuid);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Unable to upload thumbnail to cloud: %s"), *NewCanonicalGuid);
+	}
+}
+
 void UModumateDocumentWebBridge::string_to_inches(const FString& InRequest)
 {
 	FDrawingDesignerGenericRequest req;

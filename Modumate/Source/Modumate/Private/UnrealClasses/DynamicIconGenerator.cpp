@@ -104,6 +104,7 @@ void ADynamicIconGenerator::BeginPlay()
 
 	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 	IconRenderTargetForWeb = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSizeForWeb, RenderTargetSizeForWeb, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
+	IconRenderTargetForMarketplace = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSizeForMarketplace, RenderTargetSizeForMarketplace, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 	IconRenderTargetForWeb->TargetGamma = RenderTargetWebGammaScale;
 }
 
@@ -474,65 +475,7 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 		OutResponse = WebCache[AsmKey];
 		return true;
 	}
-
-	// Find if an assembly exists for this preset
-	bool bCaptureSuccess = false;
-	const FBIMAssemblySpec* assembly = presetCollection.AssemblySpecFromGUID(childPreset->ObjectType, AsmKey);
-	if (assembly)
-	{
-		bCaptureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTargetForWeb, BIM_ROOT_PART, true);
-	}
-	else
-	{
-		switch (childPreset->NodeScope)
-		{
-			case EBIMValueScope::RawMaterial:
-				bCaptureSuccess = SetIconMeshForRawMaterial(AsmKey, IconRenderTargetForWeb);
-				break;
-			case EBIMValueScope::Profile:
-				bCaptureSuccess = SetIconMeshForProfile(AsmKey, IconRenderTargetForWeb);
-				break;
-			case EBIMValueScope::Material:
-				bCaptureSuccess = SetIconMeshForMaterial(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
-				break;
-			case EBIMValueScope::Module:
-			case EBIMValueScope::Gap:
-				bCaptureSuccess = SetIconMeshForModule(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
-				break;
-			case EBIMValueScope::Mesh:
-				bCaptureSuccess = SetIconMeshForMesh(AsmKey, IconRenderTargetForWeb);
-				break;
-			case EBIMValueScope::Layer:
-				bCaptureSuccess = SetIconMeshForLayerPreset(presetCollection, AsmKey, IconRenderTargetForWeb);
-				break;
-			case EBIMValueScope::Pattern:
-			{
-				const FStaticIconTexture* staticIcon = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(AsmKey);
-				if (staticIcon != nullptr && staticIcon->IsValid())
-				{
-					DrawTextureSampleToRenderTarget(staticIcon->Texture.Get(), IconRenderTargetForWeb);
-					bCaptureSuccess = true;
-				}
-			}
-				break;
-			case EBIMValueScope::IESProfile:
-			{
-				const FStaticIconTexture* staticIconIES = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(AsmKey);
-				if (staticIconIES != nullptr && staticIconIES->IsValid())
-				{
-					DrawTextureSampleToRenderTarget(staticIconIES->Texture.Get(), IconRenderTargetForWeb);
-					bCaptureSuccess = true;
-				}
-				break;
-			}			
-			case EBIMValueScope::Symbol:
-			{
-				bCaptureSuccess = SetIconMeshForSymbol(childPreset, IconRenderTargetForWeb);
-				break;
-			}
-		}
-	}	
-	
+	bool bCaptureSuccess = GetIconRenderTargetForPreset(AsmKey, IconRenderTargetForWeb);
 	if (bCaptureSuccess)
 	{
 		if (bExportToTempFolder)
@@ -554,6 +497,90 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 		}
 		return true;
 	}
+	return false;
+}
+
+bool ADynamicIconGenerator::GetMarketplaceIconForPreset(const FGuid& AsmKey, FBufferArchive& ImageBuffer)
+{
+#if UE_SERVER
+	return false;
+#endif
+	
+	bool bCaptureSuccess = GetIconRenderTargetForPreset(AsmKey, IconRenderTargetForMarketplace);
+	if (!bCaptureSuccess)
+	{
+		return false;
+	}
+
+	if (!FImageUtils::ExportRenderTarget2DAsPNG(IconRenderTargetForMarketplace, ImageBuffer))
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+bool ADynamicIconGenerator::GetIconRenderTargetForPreset(const FGuid& PresetGuid, UTextureRenderTarget2D* InRenderTarget)
+{
+#if UE_SERVER
+	return false;
+#endif
+
+	FBIMPresetCollectionProxy presetCollection(Controller->GetDocument()->GetPresetCollection());
+	// Find if this is a valid preset
+	const FBIMPresetInstance* preset = presetCollection.PresetFromGUID(PresetGuid);
+	if (preset == nullptr)
+	{
+		return false;
+	}
+	
+	const FBIMAssemblySpec* assembly = presetCollection.AssemblySpecFromGUID(preset->ObjectType, preset->GUID);
+	if (assembly)
+	{
+		return SetIconMeshForAssemblyType(*assembly, InRenderTarget, BIM_ROOT_PART, true);
+	}
+
+	switch (preset->NodeScope)
+	{
+	case EBIMValueScope::RawMaterial:
+		return SetIconMeshForRawMaterial(PresetGuid, InRenderTarget);
+	case EBIMValueScope::Profile:
+		return SetIconMeshForProfile(PresetGuid, InRenderTarget);
+	case EBIMValueScope::Material:
+		return SetIconMeshForMaterial(presetCollection, true, preset->GUID, BIM_ID_NONE, InRenderTarget);
+	case EBIMValueScope::Module:
+	case EBIMValueScope::Gap:
+		return SetIconMeshForModule(presetCollection, true, preset->GUID, BIM_ID_NONE, InRenderTarget);
+	case EBIMValueScope::Mesh:
+		return SetIconMeshForMesh(PresetGuid, InRenderTarget);
+	case EBIMValueScope::Layer:
+		return SetIconMeshForLayerPreset(presetCollection, PresetGuid, InRenderTarget);
+	case EBIMValueScope::Pattern:
+		{
+			const FStaticIconTexture* staticIcon = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(PresetGuid);
+			if (staticIcon != nullptr && staticIcon->IsValid())
+			{
+				DrawTextureSampleToRenderTarget(staticIcon->Texture.Get(), InRenderTarget);
+				return true;
+			}
+			return false;
+		}
+	case EBIMValueScope::IESProfile:
+		{
+			const FStaticIconTexture* staticIconIES = Controller->GetDocument()->GetPresetCollection().GetStaticIconTextureByGUID(PresetGuid);
+			if (staticIconIES != nullptr && staticIconIES->IsValid())
+			{
+				DrawTextureSampleToRenderTarget(staticIconIES->Texture.Get(), InRenderTarget);
+				return true;
+			}
+			return false;
+		}			
+	case EBIMValueScope::Symbol:
+		{
+			return SetIconMeshForSymbol(preset, InRenderTarget);
+		}
+	}
+
 	return false;
 }
 

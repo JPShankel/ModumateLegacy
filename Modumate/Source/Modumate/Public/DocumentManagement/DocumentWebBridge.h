@@ -118,6 +118,9 @@ public:
 	void get_preset_thumbnail(const FString& InRequest);
 
 	UFUNCTION()
+	void upload_preset_thumbnail_to_cloud(const FString& InGUID, const FString& NewCanonicalGuid);
+
+	UFUNCTION()
 	void open_delete_preset_menu(const FString& InGUID);
 
 	// Alignments
